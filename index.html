@@ -1,0 +1,2463 @@
+
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Om At Home · Live Virtual Yoga from Around the World</title>
+      <style>
+        :root {
+          --soil: #2c1a0e;
+          --bark: #4a2e1a;
+          --clay: #8b5e3c;
+          --sand: #e8d5b7;
+          --cream: #faf5ee;
+          --white: #ffffff;
+          --chakra-r: #c0392b;
+          --chakra-o: #e67e22;
+          --chakra-y: #d4a017;
+          --chakra-g: #27ae60;
+          --chakra-b: #2980b9;
+          --chakra-i: #5c3d91;
+          --chakra-v: #8e44ad;
+          --yin: #7b3fa0;
+          --vinyasa: #1e6fa8;
+          --pilates: #1e7a4a;
+          --heart: #c0392b;
+          --sunset: #d4a017;
+          --radius: 12px;
+          --radius-sm: 7px;
+          --shadow: 0 2px 20px rgba(44, 26, 14, 0.12);
+        }
+        *,
+        *::before,
+        *::after {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+        }
+        html {
+          scroll-behavior: smooth;
+        }
+        body {
+          background: var(--cream);
+          color: var(--soil);
+          font-family: "Georgia", "Times New Roman", serif;
+          line-height: 1.6;
+        }
+        h1,
+        h2,
+        h3,
+        h4 {
+          font-family: "Georgia", serif;
+          font-weight: 400;
+        }
+        p,
+        li,
+        span,
+        label,
+        button,
+        input {
+          font-family: "Helvetica Neue", Arial, sans-serif;
+        }
+
+        /* NAV */
+        nav {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          background: rgba(250, 245, 238, 0.94);
+          backdrop-filter: blur(14px);
+          border-bottom: 1px solid rgba(139, 94, 60, 0.15);
+          padding: 0 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 64px;
+        }
+        .nav-logo {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          text-decoration: none;
+          color: var(--soil);
+        }
+        .nav-logo .om {
+          font-size: 26px;
+        }
+        .nav-logo .name {
+          font-size: 18px;
+          font-family: Georgia, serif;
+          letter-spacing: 0.02em;
+        }
+        .nav-links {
+          display: flex;
+          gap: 2rem;
+          list-style: none;
+        }
+        .nav-links a {
+          text-decoration: none;
+          color: var(--clay);
+          font-size: 13px;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          transition: color 0.2s;
+        }
+        .nav-links a:hover {
+          color: var(--soil);
+        }
+        .nav-cta {
+          background: var(--soil);
+          color: var(--sand);
+          border: none;
+          border-radius: var(--radius-sm);
+          padding: 9px 20px;
+          font-size: 13px;
+          cursor: pointer;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          transition: background 0.2s;
+        }
+        .nav-cta:hover {
+          background: var(--bark);
+        }
+        .nav-trial {
+          background: transparent;
+          color: var(--soil);
+          border: 1px solid rgba(44, 26, 14, 0.22);
+          border-radius: var(--radius-sm);
+          padding: 9px 16px;
+          font-size: 13px;
+          cursor: pointer;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          transition: background 0.2s, border-color 0.2s;
+          white-space: nowrap;
+        }
+        .nav-trial:hover {
+          background: rgba(44, 26, 14, 0.06);
+          border-color: rgba(44, 26, 14, 0.35);
+        }
+        .nav-toggle {
+          display: none;
+          flex-direction: column;
+          justify-content: center;
+          gap: 5px;
+          width: 40px;
+          height: 40px;
+          padding: 8px;
+          background: transparent;
+          border: 1px solid rgba(139, 94, 60, 0.2);
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+        }
+        .nav-toggle span {
+          display: block;
+          width: 20px;
+          height: 2px;
+          background: var(--soil);
+          border-radius: 1px;
+          transition: transform 0.2s, opacity 0.2s;
+        }
+        .nav-toggle[aria-expanded="true"] span:nth-child(1) {
+          transform: translateY(7px) rotate(45deg);
+        }
+        .nav-toggle[aria-expanded="true"] span:nth-child(2) {
+          opacity: 0;
+        }
+        .nav-toggle[aria-expanded="true"] span:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+        }
+        .nav-menu {
+          display: flex;
+          align-items: center;
+          gap: 2rem;
+        }
+        .nav-end {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        /* HERO */
+        .hero {
+          min-height: 95vh;
+          background: linear-gradient(
+            160deg,
+            var(--soil) 0%,
+            #3d1f5c 45%,
+            #0f2a1e 100%
+          );
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 4rem 2rem;
+          position: relative;
+          overflow: hidden;
+        }
+        .hero-globe {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 600px;
+          height: 600px;
+          border-radius: 50%;
+          border: 1px solid rgba(232, 213, 183, 0.06);
+          pointer-events: none;
+        }
+        .hero-globe::before {
+          content: "";
+          position: absolute;
+          inset: 50px;
+          border-radius: 50%;
+          border: 1px solid rgba(232, 213, 183, 0.04);
+        }
+        .hero-globe::after {
+          content: "";
+          position: absolute;
+          inset: 120px;
+          border-radius: 50%;
+          border: 1px solid rgba(232, 213, 183, 0.03);
+        }
+        @keyframes rotateSlow {
+          from {
+            transform: translate(-50%, -50%) rotate(0deg);
+          }
+          to {
+            transform: translate(-50%, -50%) rotate(360deg);
+          }
+        }
+        @keyframes pulse {
+          0%,
+          100% {
+            opacity: 0.4;
+            transform: translate(-50%, -50%) scale(1);
+          }
+          50% {
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1.03);
+          }
+        }
+        .hero-globe {
+          animation: pulse 8s ease-in-out infinite;
+        }
+        .world-dots {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        .wdot {
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: rgba(232, 213, 183, 0.35);
+          animation: twinkle var(--d, 4s) ease-in-out infinite var(--dl, 0s);
+        }
+        @keyframes twinkle {
+          0%,
+          100% {
+            opacity: 0.2;
+          }
+          50% {
+            opacity: 0.9;
+          }
+        }
+        .hero-om {
+          font-size: 100px;
+          color: var(--sand);
+          opacity: 0.12;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -56%);
+          pointer-events: none;
+          user-select: none;
+        }
+        .hero-content {
+          position: relative;
+          z-index: 1;
+        }
+        .hero-eyebrow {
+          font-size: 11px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--sand);
+          opacity: 0.55;
+          margin-bottom: 1.25rem;
+        }
+        .hero h1 {
+          font-size: clamp(40px, 7vw, 80px);
+          color: var(--sand);
+          line-height: 1.08;
+          margin-bottom: 1.25rem;
+        }
+        .hero h1 em {
+          font-style: italic;
+          color: rgba(232, 213, 183, 0.65);
+        }
+        .hero-sub {
+          font-size: 17px;
+          color: rgba(232, 213, 183, 0.7);
+          max-width: 520px;
+          margin: 0 auto 2.5rem;
+          line-height: 1.75;
+        }
+        .hero-locations {
+          display: flex;
+          gap: 1.5rem;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-bottom: 2.5rem;
+        }
+        .loc-pill {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 13px;
+          color: rgba(232, 213, 183, 0.55);
+          letter-spacing: 0.03em;
+        }
+        .loc-icon {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+          color: rgba(232, 213, 183, 0.55);
+        }
+        .loc-icon--africa { transform: rotate(-25deg); }
+        .loc-icon--asia { transform: rotate(55deg); }
+        .loc-icon--americas { transform: rotate(145deg); }
+        .loc-icon--europe { transform: rotate(-55deg); }
+        .loc-icon--oceania { transform: rotate(95deg); }
+        .hero-actions {
+          display: flex;
+          gap: 14px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+        .btn-primary {
+          background: var(--sand);
+          color: var(--soil);
+          border: none;
+          border-radius: var(--radius-sm);
+          padding: 14px 32px;
+          font-size: 14px;
+          cursor: pointer;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          font-weight: 600;
+          transition: all 0.2s;
+        }
+        .btn-primary:hover {
+          background: #fff;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        .btn-ghost {
+          background: transparent;
+          color: var(--sand);
+          border: 1px solid rgba(232, 213, 183, 0.35);
+          border-radius: var(--radius-sm);
+          padding: 14px 28px;
+          font-size: 14px;
+          cursor: pointer;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          transition: all 0.2s;
+        }
+        .btn-ghost:hover {
+          border-color: var(--sand);
+          background: rgba(232, 213, 183, 0.08);
+        }
+        .chakra-strip {
+          display: flex;
+          gap: 8px;
+          justify-content: center;
+          margin-top: 3rem;
+        }
+        .chakra-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          opacity: 0.65;
+        }
+
+        /* SCROLL REVEAL */
+        .reveal {
+          opacity: 0;
+          transform: translateY(28px);
+          transition:
+            opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+            transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+          transition-delay: calc(var(--reveal-delay, 0) * 80ms);
+        }
+        .reveal.is-visible {
+          opacity: 1;
+          transform: none;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal {
+            opacity: 1;
+            transform: none;
+            transition: none;
+          }
+          .sunset-orb,
+          .sunset-icon-wrap {
+            animation: none;
+          }
+        }
+
+        /* GLOBAL COMMUNITY BAND */
+        .community-band {
+          background: linear-gradient(90deg, #0f2a1e, #1a0e2e, #0f2a1e);
+          padding: 3.5rem 2rem;
+          text-align: center;
+        }
+        .community-band .section-label {
+          color: rgba(232, 213, 183, 0.45);
+        }
+        .community-band h2 {
+          color: var(--sand);
+          font-size: clamp(26px, 4vw, 40px);
+          margin-bottom: 1rem;
+        }
+        .community-band p {
+          color: rgba(232, 213, 183, 0.65);
+          max-width: 580px;
+          margin: 0 auto 2.5rem;
+          font-size: 15px;
+          line-height: 1.8;
+        }
+        .globe-stats {
+          display: flex;
+          gap: 2rem;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-top: 1rem;
+        }
+        .gstat {
+          text-align: center;
+        }
+        .gstat-num {
+          font-size: 36px;
+          font-family: Georgia, serif;
+          color: var(--sand);
+        }
+        .gstat-label {
+          font-size: 12px;
+          color: rgba(232, 213, 183, 0.45);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          margin-top: 4px;
+        }
+        .country-flags {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-top: 2rem;
+          font-size: 24px;
+        }
+
+        /* SECTIONS */
+        section {
+          padding: 5rem 2rem;
+        }
+        .container {
+          max-width: 1080px;
+          margin: 0 auto;
+        }
+        .section-label {
+          font-size: 11px;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: var(--clay);
+          margin-bottom: 0.75rem;
+        }
+        .section-title {
+          font-size: clamp(28px, 4vw, 44px);
+          line-height: 1.15;
+          margin-bottom: 1.25rem;
+        }
+
+        /* CLASSES */
+        .classes-bg {
+          background: var(--white);
+        }
+        .classes-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+          gap: 1.25rem;
+          margin-top: 3rem;
+        }
+        .class-card {
+          border: 1px solid rgba(139, 94, 60, 0.15);
+          border-radius: var(--radius);
+          padding: 1.75rem;
+          background: var(--cream);
+          transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+          position: relative;
+          overflow: hidden;
+        }
+        .class-card::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+        }
+        .class-card.yin::before {
+          background: var(--chakra-v);
+        }
+        .class-card.vinyasa::before {
+          background: var(--chakra-b);
+        }
+        .class-card.pilates::before {
+          background: var(--chakra-g);
+        }
+        .class-card.heart::before {
+          background: var(--chakra-r);
+        }
+        .class-card.sunset-card::before {
+          background: linear-gradient(90deg, #d4a017, #e67e22);
+        }
+        .class-card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow);
+        }
+        .class-icon {
+          width: 48px;
+          height: 48px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          margin-bottom: 1.25rem;
+        }
+        .class-icon svg {
+          width: 22px;
+          height: 22px;
+        }
+        .class-card h3 {
+          font-size: 18px;
+          margin-bottom: 0.5rem;
+        }
+        .class-card p {
+          font-size: 14px;
+          color: var(--clay);
+          line-height: 1.7;
+          margin-bottom: 1.25rem;
+        }
+        .class-tag {
+          display: inline-block;
+          font-size: 11px;
+          padding: 3px 10px;
+          border-radius: 20px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+        .special-badge {
+          display: inline-block;
+          font-size: 10px;
+          padding: 2px 8px;
+          border-radius: 20px;
+          background: linear-gradient(90deg, #d4a01722, #e67e2222);
+          color: #a07010;
+          border: 1px solid #d4a01744;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          margin-bottom: 0.75rem;
+        }
+
+        /* SCHEDULE */
+        .schedule-bg {
+          background: var(--cream);
+        }
+        .day-tabs {
+          display: flex;
+          gap: 6px;
+          flex-wrap: wrap;
+          margin-bottom: 2rem;
+        }
+        .day-tab {
+          padding: 7px 16px;
+          border-radius: 20px;
+          border: 1px solid rgba(139, 94, 60, 0.2);
+          background: transparent;
+          font-size: 13px;
+          cursor: pointer;
+          font-family: inherit;
+          color: var(--clay);
+          transition: all 0.15s;
+        }
+        .day-tab.active {
+          background: var(--soil);
+          color: var(--sand);
+          border-color: var(--soil);
+        }
+        .schedule-list {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .sched-card {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.12);
+          border-radius: var(--radius);
+          padding: 1rem 1.25rem;
+          display: flex;
+          align-items: center;
+          gap: 14px;
+        }
+        .sched-card.special {
+          background: linear-gradient(135deg, #2c1a0e, #1a3a2a);
+          border-color: rgba(212, 160, 23, 0.3);
+        }
+        .sched-type {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          flex-shrink: 0;
+        }
+        .sched-info {
+          flex: 1;
+        }
+        .sched-name {
+          font-size: 15px;
+          font-family: Georgia, serif;
+          margin-bottom: 2px;
+        }
+        .sched-card.special .sched-name {
+          color: var(--sand);
+        }
+        .sched-meta {
+          font-size: 13px;
+          color: var(--clay);
+        }
+        .sched-card.special .sched-meta {
+          color: rgba(232, 213, 183, 0.55);
+        }
+        .sched-right {
+          text-align: right;
+        }
+        .sched-time {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--soil);
+        }
+        .sched-card.special .sched-time {
+          color: var(--sand);
+        }
+        .sched-spots {
+          font-size: 12px;
+          color: var(--clay);
+          margin-top: 2px;
+        }
+
+        /* SUNSET SPECIAL SECTION */
+        .sunset-section {
+          position: relative;
+          overflow: hidden;
+          background: linear-gradient(
+            160deg,
+            #1a1208 0%,
+            #142820 42%,
+            #0f1a14 70%,
+            #12101e 100%
+          );
+          padding: 6rem 2rem;
+        }
+        .sunset-ambient {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+          overflow: hidden;
+        }
+        .sunset-orb {
+          position: absolute;
+          border-radius: 50%;
+          filter: blur(80px);
+          opacity: 0.35;
+          animation: sunsetDrift 14s ease-in-out infinite;
+        }
+        .sunset-orb--1 {
+          width: 420px;
+          height: 420px;
+          top: -120px;
+          left: -80px;
+          background: radial-gradient(circle, rgba(212, 160, 23, 0.45), transparent 70%);
+        }
+        .sunset-orb--2 {
+          width: 360px;
+          height: 360px;
+          bottom: -100px;
+          right: -60px;
+          background: radial-gradient(circle, rgba(39, 174, 96, 0.25), transparent 70%);
+          animation-delay: -7s;
+        }
+        @keyframes sunsetDrift {
+          0%,
+          100% {
+            transform: translate(0, 0) scale(1);
+          }
+          50% {
+            transform: translate(20px, -16px) scale(1.05);
+          }
+        }
+        .sunset-inner {
+          position: relative;
+          z-index: 1;
+          text-align: center;
+        }
+        .sunset-section .section-label {
+          color: rgba(212, 160, 23, 0.7);
+          letter-spacing: 0.22em;
+        }
+        .sunset-section .section-title {
+          color: var(--sand);
+          font-size: clamp(32px, 5vw, 52px);
+          letter-spacing: -0.01em;
+          margin-bottom: 0.5rem;
+        }
+        .sunset-divider {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 1rem;
+          margin: 1.5rem auto 2.5rem;
+          max-width: 280px;
+        }
+        .sunset-divider::before,
+        .sunset-divider::after {
+          content: "";
+          flex: 1;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(212, 160, 23, 0.35),
+            transparent
+          );
+        }
+        .sunset-divider span {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: rgba(212, 160, 23, 0.6);
+          box-shadow: 0 0 12px rgba(212, 160, 23, 0.4);
+        }
+        .sunset-promo {
+          max-width: 900px;
+          margin: 0 auto 2.75rem;
+          border-radius: 18px;
+          overflow: hidden;
+          border: 1px solid rgba(212, 160, 23, 0.2);
+          box-shadow:
+            0 24px 64px rgba(0, 0, 0, 0.32),
+            0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+        }
+        .sunset-promo img {
+          width: 100%;
+          height: auto;
+          display: block;
+          vertical-align: middle;
+        }
+        .sunset-card-big {
+          max-width: 680px;
+          margin: 0 auto;
+          background: linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.07) 0%,
+            rgba(255, 255, 255, 0.02) 100%
+          );
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(212, 160, 23, 0.18);
+          border-radius: 20px;
+          padding: 3rem 2.5rem;
+          text-align: center;
+          box-shadow:
+            0 24px 64px rgba(0, 0, 0, 0.28),
+            inset 0 1px 0 rgba(255, 255, 255, 0.06);
+          position: relative;
+        }
+        .sunset-card-big::before {
+          content: "";
+          position: absolute;
+          inset: -1px;
+          border-radius: 21px;
+          padding: 1px;
+          background: linear-gradient(
+            135deg,
+            rgba(212, 160, 23, 0.35),
+            transparent 40%,
+            transparent 60%,
+            rgba(212, 160, 23, 0.15)
+          );
+          -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          pointer-events: none;
+        }
+        .sunset-icon-big {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 2rem;
+          margin-bottom: 2rem;
+        }
+        .sunset-icon-wrap {
+          width: 72px;
+          height: 72px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(212, 160, 23, 0.08);
+          border: 1px solid rgba(212, 160, 23, 0.2);
+          animation: iconFloat 5s ease-in-out infinite;
+        }
+        .sunset-icon-wrap:nth-child(2) {
+          animation-delay: -2.5s;
+        }
+        .sunset-icon-wrap svg {
+          width: 32px;
+          height: 32px;
+          color: #e8c547;
+        }
+        @keyframes iconFloat {
+          0%,
+          100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-6px);
+          }
+        }
+        .sunset-card-big h3 {
+          font-size: clamp(22px, 3vw, 28px);
+          color: var(--sand);
+          font-family: Georgia, serif;
+          font-style: italic;
+          font-weight: 400;
+          margin-bottom: 1.25rem;
+          line-height: 1.35;
+        }
+        .sunset-card-big p {
+          font-size: 15px;
+          color: rgba(232, 213, 183, 0.62);
+          line-height: 1.9;
+          margin-bottom: 2rem;
+          max-width: 460px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .next-event {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: rgba(212, 160, 23, 0.1);
+          border: 1px solid rgba(212, 160, 23, 0.22);
+          border-radius: 999px;
+          padding: 0.65rem 1.35rem;
+          color: rgba(232, 213, 183, 0.85);
+          font-size: 12px;
+          margin-bottom: 2rem;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+        .next-event svg {
+          width: 14px;
+          height: 14px;
+          color: #d4a017;
+          flex-shrink: 0;
+        }
+        .sunset-cta {
+          max-width: 300px;
+          margin: 0 auto;
+          background: linear-gradient(135deg, var(--sand) 0%, #f0e0c8 100%);
+          border-radius: 999px;
+          padding: 14px 28px;
+          font-size: 13px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          box-shadow: 0 8px 32px rgba(212, 160, 23, 0.2);
+          transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+        }
+        .sunset-cta:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 40px rgba(212, 160, 23, 0.3);
+          background: #fff;
+        }
+
+        /* WORLD SECTION */
+        .world-section {
+          background: var(--white);
+          padding: 5rem 2rem;
+        }
+        .world-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 1.5rem;
+          margin-top: 3rem;
+        }
+        .world-card {
+          border: 1px solid rgba(139, 94, 60, 0.12);
+          border-radius: var(--radius);
+          padding: 1.5rem;
+          text-align: center;
+          background: var(--cream);
+          transition:
+            transform 0.2s,
+            box-shadow 0.2s;
+        }
+        .world-card:hover {
+          transform: translateY(-3px);
+          box-shadow: var(--shadow);
+        }
+        .world-flag {
+          font-size: 36px;
+          margin-bottom: 0.75rem;
+        }
+        .world-card h4 {
+          font-size: 16px;
+          margin-bottom: 0.4rem;
+        }
+        .world-card p {
+          font-size: 13px;
+          color: var(--clay);
+          line-height: 1.6;
+        }
+
+        /* PRICING */
+        .pricing-bg {
+          background: var(--soil);
+        }
+        .pricing-bg .section-label {
+          color: rgba(232, 213, 183, 0.45);
+        }
+        .pricing-bg .section-title {
+          color: var(--sand);
+        }
+        .pricing-card {
+          max-width: 480px;
+          margin: 3rem auto 0;
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(232, 213, 183, 0.14);
+          border-radius: var(--radius);
+          padding: 2.5rem;
+          text-align: center;
+        }
+        .price-num {
+          font-size: 64px;
+          color: var(--sand);
+          font-family: Georgia, serif;
+          line-height: 1;
+        }
+        .price-num sup {
+          font-size: 26px;
+          vertical-align: super;
+        }
+        .price-period {
+          font-size: 15px;
+          color: rgba(232, 213, 183, 0.5);
+          margin-top: 0.25rem;
+        }
+        .price-divider {
+          height: 1px;
+          background: rgba(232, 213, 183, 0.1);
+          margin: 1.75rem 0;
+        }
+        .price-includes {
+          list-style: none;
+          text-align: left;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-bottom: 2rem;
+        }
+        .price-includes li {
+          font-size: 14px;
+          color: rgba(232, 213, 183, 0.8);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .price-includes li::before {
+          content: "✦";
+          color: var(--sand);
+          font-size: 10px;
+          flex-shrink: 0;
+        }
+        .price-note {
+          font-size: 12px;
+          color: rgba(232, 213, 183, 0.35);
+          margin-top: 1rem;
+          letter-spacing: 0.04em;
+        }
+
+        /* TEACHER */
+        .teacher-bg {
+          background: var(--cream);
+        }
+        .teacher-layout {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4rem;
+          align-items: center;
+        }
+        .teacher-photo {
+          aspect-ratio: 3/4;
+          border-radius: var(--radius);
+          background: linear-gradient(160deg, #3d1f5c, #0f2a1e);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 90px;
+          color: rgba(232, 213, 183, 0.2);
+          position: relative;
+          overflow: hidden;
+        }
+        .teacher-photo::after {
+          content: "Fillie Faragi";
+          position: absolute;
+          bottom: 1.5rem;
+          left: 1.5rem;
+          font-family: Georgia, serif;
+          font-size: 18px;
+          color: rgba(232, 213, 183, 0.65);
+          font-style: italic;
+        }
+        .teacher-text h2 {
+          font-size: 36px;
+          margin-bottom: 1rem;
+        }
+        .teacher-text .role {
+          font-size: 13px;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          color: var(--clay);
+          margin-bottom: 1.5rem;
+        }
+        .teacher-text p {
+          font-size: 15px;
+          color: var(--bark);
+          line-height: 1.85;
+          margin-bottom: 1rem;
+        }
+
+        /* APP */
+        .app-section {
+          background: var(--cream);
+        }
+        .app-wrap {
+          background: linear-gradient(135deg, #1a0e2e 0%, #0f2a1e 100%);
+          border-radius: var(--radius);
+          padding: 2rem;
+          max-width: 700px;
+          margin: 3rem auto 0;
+          border: 1px solid rgba(212, 160, 23, 0.1);
+        }
+        .app-header {
+          color: var(--sand);
+          margin-bottom: 1.5rem;
+        }
+        .app-header h3 {
+          font-size: 22px;
+          margin-bottom: 4px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .app-header p {
+          font-size: 13px;
+          opacity: 0.55;
+        }
+        .app-strip {
+          display: flex;
+          gap: 6px;
+          margin-top: 0.75rem;
+        }
+        .app-dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+        }
+        .app-tabs {
+          display: flex;
+          gap: 4px;
+          background: rgba(0, 0, 0, 0.25);
+          border-radius: 8px;
+          padding: 4px;
+          margin-bottom: 1.5rem;
+        }
+        .app-tab {
+          flex: 1;
+          padding: 7px;
+          border: none;
+          background: transparent;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 13px;
+          color: rgba(232, 213, 183, 0.5);
+          font-family: inherit;
+          transition: all 0.15s;
+        }
+        .app-tab.active {
+          background: rgba(255, 255, 255, 0.1);
+          color: var(--sand);
+        }
+        .app-panel {
+          display: none;
+        }
+        .app-panel.active {
+          display: block;
+        }
+        .sub-gate-box {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(232, 213, 183, 0.1);
+          border-radius: var(--radius);
+          padding: 1.75rem;
+          text-align: center;
+        }
+        .sub-gate-box h4 {
+          color: var(--sand);
+          font-size: 18px;
+          margin-bottom: 0.5rem;
+        }
+        .sub-gate-box p {
+          color: rgba(232, 213, 183, 0.6);
+          font-size: 13px;
+          margin-bottom: 1.25rem;
+        }
+        .big-price {
+          font-size: 48px;
+          font-family: Georgia, serif;
+          color: var(--sand);
+          margin-bottom: 0.25rem;
+        }
+        .big-price sup {
+          font-size: 20px;
+          vertical-align: super;
+        }
+        .big-price small {
+          font-size: 16px;
+          opacity: 0.55;
+        }
+        .incl-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+          margin: 1.25rem 0;
+        }
+        .incl-item {
+          background: rgba(255, 255, 255, 0.06);
+          border-radius: 8px;
+          padding: 0.6rem 0.4rem;
+          text-align: center;
+        }
+        .incl-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin: 0 auto 5px;
+        }
+        .incl-name {
+          font-size: 11px;
+          color: var(--sand);
+          margin-bottom: 2px;
+        }
+        .incl-cnt {
+          font-size: 10px;
+          color: rgba(232, 213, 183, 0.4);
+        }
+        .sub-btn {
+          background: var(--sand);
+          color: var(--soil);
+          border: none;
+          border-radius: 8px;
+          padding: 12px;
+          font-size: 14px;
+          cursor: pointer;
+          font-family: inherit;
+          font-weight: 600;
+          width: 100%;
+          transition: all 0.15s;
+        }
+        .sub-btn:hover {
+          background: #fff;
+        }
+        .trial-form {
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+          text-align: left;
+        }
+        .trial-field label {
+          display: block;
+          font-size: 11px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: rgba(232, 213, 183, 0.5);
+          margin-bottom: 0.35rem;
+        }
+        .trial-field input,
+        .trial-field select {
+          width: 100%;
+          padding: 10px 12px;
+          border-radius: 8px;
+          border: 1px solid rgba(232, 213, 183, 0.15);
+          background: rgba(0, 0, 0, 0.2);
+          color: var(--sand);
+          font-size: 14px;
+          font-family: inherit;
+        }
+        .trial-field input:focus,
+        .trial-field select:focus {
+          outline: none;
+          border-color: rgba(232, 213, 183, 0.35);
+        }
+        .trial-field select option {
+          background: var(--soil);
+          color: var(--sand);
+        }
+        .trial-note {
+          font-size: 11px;
+          color: rgba(232, 213, 183, 0.35);
+          text-align: center;
+          margin-top: 0.25rem;
+        }
+        .trial-success {
+          background: rgba(39, 174, 96, 0.1);
+          border: 1px solid rgba(39, 174, 96, 0.25);
+          border-radius: var(--radius);
+          padding: 1.25rem;
+          text-align: center;
+          margin-bottom: 1rem;
+        }
+        .trial-success h4 {
+          color: #6fcf97;
+          font-size: 16px;
+          margin-bottom: 0.35rem;
+        }
+        .trial-success p {
+          color: rgba(232, 213, 183, 0.65);
+          font-size: 13px;
+          line-height: 1.6;
+        }
+        .trial-class-pill {
+          display: inline-block;
+          margin-top: 0.75rem;
+          padding: 0.5rem 1rem;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 8px;
+          font-size: 13px;
+          color: var(--sand);
+        }
+        .sub-active-bar {
+          background: rgba(39, 174, 96, 0.12);
+          border: 1px solid rgba(39, 174, 96, 0.22);
+          border-radius: 8px;
+          padding: 0.75rem 1rem;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 1.25rem;
+          color: var(--sand);
+          font-size: 13px;
+        }
+        .cancel-btn {
+          background: transparent;
+          border: 1px solid rgba(232, 213, 183, 0.22);
+          border-radius: 6px;
+          padding: 5px 12px;
+          color: rgba(232, 213, 183, 0.6);
+          font-size: 12px;
+          cursor: pointer;
+          font-family: inherit;
+        }
+        .sched-filter {
+          display: flex;
+          gap: 6px;
+          margin-bottom: 1rem;
+          flex-wrap: wrap;
+        }
+        .sf-chip {
+          padding: 4px 12px;
+          border-radius: 20px;
+          border: 1px solid rgba(232, 213, 183, 0.18);
+          background: transparent;
+          font-size: 12px;
+          cursor: pointer;
+          font-family: inherit;
+          color: rgba(232, 213, 183, 0.6);
+          transition: all 0.15s;
+        }
+        .sf-chip.active {
+          background: rgba(232, 213, 183, 0.12);
+          color: var(--sand);
+          border-color: rgba(232, 213, 183, 0.45);
+        }
+        .sc-card {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(232, 213, 183, 0.08);
+          border-radius: 10px;
+          padding: 0.85rem 1rem;
+          margin-bottom: 0.6rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .sc-card.is-booked {
+          border-left: 3px solid #27ae60;
+        }
+        .sc-card.is-locked {
+          opacity: 0.3;
+          pointer-events: none;
+        }
+        .sc-card.is-special {
+          background: rgba(212, 160, 23, 0.08);
+          border-color: rgba(212, 160, 23, 0.25);
+        }
+        .sc-badge {
+          width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+          flex-shrink: 0;
+        }
+        .sc-info {
+          flex: 1;
+        }
+        .sc-name {
+          font-size: 13px;
+          color: var(--sand);
+          margin-bottom: 1px;
+        }
+        .sc-meta {
+          font-size: 12px;
+          color: rgba(232, 213, 183, 0.45);
+        }
+        .sc-right {
+          text-align: right;
+        }
+        .sc-spots {
+          font-size: 11px;
+          color: rgba(232, 213, 183, 0.35);
+          margin-bottom: 4px;
+        }
+        .bk-btn {
+          border: 1px solid rgba(232, 213, 183, 0.22);
+          background: transparent;
+          border-radius: 6px;
+          padding: 4px 10px;
+          font-size: 12px;
+          cursor: pointer;
+          font-family: inherit;
+          color: var(--sand);
+          transition: all 0.15s;
+        }
+        .bk-btn:hover {
+          background: rgba(232, 213, 183, 0.1);
+        }
+        .bk-btn.booked {
+          background: #27ae60;
+          border-color: #27ae60;
+          cursor: default;
+        }
+        .day-sec {
+          margin-bottom: 1.25rem;
+        }
+        .day-lbl {
+          font-size: 11px;
+          font-weight: 600;
+          color: rgba(232, 213, 183, 0.35);
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          margin-bottom: 0.5rem;
+        }
+        .my-sc-card {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(232, 213, 183, 0.08);
+          border-radius: 10px;
+          padding: 0.85rem 1rem;
+          margin-bottom: 0.6rem;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+        .usage-wrap {
+          background: rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(232, 213, 183, 0.08);
+          border-radius: 10px;
+          padding: 1rem;
+          margin-bottom: 1rem;
+        }
+        .usage-title {
+          font-size: 11px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: rgba(232, 213, 183, 0.35);
+          margin-bottom: 0.75rem;
+        }
+        .usage-row {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 6px;
+        }
+        .usage-lbl {
+          font-size: 12px;
+          color: rgba(232, 213, 183, 0.65);
+          width: 80px;
+        }
+        .usage-track {
+          flex: 1;
+          height: 5px;
+          background: rgba(255, 255, 255, 0.08);
+          border-radius: 3px;
+          overflow: hidden;
+        }
+        .usage-fill {
+          height: 100%;
+          border-radius: 3px;
+          transition: width 0.3s;
+        }
+        .usage-cnt {
+          font-size: 11px;
+          color: rgba(232, 213, 183, 0.35);
+          width: 36px;
+          text-align: right;
+        }
+        .app-empty {
+          text-align: center;
+          padding: 2rem 1rem;
+          color: rgba(232, 213, 183, 0.35);
+          font-size: 13px;
+        }
+
+        /* FOOTER */
+        footer {
+          background: var(--soil);
+          color: rgba(232, 213, 183, 0.55);
+          padding: 3.5rem 2rem;
+          text-align: center;
+        }
+        footer .om {
+          font-size: 32px;
+          margin-bottom: 0.5rem;
+        }
+        footer h3 {
+          color: var(--sand);
+          font-size: 20px;
+          margin-bottom: 0.5rem;
+        }
+        footer p {
+          font-size: 13px;
+          margin-bottom: 1.5rem;
+          line-height: 1.7;
+        }
+        footer .chakra-strip {
+          justify-content: center;
+          margin-bottom: 1.5rem;
+        }
+        footer small {
+          font-size: 12px;
+          opacity: 0.35;
+        }
+
+        @media (max-width: 1150px) {
+          .nav-toggle {
+            display: flex;
+          }
+          .nav-menu {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 1.25rem;
+            padding: 1.5rem 2rem 1.75rem;
+            background: rgba(250, 245, 238, 0.98);
+            backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(139, 94, 60, 0.15);
+            box-shadow: 0 8px 24px rgba(44, 26, 14, 0.08);
+          }
+          .nav-menu.is-open {
+            display: flex;
+          }
+          .nav-links {
+            flex-direction: column;
+            gap: 0.25rem;
+            width: 100%;
+          }
+          .nav-links a {
+            display: block;
+            padding: 0.65rem 0;
+          }
+          .nav-trial {
+            padding: 8px 12px;
+            font-size: 11px;
+          }
+          .nav-cta {
+            padding: 8px 12px;
+            font-size: 11px;
+          }
+        }
+
+        @media (max-width: 700px) {
+          .teacher-layout {
+            grid-template-columns: 1fr;
+          }
+          .hero h1 {
+            font-size: 34px;
+          }
+          .hero-locations {
+            gap: 1rem;
+          }
+          .app-tab {
+            font-size: 11px;
+            padding: 6px 4px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <!-- NAV -->
+      <nav>
+        <a href="#" class="nav-logo"
+          ><span class="om">ॐ</span><span class="name">Om At Home</span></a
+        >
+        <div class="nav-menu" id="nav-menu">
+          <ul class="nav-links">
+            <li><a href="#classes">Classes</a></li>
+            <li><a href="#schedule">Schedule</a></li>
+            <li><a href="#sunset">Sunset Flow</a></li>
+            <li><a href="#teacher">Teacher</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="nav-end">
+          <button class="nav-trial" type="button" onclick="openTrial()">
+            Book a trial
+          </button>
+          <button
+            class="nav-cta"
+            onclick="
+              document
+                .getElementById('pricing')
+                .scrollIntoView({ behavior: 'smooth' })
+            "
+          >
+            Subscribe · $70/mo
+          </button>
+          <button
+            class="nav-toggle"
+            type="button"
+            aria-label="Open menu"
+            aria-expanded="false"
+            aria-controls="nav-menu"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+
+      <!-- HERO -->
+      <section class="hero">
+        <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+          <symbol id="globe-icon" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.2"/>
+            <ellipse cx="12" cy="12" rx="3.5" ry="9.5" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.65"/>
+            <path d="M3 12h18M12 3c-2.5 3.5-2.5 14.5 0 18" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+            <path d="M9 7c2 1.5 3.5 5 3 9.5 2.5-1 4-4.5 3.5-7.5" fill="currentColor" opacity="0.5"/>
+          </symbol>
+          <symbol id="icon-sunset" viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 17h16"/>
+            <path fill="currentColor" opacity="0.85" d="M8 17a4 4 0 0 1 8 0"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M12 9V4"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M6.34 6.34 4.93 4.93"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M17.66 6.34l1.41-1.41"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M4 12H2"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M22 12h-2"/>
+          </symbol>
+          <symbol id="icon-pyramid" viewBox="0 0 24 24">
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" d="M12 3 2 21h20L12 3z"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M12 3v18"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M7 21h10"/>
+          </symbol>
+          <symbol id="icon-calendar" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+            <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M3 9h18M8 3v4M16 3v4"/>
+            <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </symbol>
+        </svg>
+        <div class="hero-globe"></div>
+        <div class="world-dots" id="world-dots"></div>
+        <div class="hero-om">ॐ</div>
+        <div class="hero-content">
+          <p class="hero-eyebrow">A global virtual yoga community</p>
+          <h1>One breath.<br /><em>Every timezone.</em></h1>
+          <p class="hero-sub">
+            Live classes in Yin Yoga Flow, Vinyasa Flow, and Pilates — streamed
+            daily by Fillie Faragi to practitioners in every corner of the
+            world.
+          </p>
+          <div class="hero-locations">
+            <span class="loc-pill"><svg class="loc-icon loc-icon--africa" viewBox="0 0 24 24" aria-hidden="true"><use href="#globe-icon"/></svg> Africa</span>
+            <span class="loc-pill"><svg class="loc-icon loc-icon--asia" viewBox="0 0 24 24" aria-hidden="true"><use href="#globe-icon"/></svg> Asia</span>
+            <span class="loc-pill"><svg class="loc-icon loc-icon--americas" viewBox="0 0 24 24" aria-hidden="true"><use href="#globe-icon"/></svg> Americas</span>
+            <span class="loc-pill"><svg class="loc-icon loc-icon--europe" viewBox="0 0 24 24" aria-hidden="true"><use href="#globe-icon"/></svg> Europe</span>
+            <span class="loc-pill"><svg class="loc-icon loc-icon--oceania" viewBox="0 0 24 24" aria-hidden="true"><use href="#globe-icon"/></svg> Oceania</span>
+          </div>
+          <div class="hero-actions">
+            <button
+              class="btn-primary"
+              onclick="openTrial()"
+            >
+              Book a free trial
+            </button>
+            <button
+              class="btn-ghost"
+              onclick="
+                document
+                  .getElementById('classes')
+                  .scrollIntoView({ behavior: 'smooth' })
+              "
+            >
+              Explore classes
+            </button>
+          </div>
+          <div class="chakra-strip">
+            <div class="chakra-dot" style="background: var(--chakra-r)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-o)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-y)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-g)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-b)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-i)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-v)"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GLOBAL COMMUNITY -->
+      <div class="community-band">
+        <div class="container">
+          <p class="section-label reveal" style="text-align: center; --reveal-delay: 0">Our community</p>
+          <h2 class="reveal" style="--reveal-delay: 1">Practice together, from everywhere</h2>
+          <p class="reveal" style="--reveal-delay: 2">
+            When you roll out your mat at home, you're joining thousands of
+            practitioners around the world doing the same thing at the same
+            time. That shared energy — across cities, continents, and time zones
+            — is what makes Om At Home unlike anything else.
+          </p>
+          <div class="globe-stats reveal" style="--reveal-delay: 3">
+            <div class="gstat">
+              <div class="gstat-num">40+</div>
+              <div class="gstat-label">Countries</div>
+            </div>
+            <div class="gstat">
+              <div class="gstat-num">5</div>
+              <div class="gstat-label">Classes daily</div>
+            </div>
+            <div class="gstat">
+              <div class="gstat-num">7</div>
+              <div class="gstat-label">Days a week</div>
+            </div>
+            <div class="gstat">
+              <div class="gstat-num">1</div>
+              <div class="gstat-label">Community</div>
+            </div>
+          </div>
+          <div class="country-flags">
+            🇺🇸🇬🇧🇦🇺🇮🇳🇧🇷🇿🇦🇯🇵🇩🇪🇫🇷🇨🇦🇲🇽🇳🇬🇸🇬🇸🇪🇳🇿🇦🇪🇰🇪🇮🇹🇪🇸
+          </div>
+        </div>
+      </div>
+
+      <!-- CLASSES -->
+      <section id="classes" class="classes-bg">
+        <div class="container">
+          <p class="section-label reveal" style="--reveal-delay: 0">What we offer</p>
+          <h2 class="section-title reveal" style="--reveal-delay: 1">Move with the world</h2>
+          <p class="reveal" style="color: var(--clay); max-width: 520px; font-size: 15px; --reveal-delay: 2">
+            Five live classes daily, led by Fillie Faragi and shared with
+            practitioners across every continent.
+          </p>
+          <div class="classes-grid reveal" style="--reveal-delay: 3">
+            <div class="class-card yin">
+              <div class="class-icon" style="background: #8e44ad1a">🟣</div>
+              <h3>Yin Yoga Flow</h3>
+              <p>
+                Long-held, grounding postures that release deep connective
+                tissue and quiet the nervous system. A shared stillness with
+                practitioners worldwide.
+              </p>
+              <span
+                class="class-tag"
+                style="background: #8e44ad15; color: #7b3fa0"
+                >45 min · 2pm &amp; 4pm daily</span
+              >
+            </div>
+            <div class="class-card vinyasa">
+              <div class="class-icon" style="background: #2980b91a">🔵</div>
+              <h3>Vinyasa Flow</h3>
+              <p>
+                Breath-linked sequences that build strength and presence. Begin
+                your morning moving in sync with yogis from Tokyo to Toronto.
+              </p>
+              <span
+                class="class-tag"
+                style="background: #2980b915; color: #1e6fa8"
+                >45 min · 5:30am &amp; 9am daily</span
+              >
+            </div>
+            <div class="class-card pilates">
+              <div class="class-icon" style="background: #27ae601a">💚</div>
+              <h3>Pilates</h3>
+              <p>
+                Core-focused movement that strengthens from the inside out. Low
+                impact, high intention — a midday reset shared across time
+                zones.
+              </p>
+              <span
+                class="class-tag"
+                style="background: #27ae6015; color: #1e7a4a"
+                >35 min · 11am daily</span
+              >
+            </div>
+            <div class="class-card heart">
+              <div class="class-icon" style="background: #c0392b1a">❤️</div>
+              <h3>Heart Opening Yin</h3>
+              <p>
+                A special Yin practice focused on the heart chakra — chest,
+                shoulders, and upper back. Offered twice a week to deepen your
+                midweek practice.
+              </p>
+              <span
+                class="class-tag"
+                style="background: #c0392b15; color: #c0392b"
+                >45 min · Tue &amp; Thu 7am</span
+              >
+            </div>
+            <div class="class-card sunset-card">
+              <div class="special-badge">✨ Special Event</div>
+              <div class="class-icon" style="background: #d4a01722; color: #a07010">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sunset"/></svg>
+              </div>
+              <h3>Sunset Flow: Live from Giza</h3>
+              <p>
+                A once-every-three-months live experience streaming Fillie's
+                practice from the Giza Pyramids at sunset. Ancient energy,
+                global community.
+              </p>
+              <span
+                class="class-tag"
+                style="background: #d4a01722; color: #a07010"
+                >Once every 3 months · Live</span
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCHEDULE -->
+      <section id="schedule" class="schedule-bg">
+        <div class="container">
+          <p class="section-label reveal" style="--reveal-delay: 0">Daily rhythm</p>
+          <h2 class="section-title reveal" style="--reveal-delay: 1">Classes every day, everywhere</h2>
+          <p
+            class="reveal"
+            style="
+              color: var(--clay);
+              max-width: 520px;
+              font-size: 15px;
+              margin-bottom: 2rem;
+              --reveal-delay: 2;
+            "
+          >
+            Five live sessions stream daily. Heart Opening Yin also runs Tuesday
+            and Thursday mornings.
+          </p>
+          <div class="day-tabs reveal" id="day-tabs" style="--reveal-delay: 3"></div>
+          <div class="schedule-list reveal" id="schedule-list" style="--reveal-delay: 4"></div>
+        </div>
+      </section>
+
+      <!-- SUNSET FLOW SPECIAL -->
+      <section id="sunset" class="sunset-section">
+        <div class="sunset-ambient" aria-hidden="true">
+          <div class="sunset-orb sunset-orb--1"></div>
+          <div class="sunset-orb sunset-orb--2"></div>
+        </div>
+        <div class="container sunset-inner">
+          <p class="section-label reveal" style="--reveal-delay: 0">Special live experience</p>
+          <h2 class="section-title reveal" style="--reveal-delay: 1">Sunset Flow: Live from Giza</h2>
+          <div class="sunset-promo reveal" style="--reveal-delay: 2">
+            <img
+              src="assets/images/sunset-giza-promo.png"
+              alt="Om at Home — virtual yoga live from the Giza Pyramids at sunset"
+              loading="lazy"
+              width="824"
+              height="522"
+            />
+          </div>
+          <div class="sunset-divider reveal" style="--reveal-delay: 3" aria-hidden="true"><span></span></div>
+          <div class="sunset-card-big reveal" style="--reveal-delay: 4">
+            <div class="sunset-icon-big">
+              <div class="sunset-icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-sunset"/></svg>
+              </div>
+              <div class="sunset-icon-wrap">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-pyramid"/></svg>
+              </div>
+            </div>
+            <h3>Where ancient energy meets global community</h3>
+            <p>
+              Once every three months, Fillie leads a live yoga flow from the
+              base of the Giza Pyramids as the Egyptian sun sets behind them.
+              Thousands of practitioners around the world roll out their mats at
+              the same moment — connected by breath, movement, and one of the
+              world's most sacred landscapes.
+            </p>
+            <div class="next-event">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-calendar"/></svg>
+              Next event: September 2026 · Date announced to subscribers
+            </div>
+            <button
+              class="sub-btn sunset-cta"
+              onclick="
+                document
+                  .getElementById('book-app')
+                  .scrollIntoView({ behavior: 'smooth' })
+              "
+            >
+              Subscribe to get notified
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- WORLD SECTION -->
+      <section class="world-section">
+        <div class="container">
+          <p class="section-label">Where we practice</p>
+          <h2 class="section-title">Your mat is the meeting place</h2>
+          <p style="color: var(--clay); max-width: 520px; font-size: 15px">
+            Whether you're in Lagos or London, Mumbai or Mexico City — you're
+            never practicing alone.
+          </p>
+          <div class="world-grid">
+            <div class="world-card">
+              <div class="world-flag">🇬🇧</div>
+              <h4>London</h4>
+              <p>Early morning Vinyasa before the workday begins</p>
+            </div>
+            <div class="world-card">
+              <div class="world-flag">🇯🇵</div>
+              <h4>Tokyo</h4>
+              <p>Evening Yin Flow as the city lights come on</p>
+            </div>
+            <div class="world-card">
+              <div class="world-flag">🇿🇦</div>
+              <h4>Cape Town</h4>
+              <p>Midmorning Pilates with an ocean backdrop</p>
+            </div>
+            <div class="world-card">
+              <div class="world-flag">🇧🇷</div>
+              <h4>São Paulo</h4>
+              <p>Sunset Flow connecting Brazil to Egypt in real time</p>
+            </div>
+            <div class="world-card">
+              <div class="world-flag">🇮🇳</div>
+              <h4>Mumbai</h4>
+              <p>Heart Opening Yin to begin the midweek</p>
+            </div>
+            <div class="world-card">
+              <div class="world-flag">🇺🇸</div>
+              <h4>New York</h4>
+              <p>Early-morning flow before the city wakes up</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEACHER -->
+      <section id="teacher" class="teacher-bg">
+        <div class="container">
+          <div class="teacher-layout">
+            <div class="teacher-photo">ॐ</div>
+            <div class="teacher-text">
+              <p class="role">Lead Instructor &amp; Founder</p>
+              <h2>Fillie Faragi</h2>
+              <p>
+                Fillie brings warmth, precision, and a deep love of connection
+                to every class she leads. Her teaching weaves together the
+                stillness of Yin, the energy of Vinyasa, the strength of Pilates
+                — and a genuine belief that movement is better shared.
+              </p>
+              <p>
+                From her mat to yours, across whatever distance lies between —
+                Fillie shows up live, every day, for practitioners in every time
+                zone. The Giza Pyramid sessions are her love letter to the
+                global community she's built.
+              </p>
+              <p
+                style="
+                  font-style: italic;
+                  color: var(--clay);
+                  font-family: Georgia, serif;
+                "
+              >
+                "When we breathe together, the world gets smaller."
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICING -->
+      <section id="pricing" class="pricing-bg">
+        <div class="container" style="text-align: center">
+          <p class="section-label">Simple pricing</p>
+          <h2 class="section-title" style="color: var(--sand)">
+            One plan. The whole world.
+          </h2>
+          <div class="pricing-card">
+            <div class="price-num">
+              <sup>$</sup>70<small style="font-size: 18px; opacity: 0.55"
+                >/mo</small
+              >
+            </div>
+            <div class="price-period">Om At Home Monthly</div>
+            <div class="price-divider"></div>
+            <ul class="price-includes">
+              <li>Yin Yoga Flow — 2pm &amp; 4pm daily (45 min)</li>
+              <li>Vinyasa Flow — 5:30am &amp; 9am daily (45 min)</li>
+              <li>Pilates — 11am daily (35 min)</li>
+              <li>Heart Opening Yin — Tue &amp; Thu 7am (45 min)</li>
+              <li>Sunset Flow from Giza Pyramids (quarterly)</li>
+              <li>Live sessions with Fillie Faragi</li>
+              <li>Access from anywhere in the world</li>
+              <li>Cancel any time — no commitment</li>
+            </ul>
+            <button
+              class="sub-btn"
+              onclick="
+                document
+                  .getElementById('book-app')
+                  .scrollIntoView({ behavior: 'smooth' })
+              "
+            >
+              Join the global community
+            </button>
+            <p class="price-note">No contracts · Cancel any time</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOOK APP -->
+      <section id="book-app" class="app-section">
+        <div class="container">
+          <p class="section-label" style="text-align: center">
+            Reserve your spot
+          </p>
+          <h2 class="section-title" style="text-align: center">
+            Book your mat
+          </h2>
+          <div class="app-wrap">
+            <div class="app-header">
+              <h3><span>ॐ</span> Om At Home</h3>
+              <p>Live virtual yoga · Global community</p>
+              <div class="app-strip">
+                <div class="app-dot" style="background: var(--chakra-r)"></div>
+                <div class="app-dot" style="background: var(--chakra-o)"></div>
+                <div class="app-dot" style="background: var(--chakra-y)"></div>
+                <div class="app-dot" style="background: var(--chakra-g)"></div>
+                <div class="app-dot" style="background: var(--chakra-b)"></div>
+                <div class="app-dot" style="background: var(--chakra-i)"></div>
+                <div class="app-dot" style="background: var(--chakra-v)"></div>
+              </div>
+            </div>
+            <div class="app-tabs">
+              <button class="app-tab active" onclick="appTab('trial')">
+                Free Trial
+              </button>
+              <button class="app-tab" onclick="appTab('subscribe')">
+                Subscribe
+              </button>
+              <button class="app-tab" onclick="appTab('appschedule')">
+                Schedule
+              </button>
+              <button class="app-tab" onclick="appTab('myclasses')">
+                My Classes
+              </button>
+            </div>
+            <div id="trial" class="app-panel active"></div>
+            <div id="subscribe" class="app-panel"></div>
+            <div id="appschedule" class="app-panel"></div>
+            <div id="myclasses" class="app-panel"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer>
+        <div class="om">ॐ</div>
+        <h3>Om At Home</h3>
+        <p>
+          Live virtual yoga with Fillie Faragi<br />Connecting practitioners in
+          40+ countries, every day.
+        </p>
+        <div class="chakra-strip">
+          <div class="chakra-dot" style="background: var(--chakra-r)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-o)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-y)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-g)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-b)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-i)"></div>
+          <div class="chakra-dot" style="background: var(--chakra-v)"></div>
+        </div>
+        <small>© 2026 Om At Home · All rights reserved</small>
+      </footer>
+
+      <script>
+        // Animated world dots on hero
+        const dotsEl = document.getElementById("world-dots");
+        for (let i = 0; i < 35; i++) {
+          const d = document.createElement("div");
+          d.className = "wdot";
+          d.style.cssText = `left:${Math.random() * 100}%;top:${Math.random() * 100}%;--d:${2 + Math.random() * 5}s;--dl:${Math.random() * 4}s;`;
+          dotsEl.appendChild(d);
+        }
+
+        // SCHEDULE DATA
+        const DAYS = [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday",
+        ];
+        const TUE_THU = new Set(["Tuesday", "Thursday"]);
+
+        function buildClasses() {
+          const list = [];
+          let cid = 1;
+          DAYS.forEach((day) => {
+            // Regular daily classes
+            [
+              {
+                type: "Vinyasa Flow",
+                emoji: "🔵",
+                bg: "#2980B922",
+                color: "#1E6FA8",
+                time: "5:30 AM",
+                duration: "45 min",
+              },
+              {
+                type: "Vinyasa Flow",
+                emoji: "🔵",
+                bg: "#2980B922",
+                color: "#1E6FA8",
+                time: "9:00 AM",
+                duration: "45 min",
+              },
+              {
+                type: "Pilates",
+                emoji: "💚",
+                bg: "#27AE6022",
+                color: "#1E7A4A",
+                time: "11:00 AM",
+                duration: "35 min",
+              },
+              {
+                type: "Yin Yoga Flow",
+                emoji: "🟣",
+                bg: "#8E44AD22",
+                color: "#7B3FA0",
+                time: "2:00 PM",
+                duration: "45 min",
+              },
+              {
+                type: "Yin Yoga Flow",
+                emoji: "🟣",
+                bg: "#8E44AD22",
+                color: "#7B3FA0",
+                time: "4:00 PM",
+                duration: "45 min",
+              },
+            ].forEach((s) =>
+              list.push({
+                id: cid++,
+                day,
+                special: false,
+                ...s,
+                spots: Math.floor(Math.random() * 12) + 4,
+              }),
+            );
+            // Heart Opening Yin on Tue & Thu
+            if (TUE_THU.has(day)) {
+              list.push({
+                id: cid++,
+                day,
+                special: false,
+                type: "Heart Opening Yin",
+                emoji: "❤️",
+                bg: "#C0392B22",
+                color: "#C0392B",
+                time: "7:00 AM",
+                duration: "45 min",
+                spots: Math.floor(Math.random() * 8) + 4,
+              });
+            }
+          });
+          // Sunset Flow — quarterly special, shown under Saturday
+          list.push({
+            id: cid++,
+            day: "Saturday",
+            special: true,
+            type: "Sunset Flow: Live from Giza",
+            emoji: "🌅",
+            bg: "#D4A01722",
+            color: "#D4A017",
+            time: "Quarterly",
+            duration: "90 min",
+            spots: 500,
+            note: "Next: Sep 2026",
+          });
+          return list;
+        }
+
+        const allClasses = buildClasses();
+
+        // Static schedule section
+        let activeDay = "Monday";
+        function renderDayTabs() {
+          document.getElementById("day-tabs").innerHTML = DAYS.map(
+            (d) =>
+              `<button class="day-tab ${d === activeDay ? "active" : ""}" onclick="setDay('${d}')">${d.slice(0, 3)}</button>`,
+          ).join("");
+        }
+        function setDay(d) {
+          activeDay = d;
+          renderDayTabs();
+          renderDaySchedule();
+        }
+        function renderDaySchedule() {
+          const dayC = allClasses.filter((c) => c.day === activeDay);
+          document.getElementById("schedule-list").innerHTML = dayC
+            .map(
+              (c) => `
+    <div class="sched-card ${c.special ? "special" : ""}">
+      <div class="sched-type" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sched-info">
+        <div class="sched-name">${c.type}</div>
+        <div class="sched-meta">${c.duration} · Fillie Faragi${c.note ? " · " + c.note : ""}</div>
+      </div>
+      <div class="sched-right">
+        <div class="sched-time">${c.time}</div>
+        <div class="sched-spots">${c.special ? "Global event" : c.spots + " spots left"}</div>
+      </div>
+    </div>`,
+            )
+            .join("");
+        }
+        renderDayTabs();
+        renderDaySchedule();
+
+        // APP
+        const APP_TABS = ["trial", "subscribe", "appschedule", "myclasses"];
+        let subscribed = false,
+          booked = new Set(),
+          appFilter = "all";
+        let trialBooking = JSON.parse(
+          localStorage.getItem("omathome_trial") || "null",
+        );
+
+        function saveTrial(data) {
+          trialBooking = data;
+          localStorage.setItem("omathome_trial", JSON.stringify(data));
+        }
+
+        function openTrial() {
+          document
+            .getElementById("book-app")
+            .scrollIntoView({ behavior: "smooth" });
+          setTimeout(() => appTab("trial"), 400);
+        }
+
+        function appTab(tab) {
+          document.querySelectorAll(".app-tab").forEach((t, i) =>
+            t.classList.toggle("active", APP_TABS[i] === tab),
+          );
+          document
+            .querySelectorAll(".app-panel")
+            .forEach((p) => p.classList.remove("active"));
+          document.getElementById(tab).classList.add("active");
+          if (tab === "trial") renderTrialPanel();
+          if (tab === "subscribe") renderSubPanel();
+          if (tab === "appschedule") renderAppSchedule();
+          if (tab === "myclasses") renderMyClasses();
+        }
+
+        function renderTrialPanel() {
+          const el = document.getElementById("trial");
+          if (subscribed) {
+            el.innerHTML = `<div class="sub-gate-box"><h4>You're already subscribed</h4>
+    <p>Your membership includes unlimited live classes. Head to the schedule to book your next session.</p>
+    <button class="sub-btn" onclick="appTab('appschedule')">View schedule →</button></div>`;
+            return;
+          }
+          if (trialBooking) {
+            const c = allClasses.find((x) => x.id === trialBooking.classId);
+            el.innerHTML = `<div class="trial-success"><h4>✓ Trial lesson booked</h4>
+    <p>Hi ${trialBooking.name}, you're all set. We'll send joining details to <strong>${trialBooking.email}</strong> before your class.</p>
+    ${c ? `<div class="trial-class-pill">${c.type} · ${c.day} · ${c.time}</div>` : ""}</div>
+    <div class="sub-gate-box"><h4>Love your first class?</h4>
+    <p>Subscribe for unlimited daily access — Yin, Vinyasa, Pilates, and more with Fillie Faragi.</p>
+    <button class="sub-btn" onclick="appTab('subscribe')">View membership · $70/mo</button></div>`;
+            return;
+          }
+          const classOptions = allClasses
+            .filter((c) => !c.special)
+            .map(
+              (c) =>
+                `<option value="${c.id}">${c.day} · ${c.time} · ${c.type}</option>`,
+            )
+            .join("");
+          el.innerHTML = `<div class="sub-gate-box"><h4>Book your free trial lesson</h4>
+    <p>Try one live class with Fillie Faragi — no payment required. One free session per person.</p>
+    <form class="trial-form" onsubmit="submitTrial(event)">
+      <div class="trial-field"><label for="trial-name">Your name</label><input id="trial-name" type="text" required placeholder="Jane Smith" /></div>
+      <div class="trial-field"><label for="trial-email">Email</label><input id="trial-email" type="email" required placeholder="you@email.com" /></div>
+      <div class="trial-field"><label for="trial-class">Choose a class</label><select id="trial-class" required>${classOptions}</select></div>
+      <button class="sub-btn" type="submit">Book my free trial</button>
+      <p class="trial-note">We'll email you a link to join before your class starts.</p>
+    </form></div>`;
+        }
+
+        function submitTrial(e) {
+          e.preventDefault();
+          const name = document.getElementById("trial-name").value.trim();
+          const email = document.getElementById("trial-email").value.trim();
+          const classId = parseInt(
+            document.getElementById("trial-class").value,
+            10,
+          );
+          if (!name || !email || !classId) return;
+          saveTrial({ name, email, classId, bookedAt: Date.now() });
+          booked.add(classId);
+          renderTrialPanel();
+          renderMyClasses();
+        }
+
+        function renderSubPanel() {
+          const el = document.getElementById("subscribe");
+          if (subscribed) {
+            el.innerHTML = `<div class="sub-active-bar"><span>✓ Active — Om At Home Monthly · $70/mo</span><button class="cancel-btn" onclick="cancelSub()">Cancel</button></div>
+    <div class="sub-gate-box"><h4>Your daily access</h4><p>Live classes daily with Fillie Faragi, shared with the global community</p>
+    <div class="incl-grid">
+      <div class="incl-item"><div class="incl-dot" style="background:#8E44AD"></div><div class="incl-name">Yin Yoga Flow</div><div class="incl-cnt">2pm &amp; 4pm</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#2980B9"></div><div class="incl-name">Vinyasa Flow</div><div class="incl-cnt">5:30am &amp; 9am</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#27AE60"></div><div class="incl-name">Pilates</div><div class="incl-cnt">11am</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#C0392B"></div><div class="incl-name">Heart Opening</div><div class="incl-cnt">Tue &amp; Thu</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#D4A017"></div><div class="incl-name">Sunset Flow</div><div class="incl-cnt">Quarterly</div></div>
+    </div>
+    <button class="sub-btn" onclick="appTab('appschedule')">View this week's schedule →</button></div>`;
+          } else {
+            el.innerHTML = `<div class="sub-gate-box"><h4>Join the global community</h4>
+    <p>One subscription. Five daily classes. Practitioners in 40+ countries. Led by Fillie Faragi, live every day.</p>
+    <div class="big-price"><sup>$</sup>70<small>/mo</small></div>
+    <div class="incl-grid">
+      <div class="incl-item"><div class="incl-dot" style="background:#8E44AD"></div><div class="incl-name">Yin Yoga Flow</div><div class="incl-cnt">2 per day</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#2980B9"></div><div class="incl-name">Vinyasa Flow</div><div class="incl-cnt">2 per day</div></div>
+      <div class="incl-item"><div class="incl-dot" style="background:#27AE60"></div><div class="incl-name">Pilates</div><div class="incl-cnt">Daily</div></div>
+    </div>
+    <button class="sub-btn" onclick="subscribe()">Subscribe for $70/month</button>
+    <p style="font-size:11px;color:rgba(232,213,183,.3);margin-top:.75rem">Cancel any time · No commitment</p></div>`;
+          }
+        }
+
+        function subscribe() {
+          subscribed = true;
+          renderTrialPanel();
+          renderSubPanel();
+          renderAppSchedule();
+          renderMyClasses();
+        }
+        function cancelSub() {
+          subscribed = false;
+          booked.clear();
+          if (trialBooking) booked.add(trialBooking.classId);
+          renderTrialPanel();
+          renderSubPanel();
+          renderAppSchedule();
+          renderMyClasses();
+        }
+
+        function renderAppSchedule() {
+          const el = document.getElementById("appschedule");
+          const types = [
+            "all",
+            "Yin Yoga Flow",
+            "Vinyasa Flow",
+            "Pilates",
+            "Heart Opening Yin",
+          ];
+          const labels = ["All", "Yin", "Vinyasa", "Pilates", "Heart Yin"];
+          let html = `<div class="sched-filter">${types.map((t, i) => `<button class="sf-chip ${appFilter === t ? "active" : ""}" onclick="setFilter('${t}')">${labels[i]}</button>`).join("")}</div>`;
+          const filtered =
+            appFilter === "all"
+              ? allClasses
+              : allClasses.filter((c) => c.type === appFilter);
+          DAYS.forEach((day) => {
+            const dc = filtered.filter((c) => c.day === day);
+            if (!dc.length) return;
+            html += `<div class="day-sec"><div class="day-lbl">${day}</div>`;
+            dc.forEach((c) => {
+              const isB = booked.has(c.id);
+              const locked = !subscribed;
+              html += `<div class="sc-card ${isB ? "is-booked" : ""} ${locked ? "is-locked" : ""} ${c.special ? "is-special" : ""}">
+        <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+        <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.time} · ${c.duration} · Fillie Faragi</div></div>
+        <div class="sc-right"><div class="sc-spots">${c.special ? "Global event" : c.spots + " spots"}</div>
+          <button class="bk-btn ${isB ? "booked" : ""}" onclick="toggleBook(${c.id})" ${isB ? "disabled" : ""}>${isB ? "✓ Booked" : c.special ? "Notify" : "Book"}</button>
+        </div></div>`;
+            });
+            html += "</div>";
+          });
+          if (!subscribed)
+            html += `<div class="app-empty">🌍 ${trialBooking ? "Subscribe for unlimited classes" : "Book a free trial or subscribe to reserve your spot"}<br><br>
+            <button class="sub-btn" style="max-width:200px;margin:.5rem auto 0" onclick="appTab('${trialBooking ? "subscribe" : "trial"}')">${trialBooking ? "View plans" : "Book free trial"}</button></div>`;
+          el.innerHTML = html;
+        }
+
+        function renderMyClasses() {
+          const el = document.getElementById("myclasses");
+          if (!subscribed && !trialBooking) {
+            el.innerHTML = `<div class="app-empty">Book a free trial lesson or subscribe for full access.<br><br>
+            <button class="sub-btn" style="max-width:200px;margin:.5rem auto 0" onclick="appTab('trial')">Book free trial</button></div>`;
+            return;
+          }
+          if (!subscribed && trialBooking) {
+            const c = allClasses.find((x) => x.id === trialBooking.classId);
+            if (!c) {
+              el.innerHTML = `<div class="app-empty">Your trial class could not be found.</div>`;
+              return;
+            }
+            el.innerHTML = `<div class="sub-active-bar"><span>Free trial · 1 class remaining</span><button class="cancel-btn" onclick="appTab('subscribe')">Upgrade</button></div>
+    <div class="my-sc-card">
+      <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.day} · ${c.time} · ${c.duration}</div></div>
+    </div>
+    <button class="sub-btn" style="margin-top:1rem" onclick="appTab('subscribe')">Subscribe for unlimited classes →</button>`;
+            return;
+          }
+          const myList = allClasses.filter((c) => booked.has(c.id));
+          const cnt = {
+            "Yin Yoga Flow": 0,
+            "Vinyasa Flow": 0,
+            Pilates: 0,
+            "Heart Opening Yin": 0,
+          };
+          myList.forEach((c) => {
+            if (cnt[c.type] !== undefined) cnt[c.type]++;
+          });
+          let html = `<div class="usage-wrap"><div class="usage-title">Bookings this week</div>
+    <div class="usage-row"><span class="usage-lbl" style="color:#8E44AD">Yin Yoga</span><div class="usage-track"><div class="usage-fill" style="width:${Math.min((cnt["Yin Yoga Flow"] / 14) * 100, 100)}%;background:#8E44AD"></div></div><span class="usage-cnt">${cnt["Yin Yoga Flow"]}/14</span></div>
+    <div class="usage-row"><span class="usage-lbl" style="color:#2980B9">Vinyasa</span><div class="usage-track"><div class="usage-fill" style="width:${Math.min((cnt["Vinyasa Flow"] / 14) * 100, 100)}%;background:#2980B9"></div></div><span class="usage-cnt">${cnt["Vinyasa Flow"]}/14</span></div>
+    <div class="usage-row"><span class="usage-lbl" style="color:#27AE60">Pilates</span><div class="usage-track"><div class="usage-fill" style="width:${Math.min((cnt["Pilates"] / 7) * 100, 100)}%;background:#27AE60"></div></div><span class="usage-cnt">${cnt["Pilates"]}/7</span></div>
+    <div class="usage-row"><span class="usage-lbl" style="color:#C0392B">Heart Yin</span><div class="usage-track"><div class="usage-fill" style="width:${Math.min((cnt["Heart Opening Yin"] / 2) * 100, 100)}%;background:#C0392B"></div></div><span class="usage-cnt">${cnt["Heart Opening Yin"]}/2</span></div>
+  </div>`;
+          if (!myList.length)
+            html += `<div class="app-empty">No classes booked yet.<br><br><button class="sub-btn" style="max-width:200px;margin:.75rem auto 0" onclick="appTab('appschedule')">Browse schedule</button></div>`;
+          else
+            myList.forEach((c) => {
+              html += `<div class="my-sc-card">
+      <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.day} · ${c.time}</div></div>
+      <button class="cancel-btn" onclick="toggleBook(${c.id})">Cancel</button>
+    </div>`;
+            });
+          el.innerHTML = html;
+        }
+
+        function setFilter(f) {
+          appFilter = f;
+          renderAppSchedule();
+        }
+        function toggleBook(id) {
+          if (!subscribed) return;
+          booked.has(id) ? booked.delete(id) : booked.add(id);
+          renderAppSchedule();
+          renderMyClasses();
+        }
+
+        renderTrialPanel();
+        renderSubPanel();
+        renderAppSchedule();
+        renderMyClasses();
+
+        if (trialBooking) booked.add(trialBooking.classId);
+
+        const navToggle = document.querySelector(".nav-toggle");
+        const navMenu = document.getElementById("nav-menu");
+        navToggle.addEventListener("click", () => {
+          const open = navMenu.classList.toggle("is-open");
+          navToggle.setAttribute("aria-expanded", open);
+          navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        });
+        navMenu.querySelectorAll("a").forEach((el) => {
+          el.addEventListener("click", () => {
+            navMenu.classList.remove("is-open");
+            navToggle.setAttribute("aria-expanded", "false");
+            navToggle.setAttribute("aria-label", "Open menu");
+          });
+        });
+
+        const revealEls = document.querySelectorAll(".reveal");
+        if ("IntersectionObserver" in window) {
+          const revealObserver = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("is-visible");
+                  revealObserver.unobserve(entry.target);
+                }
+              });
+            },
+            { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+          );
+          revealEls.forEach((el) => revealObserver.observe(el));
+        } else {
+          revealEls.forEach((el) => el.classList.add("is-visible"));
+        }
+      </script>
+    </body>
+  </html>
