@@ -456,11 +456,25 @@
         }
         .country-flags {
           display: flex;
-          gap: 10px;
+          gap: 8px;
           justify-content: center;
           flex-wrap: wrap;
           margin-top: 2rem;
-          font-size: 24px;
+          max-width: 680px;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .country-flags img {
+          width: 36px;
+          height: 27px;
+          object-fit: cover;
+          border-radius: 4px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+          border: 1px solid rgba(255, 255, 255, 0.18);
+          transition: transform 0.15s;
+        }
+        .country-flags img:hover {
+          transform: scale(1.1);
         }
 
         /* SECTIONS */
@@ -543,8 +557,8 @@
           margin-bottom: 1.25rem;
         }
         .class-icon svg {
-          width: 22px;
-          height: 22px;
+          width: 32px;
+          height: 32px;
         }
         .class-card h3 {
           font-size: 18px;
@@ -628,8 +642,11 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 18px;
           flex-shrink: 0;
+        }
+        .sched-type svg {
+          width: 24px;
+          height: 24px;
         }
         .sched-info {
           flex: 1;
@@ -772,7 +789,8 @@
           width: 100%;
           height: auto;
           display: block;
-          vertical-align: middle;
+          aspect-ratio: 917 / 650;
+          object-fit: cover;
         }
         .sunset-card-big {
           max-width: 680px;
@@ -915,9 +933,12 @@
         }
         .world-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          grid-template-columns: repeat(3, 1fr);
           gap: 1.5rem;
           margin-top: 3rem;
+          max-width: 960px;
+          margin-left: auto;
+          margin-right: auto;
         }
         .world-card {
           border: 1px solid rgba(139, 94, 60, 0.12);
@@ -933,9 +954,18 @@
           transform: translateY(-3px);
           box-shadow: var(--shadow);
         }
-        .world-flag {
-          font-size: 36px;
-          margin-bottom: 0.75rem;
+        .world-mark {
+          width: 52px;
+          height: 52px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin: 0 auto 0.75rem;
+        }
+        .world-mark svg {
+          width: 30px;
+          height: 30px;
         }
         .world-card h4 {
           font-size: 16px;
@@ -1020,31 +1050,24 @@
         }
         .teacher-layout {
           display: grid;
-          grid-template-columns: 1fr 1fr;
+          grid-template-columns: minmax(280px, 480px) 1fr;
           gap: 4rem;
           align-items: center;
         }
         .teacher-photo {
-          aspect-ratio: 3/4;
+          width: 100%;
+          max-width: 480px;
+          aspect-ratio: 917 / 650;
           border-radius: var(--radius);
-          background: linear-gradient(160deg, #3d1f5c, #0f2a1e);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 90px;
-          color: rgba(232, 213, 183, 0.2);
-          position: relative;
           overflow: hidden;
+          box-shadow: var(--shadow);
         }
-        .teacher-photo::after {
-          content: "Fillie Faragi";
-          position: absolute;
-          bottom: 1.5rem;
-          left: 1.5rem;
-          font-family: Georgia, serif;
-          font-size: 18px;
-          color: rgba(232, 213, 183, 0.65);
-          font-style: italic;
+        .teacher-photo img {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+          object-position: center;
         }
         .teacher-text h2 {
           font-size: 36px;
@@ -1344,8 +1367,11 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 14px;
           flex-shrink: 0;
+        }
+        .sc-badge svg {
+          width: 20px;
+          height: 20px;
         }
         .sc-info {
           flex: 1;
@@ -1461,30 +1487,111 @@
         footer {
           background: var(--soil);
           color: rgba(232, 213, 183, 0.55);
-          padding: 3.5rem 2rem;
-          text-align: center;
+          padding: 4rem 2rem 2rem;
         }
-        footer .om {
-          font-size: 32px;
-          margin-bottom: 0.5rem;
+        .footer-inner {
+          max-width: 1080px;
+          margin: 0 auto 2.5rem;
+          display: grid;
+          grid-template-columns: 1.3fr 1fr 1fr;
+          gap: 3rem;
+          text-align: left;
         }
-        footer h3 {
+        .footer-brand .om {
+          font-size: 28px;
+          margin-bottom: 0.35rem;
+          color: var(--sand);
+        }
+        .footer-brand h3 {
           color: var(--sand);
           font-size: 20px;
-          margin-bottom: 0.5rem;
+          margin-bottom: 0.75rem;
         }
-        footer p {
+        .footer-brand p {
           font-size: 13px;
-          margin-bottom: 1.5rem;
-          line-height: 1.7;
+          line-height: 1.75;
+          margin: 0;
+          max-width: 280px;
+        }
+        .footer-heading {
+          font-size: 11px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: rgba(232, 213, 183, 0.4);
+          margin-bottom: 1rem;
+          font-family: "Helvetica Neue", Arial, sans-serif;
+        }
+        .footer-links {
+          list-style: none;
+          display: flex;
+          flex-direction: column;
+          gap: 0.55rem;
+        }
+        .footer-links a {
+          color: rgba(232, 213, 183, 0.7);
+          text-decoration: none;
+          font-size: 14px;
+          transition: color 0.15s;
+        }
+        .footer-links a:hover {
+          color: var(--sand);
+        }
+        .footer-socials {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 1.25rem;
+        }
+        .footer-socials a {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          border: 1px solid rgba(232, 213, 183, 0.18);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: var(--sand);
+          transition:
+            background 0.15s,
+            border-color 0.15s,
+            transform 0.15s;
+        }
+        .footer-socials a:hover {
+          background: rgba(232, 213, 183, 0.1);
+          border-color: rgba(232, 213, 183, 0.35);
+          transform: translateY(-2px);
+        }
+        .footer-socials svg {
+          width: 18px;
+          height: 18px;
+        }
+        .footer-email {
+          font-size: 13px;
+          color: rgba(232, 213, 183, 0.55);
+          text-decoration: none;
+          transition: color 0.15s;
+        }
+        .footer-email:hover {
+          color: var(--sand);
+        }
+        .footer-bottom {
+          max-width: 1080px;
+          margin: 0 auto;
+          padding-top: 2rem;
+          border-top: 1px solid rgba(232, 213, 183, 0.1);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1rem;
+          text-align: center;
         }
         footer .chakra-strip {
           justify-content: center;
-          margin-bottom: 1.5rem;
+          margin: 0;
         }
         footer small {
           font-size: 12px;
-          opacity: 0.35;
+          opacity: 0.4;
         }
 
         @media (max-width: 1150px) {
@@ -1528,15 +1635,37 @@
           }
         }
 
+        @media (max-width: 768px) {
+          .footer-inner {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            text-align: center;
+          }
+          .footer-brand p {
+            max-width: none;
+            margin: 0 auto;
+          }
+          .world-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
         @media (max-width: 700px) {
           .teacher-layout {
             grid-template-columns: 1fr;
+          }
+          .teacher-photo {
+            max-width: 100%;
+            margin: 0 auto;
           }
           .hero h1 {
             font-size: 34px;
           }
           .hero-locations {
             gap: 1rem;
+          }
+          .world-grid {
+            grid-template-columns: 1fr;
           }
           .app-tab {
             font-size: 11px;
@@ -1609,10 +1738,67 @@
             <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M12 3v18"/>
             <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M7 21h10"/>
           </symbol>
+          <symbol id="icon-map-pin" viewBox="0 0 48 48">
+            <circle cx="24" cy="24" r="17" fill="none" stroke="currentColor" stroke-width="1.3" opacity="0.35"/>
+            <ellipse cx="24" cy="24" rx="6.5" ry="17" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.22"/>
+            <path d="M7 24h34" fill="none" stroke="currentColor" stroke-width="0.9" opacity="0.22"/>
+            <path d="M24 12c-3.8 0-7 3.1-7 7 0 5.4 7 12.5 7 12.5s7-7.1 7-12.5c0-3.9-3.2-7-7-7z" fill="currentColor"/>
+            <circle cx="24" cy="19" r="2.6" fill="currentColor" opacity="0.25"/>
+          </symbol>
           <symbol id="icon-calendar" viewBox="0 0 24 24">
             <rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
             <path fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" d="M3 9h18M8 3v4M16 3v4"/>
             <circle cx="12" cy="14" r="1.5" fill="currentColor"/>
+          </symbol>
+          <symbol id="icon-yin" viewBox="0 0 48 48">
+            <ellipse cx="24" cy="44" rx="17" ry="2" fill="currentColor" opacity="0.14"/>
+            <circle cx="13" cy="17" r="5" fill="currentColor"/>
+            <path fill="currentColor" d="M9.5 21.5c-1.5 1.2-2.5 3.5-2.8 6.2-.4 3.8 1.2 7.5 4.5 9.2 2.2 1.1 4.5.6 6-1.2l3.5-5.2c1-1.5 1.2-3.5.5-5.2-.8-2-2.8-3.2-5-3.2-1.8 0-3.5.8-4.7 2.2z"/>
+            <path fill="currentColor" opacity="0.72" d="M20.5 22.5l14 5.5 2.5 1.5-1.8 1-14.5-5.5z"/>
+            <path fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" d="M10 34c2-4 5-6 8.5-5.5"/>
+            <path fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" d="M22 33c3-3 6-2.5 8 1"/>
+            <path fill="currentColor" opacity="0.5" d="M9 38.5h22c1.5 0 2.8-1 3.2-2.5l.8-3H5l.8 3c.4 1.5 1.7 2.5 3.2 2.5z"/>
+          </symbol>
+          <symbol id="icon-vinyasa" viewBox="0 0 48 48">
+            <ellipse cx="24" cy="44" rx="17" ry="2" fill="currentColor" opacity="0.14"/>
+            <circle cx="24" cy="10" r="5" fill="currentColor"/>
+            <path fill="currentColor" d="M21.5 15.5h5c1.2 0 2.2 1 2.2 2.2V26c0 1-.6 1.8-1.5 2.2"/>
+            <path fill="currentColor" d="M8 19.5h32c1.4 0 2.5 1.1 2.5 2.5v.5c0 1.4-1.1 2.5-2.5 2.5H8c-1.4 0-2.5-1.1-2.5-2.5V22c0-1.4 1.1-2.5 2.5-2.5z"/>
+            <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M23 28.5 14 41"/>
+            <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M25 28.5 36 39"/>
+          </symbol>
+          <symbol id="icon-pilates" viewBox="0 0 48 48">
+            <ellipse cx="24" cy="44" rx="17" ry="2" fill="currentColor" opacity="0.14"/>
+            <ellipse cx="22" cy="39" rx="15" ry="2.8" fill="currentColor" opacity="0.12"/>
+            <circle cx="33" cy="19" r="4.8" fill="currentColor"/>
+            <path fill="currentColor" d="M29 22.5c-3 1.5-8 2.2-12.5 1.5-3.2-.5-6-2.2-7.2-4.5-1-1.8-.8-4 .8-5.8 1.8-2.2 5-2.5 7.8-.5 3 2.2 6 3 8.8 2 2-.8 3.8-.5 5.3.8 1.2 1 1.8 2.8 1.5 4.5-.4 2.2-2.2 3.5-4.5 3z"/>
+            <path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M17 24l-5.5-4.5M21 23l-3.5-6.5"/>
+            <path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M27 29.5l-1.5 7M33 28.5l2 7.5"/>
+            <path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" d="M20 31l-3.5 5"/>
+          </symbol>
+          <symbol id="icon-heart-yin" viewBox="0 0 48 48">
+            <ellipse cx="24" cy="44" rx="17" ry="2" fill="currentColor" opacity="0.14"/>
+            <circle cx="24" cy="12" r="4.8" fill="currentColor"/>
+            <path fill="currentColor" d="M19.5 16.5c-2.8 2.2-4.5 6-4 9.8.5 3.2 2.8 6 5.8 7.2 1.8.8 3.5.5 4.8-.8 2-2 2.5-5.5 1.2-8.5-1-2.5-3.2-4-5.5-3.5-1.2.2-2.2 1-2.3 2.8z"/>
+            <path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" d="M17 21.5 11 25M31 21.5l6 3.5"/>
+            <path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M19 29l-4.5 9M29 29l4.5 9"/>
+            <path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M17.5 39l4-7M30.5 39l-4-7"/>
+            <path fill="currentColor" opacity="0.4" d="M24 19.5c1.8 1.5 3 3.8 3 6.2s-1.5 5-3 6.3-3-3.8-3-6.3 1.2-4.7 3-6.2z"/>
+          </symbol>
+          <symbol id="icon-instagram" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+            <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/>
+          </symbol>
+          <symbol id="icon-facebook" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M14 8.5V7.2c0-.7.1-1.1.4-1.4.4-.4 1-.6 1.9-.6h1.2V3h-2.4c-2.2 0-3.6 1.1-4.2 2.6-.3.7-.4 1.5-.4 2.5V8.5H8v3.2h2.3V21h3.7v-9.3H17l.5-3.2H14z"/>
+          </symbol>
+          <symbol id="icon-youtube" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18 5 12 5 12 5s-6 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 9 2 12 2 12s0 3 .4 4.8a2.5 2.5 0 0 0 1.8 1.8C6 19 12 19 12 19s6 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.8.4-4.8.4-4.8s0-3-.4-4.8z"/>
+            <path fill="var(--soil)" d="M10 15.5v-7l6 3.5-6 3.5z"/>
+          </symbol>
+          <symbol id="icon-tiktok" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M16.5 4.5c.4 2.2 1.8 3.9 3.9 4.2v3.1c-1.4 0-2.7-.4-3.9-1.1v5.8c0 3.4-2.8 6.2-6.2 6.2S4.1 19.9 4.1 16.5 6.9 10.3 10.3 10.3c.4 0 .8 0 1.2.1v3.4c-.4-.1-.7-.2-1.2-.2-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 2.9-1.3 2.9-2.9V4.5h3.3z"/>
           </symbol>
         </svg>
         <div class="hero-globe"></div>
@@ -1692,8 +1878,18 @@
               <div class="gstat-label">Community</div>
             </div>
           </div>
-          <div class="country-flags">
-            🇺🇸🇬🇧🇦🇺🇮🇳🇧🇷🇿🇦🇯🇵🇩🇪🇫🇷🇨🇦🇲🇽🇳🇬🇸🇬🇸🇪🇳🇿🇦🇪🇰🇪🇮🇹🇪🇸
+          <div class="country-flags" aria-label="Practitioners from 20 countries worldwide">
+            <img src="assets/flags/us.svg" alt="United States" title="United States" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/gb.svg" alt="United Kingdom" title="United Kingdom" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/au.svg" alt="Australia" title="Australia" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/in.svg" alt="India" title="India" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/br.svg" alt="Brazil" title="Brazil" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/za.svg" alt="South Africa" title="South Africa" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/jp.svg" alt="Japan" title="Japan" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/de.svg" alt="Germany" title="Germany" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/fr.svg" alt="France" title="France" width="36" height="27" loading="lazy" />
+            <img src="assets/flags/ca.svg" alt="Canada" title="Canada" width="36" height="27" loading="lazy" />
+           
           </div>
         </div>
       </div>
@@ -1709,7 +1905,9 @@
           </p>
           <div class="classes-grid reveal" style="--reveal-delay: 3">
             <div class="class-card yin">
-              <div class="class-icon" style="background: #8e44ad1a">🟣</div>
+              <div class="class-icon" style="background: #8e44ad1a; color: #7b3fa0">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-yin"/></svg>
+              </div>
               <h3>Yin Yoga Flow</h3>
               <p>
                 Long-held, grounding postures that release deep connective
@@ -1723,7 +1921,9 @@
               >
             </div>
             <div class="class-card vinyasa">
-              <div class="class-icon" style="background: #2980b91a">🔵</div>
+              <div class="class-icon" style="background: #2980b91a; color: #1e6fa8">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-vinyasa"/></svg>
+              </div>
               <h3>Vinyasa Flow</h3>
               <p>
                 Breath-linked sequences that build strength and presence. Begin
@@ -1736,7 +1936,9 @@
               >
             </div>
             <div class="class-card pilates">
-              <div class="class-icon" style="background: #27ae601a">💚</div>
+              <div class="class-icon" style="background: #27ae601a; color: #1e7a4a">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-pilates"/></svg>
+              </div>
               <h3>Pilates</h3>
               <p>
                 Core-focused movement that strengthens from the inside out. Low
@@ -1750,7 +1952,9 @@
               >
             </div>
             <div class="class-card heart">
-              <div class="class-icon" style="background: #c0392b1a">❤️</div>
+              <div class="class-icon" style="background: #c0392b1a; color: #c0392b">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-heart-yin"/></svg>
+              </div>
               <h3>Heart Opening Yin</h3>
               <p>
                 A special Yin practice focused on the heart chakra — chest,
@@ -1816,15 +2020,6 @@
         <div class="container sunset-inner">
           <p class="section-label reveal" style="--reveal-delay: 0">Special live experience</p>
           <h2 class="section-title reveal" style="--reveal-delay: 1">Sunset Flow: Live from Giza</h2>
-          <div class="sunset-promo reveal" style="--reveal-delay: 2">
-            <img
-              src="assets/images/sunset-giza-promo.png"
-              alt="Om at Home — virtual yoga live from the Giza Pyramids at sunset"
-              loading="lazy"
-              width="824"
-              height="522"
-            />
-          </div>
           <div class="sunset-divider reveal" style="--reveal-delay: 3" aria-hidden="true"><span></span></div>
           <div class="sunset-card-big reveal" style="--reveal-delay: 4">
             <div class="sunset-icon-big">
@@ -1872,32 +2067,44 @@
           </p>
           <div class="world-grid">
             <div class="world-card">
-              <div class="world-flag">🇬🇧</div>
+              <div class="world-mark" style="background:#2980b91a;color:#1e6fa8">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>London</h4>
               <p>Early morning Vinyasa before the workday begins</p>
             </div>
             <div class="world-card">
-              <div class="world-flag">🇯🇵</div>
+              <div class="world-mark" style="background:#c0392b1a;color:#c0392b">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>Tokyo</h4>
               <p>Evening Yin Flow as the city lights come on</p>
             </div>
             <div class="world-card">
-              <div class="world-flag">🇿🇦</div>
+              <div class="world-mark" style="background:#27ae601a;color:#1e7a4a">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>Cape Town</h4>
               <p>Midmorning Pilates with an ocean backdrop</p>
             </div>
             <div class="world-card">
-              <div class="world-flag">🇧🇷</div>
+              <div class="world-mark" style="background:#d4a01722;color:#a07010">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>São Paulo</h4>
               <p>Sunset Flow connecting Brazil to Egypt in real time</p>
             </div>
             <div class="world-card">
-              <div class="world-flag">🇮🇳</div>
+              <div class="world-mark" style="background:#8e44ad1a;color:#7b3fa0">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>Mumbai</h4>
               <p>Heart Opening Yin to begin the midweek</p>
             </div>
             <div class="world-card">
-              <div class="world-flag">🇺🇸</div>
+              <div class="world-mark" style="background:#2c3e501a;color:#2c3e50">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><use href="#icon-map-pin"/></svg>
+              </div>
               <h4>New York</h4>
               <p>Early-morning flow before the city wakes up</p>
             </div>
@@ -1909,7 +2116,15 @@
       <section id="teacher" class="teacher-bg">
         <div class="container">
           <div class="teacher-layout">
-            <div class="teacher-photo">ॐ</div>
+            <div class="teacher-photo">
+              <img
+                src="assets/images/om-at-home-promo.png"
+                alt="Fillie Faragi leading virtual yoga live from the Giza Pyramids"
+                loading="lazy"
+                width="917"
+                height="650"
+              />
+            </div>
             <div class="teacher-text">
               <p class="role">Lead Instructor &amp; Founder</p>
               <h2>Fillie Faragi</h2>
@@ -2026,22 +2241,58 @@
 
       <!-- FOOTER -->
       <footer>
-        <div class="om">ॐ</div>
-        <h3>Om At Home</h3>
-        <p>
-          Live virtual yoga with Fillie Faragi<br />Connecting practitioners in
-          40+ countries, every day.
-        </p>
-        <div class="chakra-strip">
-          <div class="chakra-dot" style="background: var(--chakra-r)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-o)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-y)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-g)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-b)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-i)"></div>
-          <div class="chakra-dot" style="background: var(--chakra-v)"></div>
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <div class="om">ॐ</div>
+            <h3>Om At Home</h3>
+            <p>
+              Live virtual yoga with Fillie Faragi — connecting practitioners in
+              40+ countries, every day.
+            </p>
+          </div>
+          <div class="footer-nav">
+            <p class="footer-heading">Pages</p>
+            <ul class="footer-links">
+              <li><a href="#">Home</a></li>
+              <li><a href="#classes">Classes</a></li>
+              <li><a href="#schedule">Schedule</a></li>
+              <li><a href="#sunset">Sunset Flow</a></li>
+              <li><a href="#teacher">Teacher</a></li>
+              <li><a href="#pricing">Pricing</a></li>
+              <li><a href="#book-app">Book Your Mat</a></li>
+            </ul>
+          </div>
+          <div class="footer-connect">
+            <p class="footer-heading">Connect</p>
+            <div class="footer-socials">
+              <a href="https://instagram.com/omathome" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-instagram"/></svg>
+              </a>
+              <a href="https://facebook.com/omathome" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-facebook"/></svg>
+              </a>
+              <a href="https://youtube.com/@omathome" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-youtube"/></svg>
+              </a>
+              <a href="https://tiktok.com/@omathome" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-tiktok"/></svg>
+              </a>
+            </div>
+      
+          </div>
         </div>
-        <small>© 2026 Om At Home · All rights reserved</small>
+        <div class="footer-bottom">
+          <div class="chakra-strip">
+            <div class="chakra-dot" style="background: var(--chakra-r)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-o)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-y)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-g)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-b)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-i)"></div>
+            <div class="chakra-dot" style="background: var(--chakra-v)"></div>
+          </div>
+          <small>© 2026 Om At Home · All rights reserved</small>
+        </div>
       </footer>
 
       <script>
@@ -2066,6 +2317,19 @@
         ];
         const TUE_THU = new Set(["Tuesday", "Thursday"]);
 
+        const TYPE_ICONS = {
+          "Vinyasa Flow": { id: "icon-vinyasa", vb: "0 0 48 48" },
+          Pilates: { id: "icon-pilates", vb: "0 0 48 48" },
+          "Yin Yoga Flow": { id: "icon-yin", vb: "0 0 48 48" },
+          "Heart Opening Yin": { id: "icon-heart-yin", vb: "0 0 48 48" },
+          "Sunset Flow: Live from Giza": { id: "icon-sunset", vb: "0 0 24 24" },
+        };
+
+        function classIconHtml(c) {
+          const icon = TYPE_ICONS[c.type] || TYPE_ICONS["Vinyasa Flow"];
+          return `<svg viewBox="${icon.vb}" aria-hidden="true" style="color:${c.color}"><use href="#${icon.id}"/></svg>`;
+        }
+
         function buildClasses() {
           const list = [];
           let cid = 1;
@@ -2074,7 +2338,6 @@
             [
               {
                 type: "Vinyasa Flow",
-                emoji: "🔵",
                 bg: "#2980B922",
                 color: "#1E6FA8",
                 time: "5:30 AM",
@@ -2082,7 +2345,6 @@
               },
               {
                 type: "Vinyasa Flow",
-                emoji: "🔵",
                 bg: "#2980B922",
                 color: "#1E6FA8",
                 time: "9:00 AM",
@@ -2090,7 +2352,6 @@
               },
               {
                 type: "Pilates",
-                emoji: "💚",
                 bg: "#27AE6022",
                 color: "#1E7A4A",
                 time: "11:00 AM",
@@ -2098,7 +2359,6 @@
               },
               {
                 type: "Yin Yoga Flow",
-                emoji: "🟣",
                 bg: "#8E44AD22",
                 color: "#7B3FA0",
                 time: "2:00 PM",
@@ -2106,7 +2366,6 @@
               },
               {
                 type: "Yin Yoga Flow",
-                emoji: "🟣",
                 bg: "#8E44AD22",
                 color: "#7B3FA0",
                 time: "4:00 PM",
@@ -2128,7 +2387,6 @@
                 day,
                 special: false,
                 type: "Heart Opening Yin",
-                emoji: "❤️",
                 bg: "#C0392B22",
                 color: "#C0392B",
                 time: "7:00 AM",
@@ -2143,7 +2401,6 @@
             day: "Saturday",
             special: true,
             type: "Sunset Flow: Live from Giza",
-            emoji: "🌅",
             bg: "#D4A01722",
             color: "#D4A017",
             time: "Quarterly",
@@ -2175,7 +2432,7 @@
             .map(
               (c) => `
     <div class="sched-card ${c.special ? "special" : ""}">
-      <div class="sched-type" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sched-type" style="background:${c.bg};color:${c.color}">${classIconHtml(c)}</div>
       <div class="sched-info">
         <div class="sched-name">${c.type}</div>
         <div class="sched-meta">${c.duration} · Fillie Faragi${c.note ? " · " + c.note : ""}</div>
@@ -2344,7 +2601,7 @@
               const isB = booked.has(c.id);
               const locked = !subscribed;
               html += `<div class="sc-card ${isB ? "is-booked" : ""} ${locked ? "is-locked" : ""} ${c.special ? "is-special" : ""}">
-        <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+        <div class="sc-badge" style="background:${c.bg};color:${c.color}">${classIconHtml(c)}</div>
         <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.time} · ${c.duration} · Fillie Faragi</div></div>
         <div class="sc-right"><div class="sc-spots">${c.special ? "Global event" : c.spots + " spots"}</div>
           <button class="bk-btn ${isB ? "booked" : ""}" onclick="toggleBook(${c.id})" ${isB ? "disabled" : ""}>${isB ? "✓ Booked" : c.special ? "Notify" : "Book"}</button>
@@ -2373,7 +2630,7 @@
             }
             el.innerHTML = `<div class="sub-active-bar"><span>Free trial · 1 class remaining</span><button class="cancel-btn" onclick="appTab('subscribe')">Upgrade</button></div>
     <div class="my-sc-card">
-      <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sc-badge" style="background:${c.bg};color:${c.color}">${classIconHtml(c)}</div>
       <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.day} · ${c.time} · ${c.duration}</div></div>
     </div>
     <button class="sub-btn" style="margin-top:1rem" onclick="appTab('subscribe')">Subscribe for unlimited classes →</button>`;
@@ -2400,7 +2657,7 @@
           else
             myList.forEach((c) => {
               html += `<div class="my-sc-card">
-      <div class="sc-badge" style="background:${c.bg}">${c.emoji}</div>
+      <div class="sc-badge" style="background:${c.bg};color:${c.color}">${classIconHtml(c)}</div>
       <div class="sc-info"><div class="sc-name">${c.type}</div><div class="sc-meta">${c.day} · ${c.time}</div></div>
       <button class="cancel-btn" onclick="toggleBook(${c.id})">Cancel</button>
     </div>`;
