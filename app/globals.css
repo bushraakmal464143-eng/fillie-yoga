@@ -335,6 +335,26 @@
           color: #a33;
           font-size: 13px;
         }
+        .auth-success {
+          color: #2d6a4f;
+          font-size: 13px;
+          background: #2d6a4f14;
+          border-radius: var(--radius-sm);
+          padding: 0.65rem 0.75rem;
+        }
+        .auth-resend {
+          border: none;
+          background: none;
+          color: var(--clay);
+          font-size: 13px;
+          text-decoration: underline;
+          cursor: pointer;
+          padding: 0.25rem 0;
+        }
+        .auth-resend:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
         .auth-submit {
           margin-top: 0.25rem;
           border: none;
@@ -1659,9 +1679,11 @@
         }
         .pricing-bg .section-label {
           color: rgba(232, 213, 183, 0.45);
+          text-align: center;
         }
         .pricing-bg .section-title {
           color: var(--sand);
+          text-align: center;
         }
         .pricing-single {
           margin-top: 3rem;

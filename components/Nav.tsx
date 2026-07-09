@@ -72,7 +72,7 @@ export default function Nav() {
         <div className="nav-auth-mobile">
           {authReady && user ? (
             <>
-              <span className="nav-user-name">Hi, {user.name.split(" ")[0]}</span>
+              <span className="nav-user-name">Welcome, {user.name.split(" ")[0]}</span>
               <button className="nav-auth" type="button" onClick={() => { void logout(); closeMenu(); }}>
                 Log out
               </button>
@@ -116,7 +116,7 @@ export default function Nav() {
       <div className="nav-end">
         {authReady && user ? (
           <div className="nav-user">
-            <span className="nav-user-name">Hi, {user.name.split(" ")[0]}</span>
+            <span className="nav-user-name">Welcome, {user.name.split(" ")[0]}</span>
             <button className="nav-auth" type="button" onClick={() => void logout()}>
               Log out
             </button>

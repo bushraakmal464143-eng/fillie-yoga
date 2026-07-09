@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
-import { createUser, findUserByEmail } from "@/lib/user-store";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { sendSignupOtp } from "@/lib/supabase-user";
+import { createUser } from "@/lib/user-store";
 import { setUserSession, toPublicUser } from "@/lib/user-auth";
 
 export async function POST(request: Request) {
@@ -22,6 +24,15 @@ export async function POST(request: Request) {
       { error: "Password must be at least 6 characters." },
       { status: 400 },
     );
+  }
+
+  if (isSupabaseConfigured()) {
+    const result = await sendSignupOtp({ name, email });
+    if (result.error) {
+      const status = result.error.includes("exists") ? 409 : 400;
+      return NextResponse.json({ error: result.error }, { status });
+    }
+    return NextResponse.json({ ok: true, needsVerification: true });
   }
 
   try {
