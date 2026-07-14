@@ -31,6 +31,7 @@ yarn-error.log*
 
 # local user data (created at runtime)
 /data/users.json
+/data/logins.json
 
 # typescript
 *.tsbuildinfo

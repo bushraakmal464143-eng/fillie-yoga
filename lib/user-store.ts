@@ -51,6 +51,7 @@ export async function createUser(input: {
     name: input.name.trim(),
     email,
     createdAt: Date.now(),
+    lastLoginAt: Date.now(),
     passwordHash: await hashPassword(input.password),
   };
 
@@ -62,5 +63,30 @@ export async function createUser(input: {
     name: user.name,
     email: user.email,
     createdAt: user.createdAt,
+    lastLoginAt: user.lastLoginAt,
   };
+}
+
+export async function listUsers(): Promise<User[]> {
+  const store = await readStore();
+  return store.users
+    .map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      lastLoginAt: user.lastLoginAt,
+    }))
+    .sort((a, b) => (b.lastLoginAt ?? b.createdAt) - (a.lastLoginAt ?? a.createdAt));
+}
+
+export async function touchUserLogin(userId: string): Promise<void> {
+  const store = await readStore();
+  const index = store.users.findIndex((user) => user.id === userId);
+  if (index === -1) return;
+  store.users[index] = {
+    ...store.users[index],
+    lastLoginAt: Date.now(),
+  };
+  await writeStore(store);
 }

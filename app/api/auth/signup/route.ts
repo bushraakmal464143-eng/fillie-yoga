@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { sendSignupOtp } from "@/lib/supabase-user";
 import { createUser } from "@/lib/user-store";
+import { getClientMeta, recordLoginEvent } from "@/lib/login-log";
 import { setUserSession, toPublicUser } from "@/lib/user-auth";
 
 export async function POST(request: Request) {
@@ -37,6 +38,16 @@ export async function POST(request: Request) {
 
   try {
     const user = await createUser({ name, email, password });
+    const meta = getClientMeta(request);
+    await recordLoginEvent({
+      userId: user.id,
+      name: user.name,
+      email: user.email,
+      action: "signup",
+      ip: meta.ip,
+      userAgent: meta.userAgent,
+    });
+
     const response = NextResponse.json({ user: toPublicUser(user) });
     setUserSession(response, user.id);
     return response;

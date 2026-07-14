@@ -5,6 +5,9 @@ export const ROUTES = {
   teacher: "/teacher",
   pricing: "/pricing",
   admin: "/admin",
+  adminSubscribers: "/admin/subscribers",
+  adminClasses: "/admin/classes",
+  adminPricing: "/admin/pricing",
   sunset: "/#sunset",
   bookApp: "/#book-app",
 } as const;

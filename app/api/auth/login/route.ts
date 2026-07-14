@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signInWithSupabase } from "@/lib/supabase-user";
-import { findUserByEmail } from "@/lib/user-store";
+import { findUserByEmail, touchUserLogin } from "@/lib/user-store";
+import { getClientMeta, recordLoginEvent } from "@/lib/login-log";
 import { setUserSession, toPublicUser, verifyPassword } from "@/lib/user-auth";
 
 export async function POST(request: Request) {
@@ -17,11 +18,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please enter your email and password." }, { status: 400 });
   }
 
+  const meta = getClientMeta(request);
+
   if (isSupabaseConfigured()) {
     const result = await signInWithSupabase(email, password);
     if (result.error) {
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
+
+    if (result.user) {
+      await recordLoginEvent({
+        userId: result.user.id,
+        name: result.user.name,
+        email: result.user.email,
+        action: "login",
+        ip: meta.ip,
+        userAgent: meta.userAgent,
+      });
+    }
+
     return NextResponse.json({ user: result.user });
   }
 
@@ -30,7 +45,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
   }
 
-  const response = NextResponse.json({ user: toPublicUser(user) });
+  await touchUserLogin(user.id);
+  await recordLoginEvent({
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    action: "login",
+    ip: meta.ip,
+    userAgent: meta.userAgent,
+  });
+
+  const response = NextResponse.json({
+    user: toPublicUser({ ...user, lastLoginAt: Date.now() }),
+  });
   setUserSession(response, user.id);
   return response;
 }

@@ -100,7 +100,16 @@ function TrialPanel() {
 }
 
 function SubscribePanel() {
-  const { subscribed, subscribe, cancelSub, setActiveTab, primaryPlan } = useApp();
+  const {
+    subscribed,
+    subscribe,
+    cancelSub,
+    setActiveTab,
+    primaryPlan,
+    checkoutLoading,
+    checkoutError,
+    cancelLoading,
+  } = useApp();
   const priceLabel = primaryPlan ? formatPlanPeriod(primaryPlan) : "$70/mo";
   const subscribeLabel = primaryPlan?.subscribeCtaText ?? "Subscribe for $70/month";
   const priceAmount = primaryPlan?.price ?? 70;
@@ -113,8 +122,18 @@ function SubscribePanel() {
       <>
         <div className="sub-active-bar">
           <span>✓ Active — {planName} · {priceLabel}</span>
-          <button className="cancel-btn" type="button" onClick={cancelSub}>Cancel</button>
+          <button
+            className="cancel-btn"
+            type="button"
+            disabled={cancelLoading}
+            onClick={() => void cancelSub()}
+          >
+            {cancelLoading ? "Canceling…" : "Cancel"}
+          </button>
         </div>
+        {checkoutError && (
+          <p style={{ fontSize: 12, color: "#e74c3c", marginBottom: ".75rem" }}>{checkoutError}</p>
+        )}
         <div className="sub-gate-box">
           <h4>Your daily access</h4>
           <p>Live classes daily with Fillie Faragi, shared with the global community</p>
@@ -147,9 +166,17 @@ function SubscribePanel() {
         <div className="incl-item"><div className="incl-dot" style={{ background: "#2980B9" }} /><div className="incl-name">Vinyasa Flow</div><div className="incl-cnt">2 per day</div></div>
         <div className="incl-item"><div className="incl-dot" style={{ background: "#27AE60" }} /><div className="incl-name">Pilates</div><div className="incl-cnt">Daily</div></div>
       </div>
-      <button className="sub-btn" type="button" onClick={subscribe}>
-        {subscribeLabel}
+      <button
+        className="sub-btn"
+        type="button"
+        disabled={checkoutLoading}
+        onClick={() => void subscribe(primaryPlan?.id)}
+      >
+        {checkoutLoading ? "Redirecting to Stripe…" : subscribeLabel}
       </button>
+      {checkoutError && (
+        <p style={{ fontSize: 12, color: "#e74c3c", marginTop: ".75rem" }}>{checkoutError}</p>
+      )}
       <p style={{ fontSize: 11, color: "rgba(232,213,183,.3)", marginTop: ".75rem" }}>
         {primaryPlan?.note ?? "Cancel any time · No commitment"}
       </p>

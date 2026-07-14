@@ -9,7 +9,7 @@ type PricingProps = {
 };
 
 export default function Pricing({ plans: plansProp }: PricingProps) {
-  const { pricing, openTrial, goToBookApp } = useApp();
+  const { pricing, openTrial, subscribe, checkoutLoading, checkoutError } = useApp();
   const plans = plansProp?.length ? plansProp : pricing;
   const primary = getPrimaryPlan(plans);
 
@@ -39,8 +39,13 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
                   <li key={feature}>{feature}</li>
                 ))}
               </ul>
-              <button className="sub-btn" type="button" onClick={goToBookApp}>
-                {plan.ctaText}
+              <button
+                className="sub-btn"
+                type="button"
+                disabled={checkoutLoading}
+                onClick={() => void subscribe(plan.id)}
+              >
+                {checkoutLoading ? "Redirecting to Stripe…" : plan.ctaText}
               </button>
               <button
                 className="btn-ghost"
@@ -54,6 +59,11 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
             </div>
           ))}
         </div>
+        {checkoutError && (
+          <p className="pricing-footnote" style={{ color: "#c0392b" }}>
+            {checkoutError}
+          </p>
+        )}
         {showGrid && (
           <p className="pricing-footnote">
             Featured plan: {primary.name} · {formatPlanAmount(primary)}/{primary.period}

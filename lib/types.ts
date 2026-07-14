@@ -67,6 +67,7 @@ export type User = {
   name: string;
   email: string;
   createdAt: number;
+  lastLoginAt?: number;
 };
 
 export type StoredUser = User & {

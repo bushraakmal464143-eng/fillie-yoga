@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { startStripeCheckout } from "@/lib/checkout";
 import { DEFAULT_OFFERS, DEFAULT_PRICING } from "@/lib/default-store";
 import { buildClasses } from "@/lib/schedule";
 import { getPrimaryPlan } from "@/lib/pricing";
@@ -23,6 +24,9 @@ type AppContextValue = {
   primaryPlan: PricingPlan | null;
   classesLoaded: boolean;
   subscribed: boolean;
+  checkoutLoading: boolean;
+  checkoutError: string | null;
+  cancelLoading: boolean;
   booked: Set<number>;
   trialBooking: TrialBooking | null;
   appFilter: string;
@@ -32,8 +36,8 @@ type AppContextValue = {
   refreshClasses: () => Promise<void>;
   goToBookApp: () => void;
   openTrial: () => void;
-  subscribe: () => void;
-  cancelSub: () => void;
+  subscribe: (planId?: string) => Promise<void>;
+  cancelSub: () => Promise<void>;
   toggleBook: (id: number) => void;
   submitTrial: (data: Omit<TrialBooking, "bookedAt">) => void;
 };
@@ -48,6 +52,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [pricing, setPricing] = useState<PricingPlan[]>(DEFAULT_PRICING);
   const [classesLoaded, setClassesLoaded] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
   const [booked, setBooked] = useState<Set<number>>(new Set());
   const [trialBooking, setTrialBooking] = useState<TrialBooking | null>(null);
   const [appFilter, setAppFilter] = useState("all");
@@ -85,6 +92,43 @@ export function AppProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("omathome_trial");
       }
     }
+
+    if (localStorage.getItem("omathome_subscribed") === "1") {
+      setSubscribed(true);
+      setActiveTab("subscribe");
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("checkout") === "success") {
+      const sessionId = params.get("session_id");
+      void (async () => {
+        if (sessionId) {
+          try {
+            const response = await fetch(
+              `/api/stripe/session?session_id=${encodeURIComponent(sessionId)}`,
+            );
+            const data = (await response.json()) as {
+              subscriptionId?: string;
+            };
+            if (response.ok && data.subscriptionId) {
+              localStorage.setItem("omathome_subscription_id", data.subscriptionId);
+            }
+          } catch {
+            // Keep local membership even if session lookup fails.
+          }
+        }
+        setSubscribed(true);
+        setActiveTab("subscribe");
+        localStorage.setItem("omathome_subscribed", "1");
+      })();
+
+      params.delete("checkout");
+      params.delete("session_id");
+      const next = params.toString();
+      const cleanUrl = `${window.location.pathname}${next ? `?${next}` : ""}${window.location.hash}`;
+      window.history.replaceState({}, "", cleanUrl);
+    }
+
     setHydrated(true);
   }, []);
 
@@ -101,17 +145,51 @@ export function AppProvider({ children }: { children: ReactNode }) {
     goToBookApp();
   }, [goToBookApp]);
 
-  const subscribe = useCallback(() => {
-    setSubscribed(true);
+  const subscribe = useCallback(async (planId?: string) => {
+    setCheckoutError(null);
+    setCheckoutLoading(true);
+    try {
+      await startStripeCheckout(planId);
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Checkout failed");
+      setCheckoutLoading(false);
+    }
   }, []);
 
-  const cancelSub = useCallback(() => {
+  const cancelSub = useCallback(async () => {
+    setCancelLoading(true);
+    setCheckoutError(null);
+
+    const subscriptionId = localStorage.getItem("omathome_subscription_id");
+    if (subscriptionId) {
+      try {
+        const response = await fetch("/api/stripe/cancel", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subscriptionId }),
+        });
+        const data = (await response.json().catch(() => null)) as { error?: string } | null;
+        if (!response.ok) {
+          setCheckoutError(data?.error ?? "Could not cancel subscription in Stripe.");
+          setCancelLoading(false);
+          return;
+        }
+      } catch {
+        setCheckoutError("Could not cancel subscription. Please try again.");
+        setCancelLoading(false);
+        return;
+      }
+    }
+
     setSubscribed(false);
+    localStorage.removeItem("omathome_subscribed");
+    localStorage.removeItem("omathome_subscription_id");
     setBooked((prev) => {
       const next = new Set<number>();
       if (trialBooking) next.add(trialBooking.classId);
       return next;
     });
+    setCancelLoading(false);
   }, [trialBooking]);
 
   const toggleBook = useCallback(
@@ -142,6 +220,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       primaryPlan,
       classesLoaded,
       subscribed,
+      checkoutLoading,
+      checkoutError,
+      cancelLoading,
       booked,
       trialBooking: hydrated ? trialBooking : null,
       appFilter,
@@ -163,6 +244,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
       primaryPlan,
       classesLoaded,
       subscribed,
+      checkoutLoading,
+      checkoutError,
+      cancelLoading,
       booked,
       trialBooking,
       hydrated,

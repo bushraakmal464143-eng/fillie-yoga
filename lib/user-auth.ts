@@ -54,5 +54,6 @@ export function toPublicUser(user: User): User {
     name: user.name,
     email: user.email,
     createdAt: user.createdAt,
+    lastLoginAt: user.lastLoginAt,
   };
 }
