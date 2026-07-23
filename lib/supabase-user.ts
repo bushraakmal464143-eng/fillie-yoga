@@ -1,6 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import type { User } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isMailConfigured, sendSignupOtpEmail } from "@/lib/mail";
+import {
+  clearSignupOtp,
+  generateOtpCode,
+  saveSignupOtp,
+  verifyStoredSignupOtp,
+} from "@/lib/otp-store";
+import { createUser } from "@/lib/user-store";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
 
 export async function getSessionUser(): Promise<User | null> {
   const supabase = await createClient();
@@ -18,7 +27,10 @@ export async function getSessionUser(): Promise<User | null> {
 
   return {
     id: user.id,
-    name: profile?.name ?? (user.user_metadata?.name as string | undefined) ?? "",
+    name:
+      (profile?.name as string | undefined)?.trim() ||
+      (user.user_metadata?.name as string | undefined)?.trim() ||
+      (user.email?.split("@")[0] ?? ""),
     email: profile?.email ?? user.email ?? "",
     createdAt: profile?.created_at
       ? new Date(profile.created_at).getTime()
@@ -61,40 +73,75 @@ async function signInAndGetUser(email: string, password: string) {
   return { user, error: null };
 }
 
-export async function sendSignupOtp(input: {
+async function createConfirmedSupabaseUser(input: {
   name: string;
   email: string;
-}): Promise<{ error: string | null }> {
-  const email = input.email.trim();
+  password: string;
+}): Promise<{ user: User | null; error: string | null }> {
+  const admin = createAdminClient();
+  const email = input.email.trim().toLowerCase();
   const name = input.name.trim();
-  const supabase = await createClient();
 
   const existing = await findAuthUserByEmail(email);
   if (existing?.email_confirmed_at) {
     return {
+      user: null,
       error: "An account with this email already exists. Try logging in instead.",
     };
   }
 
-  const { error } = await supabase.auth.signInWithOtp({
+  if (existing && !existing.email_confirmed_at) {
+    await admin.auth.admin.deleteUser(existing.id);
+  }
+
+  const { data, error } = await admin.auth.admin.createUser({
     email,
-    options: {
-      shouldCreateUser: true,
-      data: { name },
-    },
+    password: input.password,
+    email_confirm: true,
+    user_metadata: { name },
   });
 
-  if (error) {
-    const message = error.message.toLowerCase();
-    if (message.includes("rate limit")) {
-      return { error: "Too many attempts. Wait a few minutes and try again." };
-    }
-    if (message.includes("already") || message.includes("registered")) {
+  if (error || !data.user) {
+    return { user: null, error: error?.message ?? "Could not create account." };
+  }
+
+  await ensureProfile(data.user.id, name, email);
+  return signInAndGetUser(email, input.password);
+}
+
+export async function sendSignupOtp(input: {
+  name: string;
+  email: string;
+}): Promise<{ error: string | null }> {
+  const email = input.email.trim().toLowerCase();
+  const name = input.name.trim();
+
+  if (!isMailConfigured()) {
+    return {
+      error:
+        "Email is not configured. Add SMTP_HOST, SMTP_USER, SMTP_PASS (and optional SMTP_FROM) to .env.local.",
+    };
+  }
+
+  if (isSupabaseConfigured()) {
+    const existing = await findAuthUserByEmail(email);
+    if (existing?.email_confirmed_at) {
       return {
         error: "An account with this email already exists. Try logging in instead.",
       };
     }
-    return { error: error.message };
+  }
+
+  const code = generateOtpCode();
+  const saved = await saveSignupOtp({ email, name, code });
+  if (saved.error) return saved;
+
+  try {
+    await sendSignupOtpEmail({ to: email, name, code });
+  } catch (error) {
+    await clearSignupOtp(email);
+    const message = error instanceof Error ? error.message : "Could not send email.";
+    return { error: `Could not send verification email: ${message}` };
   }
 
   return { error: null };
@@ -106,37 +153,50 @@ export async function verifySignupOtp(input: {
   password: string;
   code: string;
 }): Promise<{ user: User | null; error: string | null }> {
-  const email = input.email.trim();
+  const email = input.email.trim().toLowerCase();
   const name = input.name.trim();
   const code = input.code.trim();
-  const supabase = await createClient();
 
-  const { data, error } = await supabase.auth.verifyOtp({
-    email,
-    token: code,
-    type: "email",
-  });
-
-  if (error || !data.user) {
-    return { user: null, error: "Invalid or expired code. Please try again." };
+  const verified = await verifyStoredSignupOtp({ email, code });
+  if ("error" in verified) {
+    return { user: null, error: verified.error };
   }
 
-  const { error: passwordError } = await supabase.auth.updateUser({
-    password: input.password,
-  });
+  const finalName = verified.name || name;
 
-  if (passwordError) {
-    return { user: null, error: passwordError.message };
+  if (isSupabaseConfigured()) {
+    const created = await createConfirmedSupabaseUser({
+      name: finalName,
+      email,
+      password: input.password,
+    });
+    return created;
   }
 
-  await ensureProfile(data.user.id, name, email);
-
-  const user = await getSessionUser();
-  if (!user) {
-    return { user: null, error: "Account verified but session could not start. Please log in." };
+  try {
+    const user = await createUser({
+      name: finalName,
+      email,
+      password: input.password,
+    });
+    return {
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
+      error: null,
+    };
+  } catch (error) {
+    if (error instanceof Error && error.message === "EMAIL_EXISTS") {
+      return {
+        user: null,
+        error: "An account with this email already exists. Try logging in instead.",
+      };
+    }
+    return { user: null, error: "Could not create account." };
   }
-
-  return { user, error: null };
 }
 
 export async function signInWithSupabase(
@@ -144,7 +204,7 @@ export async function signInWithSupabase(
   password: string,
 ): Promise<{ user: User | null; error: string | null }> {
   const normalizedEmail = email.trim();
-  let result = await signInAndGetUser(normalizedEmail, password);
+  const result = await signInAndGetUser(normalizedEmail, password);
 
   if (!result.error) return result;
 

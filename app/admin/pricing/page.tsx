@@ -1,13 +1,5 @@
-import type { Metadata } from "next";
-import "../../globals.css";
-import "../admin.css";
-import AdminPricingPanel from "@/components/AdminPricingPanel";
+import AdminPricingPage from "@/components/admin/AdminPricingPage";
 
-export const metadata: Metadata = {
-  title: "Pricing · Admin · Om At Home",
-  robots: { index: false, follow: false },
-};
-
-export default function AdminPricingPage() {
-  return <AdminPricingPanel />;
+export default function AdminPricingRoute() {
+  return <AdminPricingPage />;
 }

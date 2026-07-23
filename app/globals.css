@@ -228,8 +228,14 @@
         }
         .nav-user-name {
           font-size: 13px;
-          color: var(--clay);
+          font-weight: 500;
+          color: var(--soil);
           white-space: nowrap;
+          padding: 7px 12px;
+          border-radius: 999px;
+          background: rgba(139, 94, 60, 0.1);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          letter-spacing: 0.01em;
         }
 
         /* AUTH MODAL */

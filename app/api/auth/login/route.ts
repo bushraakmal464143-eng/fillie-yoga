@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { recordAuthEvent } from "@/lib/admin-members";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signInWithSupabase } from "@/lib/supabase-user";
 import { findUserByEmail, touchUserLogin } from "@/lib/user-store";
@@ -34,6 +35,13 @@ export async function POST(request: Request) {
         action: "login",
         ip: meta.ip,
         userAgent: meta.userAgent,
+      });
+      await recordAuthEvent({
+        userId: result.user.id,
+        email: result.user.email,
+        name: result.user.name,
+        eventType: "login",
+        headers: request.headers,
       });
     }
 

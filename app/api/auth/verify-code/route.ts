@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { verifySignupOtp } from "@/lib/supabase-user";
+import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { setUserSession } from "@/lib/user-auth";
 
 export async function POST(request: Request) {
   const body = (await request.json()) as {
@@ -30,14 +31,17 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Enter the 6-digit code from your email." }, { status: 400 });
   }
 
-  if (!isSupabaseConfigured()) {
-    return NextResponse.json({ error: "Supabase is not configured." }, { status: 503 });
-  }
-
   const result = await verifySignupOtp({ name, email, password, code });
   if (result.error) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
 
-  return NextResponse.json({ user: result.user });
+  const response = NextResponse.json({ user: result.user });
+
+  // Local auth (no Supabase) needs the cookie session set here.
+  if (!isSupabaseConfigured() && result.user) {
+    setUserSession(response, result.user.id);
+  }
+
+  return response;
 }

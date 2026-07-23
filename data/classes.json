@@ -66,20 +66,6 @@
       "tagColor": "#a07010",
       "tag": "Once every 3 months · Live",
       "special": true
-    },
-    {
-      "icon": "icon-calendar",
-      "vb": "0 0 24 24",
-      "iconBg": "#9320d91a",
-      "iconColor": "#9320d9",
-      "title": "Restortive Yoga",
-      "desc": "knsfd.hjwedfmndlmvnwdgere",
-      "tagBg": "#9320d915",
-      "tagColor": "#9320d9",
-      "tag": "25 min,",
-      "special": true,
-      "key": "restortive-yoga",
-      "id": "offer-9034f7c5-197c-4597-9432-103092b26aae"
     }
   ],
   "sessions": [

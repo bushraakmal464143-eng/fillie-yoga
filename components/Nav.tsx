@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useApp } from "@/components/providers/AppProvider";
 import { ROUTES } from "@/lib/routes";
+import type { User } from "@/lib/types";
 
 const NAV_LINKS = [
   { href: ROUTES.classes, label: "Classes" },
@@ -14,6 +15,12 @@ const NAV_LINKS = [
   { href: ROUTES.teacher, label: "Teacher" },
   { href: ROUTES.pricing, label: "Pricing" },
 ] as const;
+
+function welcomeLabel(user: User) {
+  const raw = user.name?.trim() || user.email?.split("@")[0] || "friend";
+  const first = raw.split(/\s+/)[0];
+  return first;
+}
 
 export default function Nav() {
   const { openTrial } = useApp();
@@ -40,6 +47,8 @@ export default function Nav() {
     if (href.startsWith("/#")) return pathname === "/" && href === ROUTES.sunset;
     return pathname === href;
   };
+
+  const welcome = user ? `Welcome, ${welcomeLabel(user)}` : null;
 
   return (
     <nav>
@@ -72,8 +81,15 @@ export default function Nav() {
         <div className="nav-auth-mobile">
           {authReady && user ? (
             <>
-              <span className="nav-user-name">Welcome, {user.name.split(" ")[0]}</span>
-              <button className="nav-auth" type="button" onClick={() => { void logout(); closeMenu(); }}>
+              <span className="nav-user-name">{welcome}</span>
+              <button
+                className="nav-auth"
+                type="button"
+                onClick={() => {
+                  void logout();
+                  closeMenu();
+                }}
+              >
                 Log out
               </button>
             </>
@@ -116,7 +132,9 @@ export default function Nav() {
       <div className="nav-end">
         {authReady && user ? (
           <div className="nav-user">
-            <span className="nav-user-name">Welcome, {user.name.split(" ")[0]}</span>
+            <span className="nav-user-name" title={user.email}>
+              {welcome}
+            </span>
             <button className="nav-auth" type="button" onClick={() => void logout()}>
               Log out
             </button>
@@ -126,7 +144,11 @@ export default function Nav() {
             <button className="nav-auth" type="button" onClick={() => openAuth("login")}>
               Log in
             </button>
-            <button className="nav-auth nav-auth--primary" type="button" onClick={() => openAuth("signup")}>
+            <button
+              className="nav-auth nav-auth--primary"
+              type="button"
+              onClick={() => openAuth("signup")}
+            >
               Sign up
             </button>
           </div>

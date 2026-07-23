@@ -1,13 +1,5 @@
-import type { Metadata } from "next";
-import "../globals.css";
-import "./admin.css";
-import AdminPanel from "@/components/AdminPanel";
-
-export const metadata: Metadata = {
-  title: "Admin · Om At Home",
-  robots: { index: false, follow: false },
-};
+import AdminDashboard from "@/components/admin/AdminDashboard";
 
 export default function AdminPage() {
-  return <AdminPanel />;
+  return <AdminDashboard />;
 }

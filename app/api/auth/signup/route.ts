@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
-import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { sendSignupOtp } from "@/lib/supabase-user";
-import { createUser } from "@/lib/user-store";
-import { getClientMeta, recordLoginEvent } from "@/lib/login-log";
-import { setUserSession, toPublicUser } from "@/lib/user-auth";
+import { isMailConfigured } from "@/lib/mail";
 
 export async function POST(request: Request) {
   const body = (await request.json()) as {
@@ -27,37 +24,25 @@ export async function POST(request: Request) {
     );
   }
 
-  if (isSupabaseConfigured()) {
-    const result = await sendSignupOtp({ name, email });
-    if (result.error) {
-      const status = result.error.includes("exists") ? 409 : 400;
-      return NextResponse.json({ error: result.error }, { status });
-    }
-    return NextResponse.json({ ok: true, needsVerification: true });
+  if (!isMailConfigured()) {
+    return NextResponse.json(
+      {
+        error:
+          "Email is not configured. Add SMTP settings to .env.local to send verification codes.",
+      },
+      { status: 503 },
+    );
   }
 
-  try {
-    const user = await createUser({ name, email, password });
-    const meta = getClientMeta(request);
-    await recordLoginEvent({
-      userId: user.id,
-      name: user.name,
-      email: user.email,
-      action: "signup",
-      ip: meta.ip,
-      userAgent: meta.userAgent,
-    });
-
-    const response = NextResponse.json({ user: toPublicUser(user) });
-    setUserSession(response, user.id);
-    return response;
-  } catch (error) {
-    if (error instanceof Error && error.message === "EMAIL_EXISTS") {
-      return NextResponse.json(
-        { error: "An account with this email already exists." },
-        { status: 409 },
-      );
-    }
-    return NextResponse.json({ error: "Could not create account." }, { status: 500 });
+  const result = await sendSignupOtp({ name, email });
+  if (result.error) {
+    const status = result.error.includes("exists")
+      ? 409
+      : result.error.toLowerCase().includes("wait")
+        ? 429
+        : 400;
+    return NextResponse.json({ error: result.error }, { status });
   }
+
+  return NextResponse.json({ ok: true, needsVerification: true });
 }
