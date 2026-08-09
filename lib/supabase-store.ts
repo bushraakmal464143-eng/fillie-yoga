@@ -97,17 +97,31 @@ export async function deletePricingPlan(id: string): Promise<boolean> {
 export async function addOffer(
   offer: Omit<ClassOffer, "id" | "key"> & { key?: string },
 ): Promise<ClassOffer> {
-  const key =
-    offer.key ??
-    offer.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+  const baseKey =
+    offer.key?.trim() ||
+    slugifyTitle(offer.title) ||
+    `class-${crypto.randomUUID().slice(0, 8)}`;
   const id = `offer-${crypto.randomUUID()}`;
-  const row = offerToRow({ ...offer, id, key });
-  const { data, error } = await db().from("class_offers").insert(row).select().single();
+
+  let key = baseKey;
+  let { data, error } = await db()
+    .from("class_offers")
+    .insert(offerToRow({ ...offer, id, key }))
+    .select()
+    .single();
+
+  // key is unique — if title slug collides, append a short suffix and retry
+  if (error?.code === "23505") {
+    key = `${baseKey}-${crypto.randomUUID().slice(0, 6)}`;
+    ({ data, error } = await db()
+      .from("class_offers")
+      .insert(offerToRow({ ...offer, id, key }))
+      .select()
+      .single());
+  }
+
   if (error) throw error;
-  return offerFromRow(data);
+  return offerFromRow(data!);
 }
 
 export async function deleteOffer(id: string): Promise<boolean> {
@@ -166,9 +180,27 @@ export async function addSession(
     note: session.note?.trim() || undefined,
   });
 
-  const { data, error } = await db().from("yoga_sessions").insert(row).select().single();
+  // Prefer the DB serial sequence; if it drifted after seeded inserts
+  // (duplicate key on yoga_sessions_pkey), fall back to max(id)+1.
+  let { data, error } = await db().from("yoga_sessions").insert(row).select().single();
+
+  if (error?.code === "23505") {
+    const { data: latest } = await db()
+      .from("yoga_sessions")
+      .select("id")
+      .order("id", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const nextId = (latest?.id ?? 0) + 1;
+    ({ data, error } = await db()
+      .from("yoga_sessions")
+      .insert({ ...row, id: nextId })
+      .select()
+      .single());
+  }
+
   if (error) throw error;
-  return sessionFromRow(data);
+  return sessionFromRow(data!);
 }
 
 export async function deleteSession(id: number): Promise<boolean> {

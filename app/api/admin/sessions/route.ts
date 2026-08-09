@@ -19,19 +19,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const session = await addSession({
-    day: body.day,
-    type: body.type.trim(),
-    time: body.time.trim(),
-    duration: body.duration.trim(),
-    bg: body.bg || "#2980B922",
-    color: body.color || "#1E6FA8",
-    spots: Number(body.spots) || 8,
-    special: Boolean(body.special),
-    note: body.note?.trim() || undefined,
-  });
+  try {
+    const session = await addSession({
+      day: body.day,
+      type: body.type.trim(),
+      time: body.time.trim(),
+      duration: body.duration.trim(),
+      bg: body.bg || "#2980B922",
+      color: body.color || "#1E6FA8",
+      spots: Number(body.spots) || 8,
+      special: Boolean(body.special),
+      note: body.note?.trim() || undefined,
+    });
 
-  return NextResponse.json(session, { status: 201 });
+    return NextResponse.json(session, { status: 201 });
+  } catch (err) {
+    console.error(err);
+    const message = err instanceof Error ? err.message : "Could not add schedule session.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {

@@ -39,8 +39,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const offer = await addOffer(offerPayload(body));
-  return NextResponse.json(offer, { status: 201 });
+  try {
+    const offer = await addOffer(offerPayload(body));
+    return NextResponse.json(offer, { status: 201 });
+  } catch (err) {
+    console.error(err);
+    const message = err instanceof Error ? err.message : "Could not add class card.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {

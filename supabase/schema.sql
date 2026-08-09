@@ -192,3 +192,9 @@ create index if not exists login_events_user_id_idx
 alter table public.login_events enable row level security;
 
 -- No public policies: only service-role (admin API) can read/write login_events.
+
+-- If seeded rows used explicit ids, keep the serial sequence in sync:
+-- SELECT setval(
+--   pg_get_serial_sequence('public.yoga_sessions', 'id'),
+--   COALESCE((SELECT MAX(id) FROM public.yoga_sessions), 1)
+-- );
