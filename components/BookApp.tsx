@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { ClassIcon } from "@/components/ClassIcon";
 import { useApp } from "@/components/providers/AppProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { formatPlanPeriod } from "@/lib/pricing";
 import { DAYS } from "@/lib/schedule";
 import type { AppTab } from "@/lib/types";
@@ -14,10 +15,54 @@ const APP_TABS: { id: AppTab; label: string }[] = [
   { id: "myclasses", label: "My Classes" },
 ];
 
+function JoinMeetingButton({ url }: { url?: string }) {
+  if (!url) return null;
+  return (
+    <a
+      className="join-meet-btn"
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Join meeting
+    </a>
+  );
+}
+
+function AuthRequiredGate({ action }: { action: string }) {
+  const { openAuth, authReady } = useAuth();
+
+  return (
+    <div className="sub-gate-box">
+      <h4>Sign in required</h4>
+      <p>
+        Please create an account or log in to {action}. This keeps your bookings and membership
+        linked to you.
+      </p>
+      <button
+        className="sub-btn"
+        type="button"
+        disabled={!authReady}
+        onClick={() => openAuth("signup")}
+      >
+        Sign up
+      </button>
+      <button
+        className="cancel-btn"
+        type="button"
+        style={{ marginTop: "0.75rem", width: "100%", padding: "10px" }}
+        disabled={!authReady}
+        onClick={() => openAuth("login")}
+      >
+        Log in
+      </button>
+    </div>
+  );
+}
+
 function TrialPanel() {
   const { subscribed, trialBooking, allClasses, submitTrial, setActiveTab, primaryPlan } = useApp();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const { user, authReady } = useAuth();
   const [classId, setClassId] = useState("");
 
   if (subscribed) {
@@ -47,6 +92,11 @@ function TrialPanel() {
               {c.type} · {c.day} · {c.time}
             </div>
           )}
+          {c?.meetingUrl && (
+            <div className="trial-join-wrap">
+              <JoinMeetingButton url={c.meetingUrl} />
+            </div>
+          )}
         </div>
         <div className="sub-gate-box">
           <h4>Love your first class?</h4>
@@ -59,11 +109,16 @@ function TrialPanel() {
     );
   }
 
+  if (authReady && !user) {
+    return <AuthRequiredGate action="book a free trial lesson" />;
+  }
+
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     const id = parseInt(classId, 10);
-    if (!name.trim() || !email.trim() || !id) return;
-    submitTrial({ name: name.trim(), email: email.trim(), classId: id });
+    if (!id) return;
+    submitTrial({ name: user.name, email: user.email, classId: id });
   };
 
   return (
@@ -72,12 +127,10 @@ function TrialPanel() {
       <p>Try one live class with Fillie Faragi — no payment required. One free session per person.</p>
       <form className="trial-form" onSubmit={handleSubmit}>
         <div className="trial-field">
-          <label htmlFor="trial-name">Your name</label>
-          <input id="trial-name" type="text" required placeholder="Jane Smith" value={name} onChange={(e) => setName(e.target.value)} />
-        </div>
-        <div className="trial-field">
-          <label htmlFor="trial-email">Email</label>
-          <input id="trial-email" type="email" required placeholder="you@email.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label>Signed in as</label>
+          <p className="trial-note" style={{ margin: 0 }}>
+            {user?.name} · {user?.email}
+          </p>
         </div>
         <div className="trial-field">
           <label htmlFor="trial-class">Choose a class</label>
@@ -92,7 +145,9 @@ function TrialPanel() {
               ))}
           </select>
         </div>
-        <button className="sub-btn" type="submit">Book my free trial</button>
+        <button className="sub-btn" type="submit" disabled={!user}>
+          Book my free trial
+        </button>
         <p className="trial-note">We&apos;ll email you a link to join before your class starts.</p>
       </form>
     </div>
@@ -110,6 +165,7 @@ function SubscribePanel() {
     checkoutError,
     cancelLoading,
   } = useApp();
+  const { user, authReady, openAuth } = useAuth();
   const priceLabel = primaryPlan ? formatPlanPeriod(primaryPlan) : "$70/mo";
   const subscribeLabel = primaryPlan?.subscribeCtaText ?? "Subscribe for $70/month";
   const priceAmount = primaryPlan?.price ?? 70;
@@ -152,6 +208,10 @@ function SubscribePanel() {
     );
   }
 
+  if (authReady && !user) {
+    return <AuthRequiredGate action="subscribe to Om At Home" />;
+  }
+
   return (
     <div className="sub-gate-box">
       <h4>Join the global community</h4>
@@ -169,8 +229,14 @@ function SubscribePanel() {
       <button
         className="sub-btn"
         type="button"
-        disabled={checkoutLoading}
-        onClick={() => void subscribe(primaryPlan?.id)}
+        disabled={checkoutLoading || !user}
+        onClick={() => {
+          if (!user) {
+            openAuth("signup");
+            return;
+          }
+          void subscribe(primaryPlan?.id);
+        }}
       >
         {checkoutLoading ? "Redirecting to Stripe…" : subscribeLabel}
       </button>
@@ -186,10 +252,19 @@ function SubscribePanel() {
 
 function AppSchedulePanel() {
   const { allClasses, offers, subscribed, booked, trialBooking, appFilter, setAppFilter, toggleBook, setActiveTab } = useApp();
+  const { user, openAuth } = useAuth();
 
   const types = ["all", "Yin Yoga Flow", "Vinyasa Flow", "Pilates", "Heart Opening Yin"];
   const labels = ["All", "Yin", "Vinyasa", "Pilates", "Heart Yin"];
   const filtered = appFilter === "all" ? allClasses : allClasses.filter((c) => c.type === appFilter);
+
+  const goBookOrAuth = () => {
+    if (!user) {
+      openAuth("signup");
+      return;
+    }
+    setActiveTab(trialBooking ? "subscribe" : "trial");
+  };
 
   return (
     <>
@@ -251,9 +326,9 @@ function AppSchedulePanel() {
             className="sub-btn"
             type="button"
             style={{ maxWidth: 200, margin: ".5rem auto 0" }}
-            onClick={() => setActiveTab(trialBooking ? "subscribe" : "trial")}
+            onClick={goBookOrAuth}
           >
-            {trialBooking ? "View plans" : "Book free trial"}
+            {trialBooking ? "View plans" : user ? "Book free trial" : "Sign up to book"}
           </button>
         </div>
       )}
@@ -263,14 +338,26 @@ function AppSchedulePanel() {
 
 function MyClassesPanel() {
   const { subscribed, trialBooking, allClasses, offers, booked, toggleBook, setActiveTab } = useApp();
+  const { user, openAuth } = useAuth();
 
   if (!subscribed && !trialBooking) {
     return (
       <div className="app-empty">
         Book a free trial lesson or subscribe for full access.
         <br /><br />
-        <button className="sub-btn" type="button" style={{ maxWidth: 200, margin: ".5rem auto 0" }} onClick={() => setActiveTab("trial")}>
-          Book free trial
+        <button
+          className="sub-btn"
+          type="button"
+          style={{ maxWidth: 200, margin: ".5rem auto 0" }}
+          onClick={() => {
+            if (!user) {
+              openAuth("signup");
+              return;
+            }
+            setActiveTab("trial");
+          }}
+        >
+          {user ? "Book free trial" : "Sign up to book"}
         </button>
       </div>
     );
@@ -292,6 +379,9 @@ function MyClassesPanel() {
           <div className="sc-info">
             <div className="sc-name">{c.type}</div>
             <div className="sc-meta">{c.day} · {c.time} · {c.duration}</div>
+          </div>
+          <div className="my-sc-actions">
+            <JoinMeetingButton url={c.meetingUrl} />
           </div>
         </div>
         <button className="sub-btn" type="button" style={{ marginTop: "1rem" }} onClick={() => setActiveTab("subscribe")}>
@@ -355,7 +445,12 @@ function MyClassesPanel() {
               <div className="sc-name">{c.type}</div>
               <div className="sc-meta">{c.day} · {c.time}</div>
             </div>
-            <button className="cancel-btn" type="button" onClick={() => toggleBook(c.id)}>Cancel</button>
+            <div className="my-sc-actions">
+              <JoinMeetingButton url={c.meetingUrl} />
+              <button className="cancel-btn" type="button" onClick={() => toggleBook(c.id)}>
+                Cancel
+              </button>
+            </div>
           </div>
         ))
       )}

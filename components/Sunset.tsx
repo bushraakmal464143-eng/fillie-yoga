@@ -1,9 +1,11 @@
 "use client";
 
 import { useApp } from "@/components/providers/AppProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function Sunset() {
-  const { goToBookApp } = useApp();
+  const { goToBookApp, setActiveTab } = useApp();
+  const { user, openAuth } = useAuth();
 
   return (
     <section id="sunset" className="sunset-section">
@@ -48,7 +50,18 @@ export default function Sunset() {
             </svg>
             Next event: September 2026 · Date announced to subscribers
           </div>
-          <button className="sub-btn sunset-cta" type="button" onClick={goToBookApp}>
+          <button
+            className="sub-btn sunset-cta"
+            type="button"
+            onClick={() => {
+              if (!user) {
+                openAuth("signup");
+                return;
+              }
+              setActiveTab("subscribe");
+              goToBookApp();
+            }}
+          >
             Subscribe to get notified
           </button>
         </div>

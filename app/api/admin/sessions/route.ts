@@ -2,6 +2,29 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth";
 import { addSession, deleteSession, getSessions, updateSession } from "@/lib/store";
 import type { YogaClass } from "@/lib/types";
+
+function normalizeMeetingUrl(url?: string): string | undefined {
+  const trimmed = url?.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
+function sessionPayload(body: Omit<YogaClass, "id">) {
+  return {
+    day: body.day,
+    type: body.type.trim(),
+    time: body.time.trim(),
+    duration: body.duration.trim(),
+    bg: body.bg || "#2980B922",
+    color: body.color || "#1E6FA8",
+    spots: Number(body.spots) || 8,
+    special: Boolean(body.special),
+    note: body.note?.trim() || undefined,
+    meetingUrl: normalizeMeetingUrl(body.meetingUrl),
+  };
+}
+
 export async function GET() {
   const denied = await requireAdmin();
   if (denied) return denied;
@@ -20,18 +43,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const session = await addSession({
-      day: body.day,
-      type: body.type.trim(),
-      time: body.time.trim(),
-      duration: body.duration.trim(),
-      bg: body.bg || "#2980B922",
-      color: body.color || "#1E6FA8",
-      spots: Number(body.spots) || 8,
-      special: Boolean(body.special),
-      note: body.note?.trim() || undefined,
-    });
-
+    const session = await addSession(sessionPayload(body));
     return NextResponse.json(session, { status: 201 });
   } catch (err) {
     console.error(err);
@@ -50,17 +62,7 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  const session = await updateSession(body.id, {
-    day: body.day,
-    type: body.type.trim(),
-    time: body.time.trim(),
-    duration: body.duration.trim(),
-    bg: body.bg || "#2980B922",
-    color: body.color || "#1E6FA8",
-    spots: Number(body.spots) || 8,
-    special: Boolean(body.special),
-    note: body.note?.trim() || undefined,
-  });
+  const session = await updateSession(body.id, sessionPayload(body));
 
   if (!session) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
@@ -69,7 +71,8 @@ export async function PUT(request: Request) {
   return NextResponse.json(session);
 }
 
-export async function DELETE(request: Request) {  const denied = await requireAdmin();
+export async function DELETE(request: Request) {
+  const denied = await requireAdmin();
   if (denied) return denied;
 
   const { searchParams } = new URL(request.url);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useApp } from "@/components/providers/AppProvider";
+import { useAuth } from "@/components/providers/AuthProvider";
 import { formatPlanAmount, getPrimaryPlan } from "@/lib/pricing";
 import type { PricingPlan } from "@/lib/types";
 
@@ -10,12 +11,22 @@ type PricingProps = {
 
 export default function Pricing({ plans: plansProp }: PricingProps) {
   const { pricing, openTrial, subscribe, checkoutLoading, checkoutError } = useApp();
+  const { user, authReady, openAuth } = useAuth();
   const plans = plansProp?.length ? plansProp : pricing;
   const primary = getPrimaryPlan(plans);
 
   if (!primary) return null;
 
   const showGrid = plans.length > 1;
+
+  const requireAuthThen = (action: () => void) => {
+    if (!authReady) return;
+    if (!user) {
+      openAuth("signup");
+      return;
+    }
+    action();
+  };
 
   return (
     <section id="pricing" className="pricing-bg">
@@ -43,14 +54,14 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
                 className="sub-btn"
                 type="button"
                 disabled={checkoutLoading}
-                onClick={() => void subscribe(plan.id)}
+                onClick={() => requireAuthThen(() => void subscribe(plan.id))}
               >
                 {checkoutLoading ? "Redirecting to Stripe…" : plan.ctaText}
               </button>
               <button
                 className="btn-ghost"
                 type="button"
-                onClick={openTrial}
+                onClick={() => requireAuthThen(openTrial)}
                 style={{ marginTop: "0.75rem" }}
               >
                 {plan.trialCtaText}

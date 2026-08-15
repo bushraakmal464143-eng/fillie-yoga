@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getCurrentUser } from "@/lib/current-user";
 import { getPricing } from "@/lib/store";
 import { getStripe, toRecurringInterval, toStripeCurrency } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json(
+        { error: "Please sign up or log in before subscribing." },
+        { status: 401 },
+      );
+    }
+
     if (!process.env.STRIPE_SECRET_KEY) {
       return NextResponse.json(
         { error: "Stripe is not configured. Add STRIPE_SECRET_KEY to .env" },
@@ -31,6 +40,7 @@ export async function POST(request: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
+      customer_email: user.email,
       billing_address_collection: "required",
       phone_number_collection: { enabled: true },
       line_items: [
@@ -54,11 +64,15 @@ export async function POST(request: NextRequest) {
       metadata: {
         planId: plan.id,
         planName: plan.name,
+        userId: user.id,
+        userEmail: user.email,
       },
       subscription_data: {
         metadata: {
           planId: plan.id,
           planName: plan.name,
+          userId: user.id,
+          userEmail: user.email,
         },
       },
     });

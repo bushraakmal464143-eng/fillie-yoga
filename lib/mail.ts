@@ -23,8 +23,10 @@ export async function sendMail(input: {
 }): Promise<void> {
   const host = requireMailEnv("SMTP_HOST");
   const user = requireMailEnv("SMTP_USER");
-  const pass = requireMailEnv("SMTP_PASS");
-  const from = process.env.SMTP_FROM?.trim() || user;
+  // Gmail App Passwords are often copied with spaces — strip them.
+  const pass = requireMailEnv("SMTP_PASS").replace(/\s+/g, "");
+  const fromRaw = process.env.SMTP_FROM?.trim() || user;
+  const from = fromRaw.replace(/^["']|["']$/g, "");
   const port = Number(process.env.SMTP_PORT || "587");
   const secure =
     process.env.SMTP_SECURE === "true" || port === 465;

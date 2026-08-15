@@ -178,6 +178,7 @@ export async function addSession(
     time: session.time.trim(),
     duration: session.duration.trim(),
     note: session.note?.trim() || undefined,
+    meetingUrl: session.meetingUrl?.trim() || undefined,
   });
 
   // Prefer the DB serial sequence; if it drifted after seeded inserts
@@ -223,6 +224,7 @@ export async function updateSession(
     time: updates.time.trim(),
     duration: updates.duration.trim(),
     note: updates.note?.trim() || undefined,
+    meetingUrl: updates.meetingUrl?.trim() || undefined,
   });
 
   const { data, error } = await db()

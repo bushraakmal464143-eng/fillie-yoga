@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { getSessionUser } from "@/lib/supabase-user";
+import { getCurrentUser } from "@/lib/current-user";
 import type { TrialBooking } from "@/lib/types";
 
 export async function GET() {
@@ -9,7 +9,7 @@ export async function GET() {
     return NextResponse.json({ bookings: [] });
   }
 
-  const user = await getSessionUser();
+  const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ bookings: [] });
   }
@@ -32,6 +32,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Supabase not configured" }, { status: 503 });
   }
 
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json(
+      { error: "Please sign up or log in before booking." },
+      { status: 401 },
+    );
+  }
+
   const body = (await request.json()) as {
     sessionId?: number;
     bookingType?: "trial" | "member";
@@ -46,22 +54,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Missing session id" }, { status: 400 });
   }
 
-  const user = await getSessionUser();
-  const guestName = body.guestName?.trim();
-  const guestEmail = body.guestEmail?.trim();
-
-  if (!user && (!guestName || !guestEmail)) {
-    return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
-  }
-
   const { data, error } = await createAdminClient()
     .from("bookings")
     .insert({
-      user_id: user?.id ?? null,
+      user_id: user.id,
       session_id: sessionId,
       booking_type: bookingType,
-      guest_name: guestName ?? user?.name ?? null,
-      guest_email: guestEmail ?? user?.email ?? null,
+      guest_name: body.guestName?.trim() || user.name,
+      guest_email: body.guestEmail?.trim() || user.email,
     })
     .select("session_id, guest_name, guest_email, booking_type, booked_at")
     .single();

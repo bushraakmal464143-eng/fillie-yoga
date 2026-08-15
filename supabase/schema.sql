@@ -84,6 +84,7 @@ create table if not exists public.yoga_sessions (
   spots int not null default 8,
   special boolean not null default false,
   note text,
+  meeting_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );

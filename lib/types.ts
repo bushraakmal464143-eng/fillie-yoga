@@ -9,6 +9,8 @@ export type YogaClass = {
   duration: string;
   spots: number;
   note?: string;
+  /** Zoom / Meet join link pasted by admin (no Zoom API required). */
+  meetingUrl?: string;
 };
 
 export type OfferSchedule = {

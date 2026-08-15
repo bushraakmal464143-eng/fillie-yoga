@@ -28,6 +28,7 @@ type SessionRow = {
   spots: number;
   special: boolean;
   note: string | null;
+  meeting_url?: string | null;
 };
 
 type PricingRow = {
@@ -99,6 +100,7 @@ export function sessionFromRow(row: SessionRow): YogaClass {
     spots: row.spots,
     special: row.special,
     note: row.note ?? undefined,
+    meetingUrl: row.meeting_url?.trim() || undefined,
   };
 }
 
@@ -113,6 +115,7 @@ export function sessionToRow(session: Omit<YogaClass, "id">) {
     spots: session.spots,
     special: Boolean(session.special),
     note: session.note ?? null,
+    meeting_url: session.meetingUrl?.trim() || null,
   };
 }
 

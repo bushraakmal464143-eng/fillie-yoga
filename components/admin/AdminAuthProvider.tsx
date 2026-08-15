@@ -10,6 +10,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import PasswordInput from "@/components/PasswordInput";
 
 type AdminAuthContextValue = {
   authenticated: boolean | null;
@@ -242,9 +243,8 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
             <p>Sign in to manage class cards, schedule sessions, and membership pricing.</p>
             <div className="admin-field">
               <label htmlFor="admin-password">Password</label>
-              <input
+              <PasswordInput
                 id="admin-password"
-                type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter admin password"

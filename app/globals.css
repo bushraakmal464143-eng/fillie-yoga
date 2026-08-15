@@ -337,6 +337,35 @@
           background: var(--white);
           color: var(--soil);
         }
+        .password-field {
+          position: relative;
+          width: 100%;
+        }
+        .password-field__input {
+          width: 100%;
+          padding-right: 2.6rem !important;
+        }
+        .password-field__toggle {
+          position: absolute;
+          right: 0.45rem;
+          top: 50%;
+          transform: translateY(-50%);
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 2rem;
+          height: 2rem;
+          border: none;
+          background: transparent;
+          color: rgba(44, 26, 14, 0.5);
+          cursor: pointer;
+          border-radius: 6px;
+          padding: 0;
+        }
+        .password-field__toggle:hover {
+          color: var(--soil);
+          background: rgba(139, 94, 60, 0.08);
+        }
         .auth-error {
           color: #a33;
           font-size: 13px;
@@ -2161,6 +2190,38 @@
           display: flex;
           align-items: center;
           gap: 10px;
+        }
+        .my-sc-actions {
+          margin-left: auto;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+        }
+        .join-meet-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          background: #2d8cff;
+          color: #fff;
+          border: none;
+          border-radius: 6px;
+          padding: 6px 12px;
+          font-size: 12px;
+          font-weight: 600;
+          text-decoration: none;
+          font-family: inherit;
+          white-space: nowrap;
+        }
+        .join-meet-btn:hover {
+          background: #1a7aef;
+        }
+        .trial-join-wrap {
+          margin-top: 0.85rem;
+        }
+        .trial-join-wrap .join-meet-btn {
+          padding: 10px 16px;
+          font-size: 14px;
         }
         .usage-wrap {
           background: rgba(255, 255, 255, 0.06);

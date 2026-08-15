@@ -5,6 +5,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import { ROUTES } from "@/lib/routes";
 import { featuresToText, formatPlanPeriod, textToFeatures } from "@/lib/pricing";
 import type { PricingPlan } from "@/lib/types";
+import PasswordInput from "@/components/PasswordInput";
 
 const EMPTY_PRICING = {
   name: "",
@@ -214,9 +215,8 @@ export default function AdminPricingPanel() {
           <p>Sign in to manage pricing plans for Om At Home.</p>
           <div className="admin-field">
             <label htmlFor="admin-password">Password</label>
-            <input
+            <PasswordInput
               id="admin-password"
-              type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter admin password"

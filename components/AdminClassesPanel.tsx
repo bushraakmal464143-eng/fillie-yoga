@@ -11,6 +11,7 @@ import {
   offerToFormSchedule,
 } from "@/lib/offer-schedule";
 import type { ClassOffer, YogaClass } from "@/lib/types";
+import PasswordInput from "@/components/PasswordInput";
 
 const EMPTY_OFFER = {
   title: "",
@@ -39,6 +40,7 @@ const EMPTY_SESSION = {
   spots: 8,
   special: false,
   note: "",
+  meetingUrl: "",
 };
 
 export default function AdminClassesPanel() {
@@ -340,6 +342,7 @@ export default function AdminClassesPanel() {
       spots: session.spots,
       special: Boolean(session.special),
       note: session.note ?? "",
+      meetingUrl: session.meetingUrl ?? "",
     });
     setError("");
     scrollToForm("session-form");
@@ -381,9 +384,8 @@ export default function AdminClassesPanel() {
           <p>Sign in to manage class cards and schedule sessions for Om At Home.</p>
           <div className="admin-field">
             <label htmlFor="admin-password">Password</label>
-            <input
+            <PasswordInput
               id="admin-password"
-              type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Enter admin password"
@@ -789,6 +791,18 @@ export default function AdminClassesPanel() {
                   value={sessionForm.note}
                   onChange={(event) => setSessionForm({ ...sessionForm, note: event.target.value })}
                   placeholder="e.g. Next: Sep 2026"
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="panel-session-meeting-url">Zoom meeting link (optional)</label>
+                <input
+                  id="panel-session-meeting-url"
+                  type="url"
+                  value={sessionForm.meetingUrl}
+                  onChange={(event) =>
+                    setSessionForm({ ...sessionForm, meetingUrl: event.target.value })
+                  }
+                  placeholder="https://zoom.us/j/123456789"
                 />
               </div>
               <label className="admin-check">

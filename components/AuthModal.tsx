@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import PasswordInput from "@/components/PasswordInput";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 type SignupStep = "details" | "verify";
@@ -186,9 +187,8 @@ export default function AuthModal() {
           {!isVerifyStep && (
             <div className="auth-field">
               <label htmlFor="auth-password">Password</label>
-              <input
+              <PasswordInput
                 id="auth-password"
-                type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder={authMode === "signup" ? "At least 6 characters" : "Your password"}
@@ -202,9 +202,8 @@ export default function AuthModal() {
           {authMode === "signup" && !isVerifyStep && (
             <div className="auth-field">
               <label htmlFor="auth-confirm">Confirm password</label>
-              <input
+              <PasswordInput
                 id="auth-confirm"
-                type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
                 placeholder="Repeat your password"

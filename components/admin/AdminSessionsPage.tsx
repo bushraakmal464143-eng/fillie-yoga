@@ -90,6 +90,7 @@ export default function AdminSessionsPage() {
       spots: session.spots,
       special: Boolean(session.special),
       note: session.note ?? "",
+      meetingUrl: session.meetingUrl ?? "",
     });
     setError("");
     scrollToForm("session-form");
@@ -199,6 +200,21 @@ export default function AdminSessionsPage() {
             placeholder="e.g. Next: Sep 2026"
           />
         </div>
+        <div className="admin-field">
+          <label htmlFor="session-meeting-url">Zoom meeting link (optional)</label>
+          <input
+            id="session-meeting-url"
+            type="url"
+            value={sessionForm.meetingUrl}
+            onChange={(event) =>
+              setSessionForm({ ...sessionForm, meetingUrl: event.target.value })
+            }
+            placeholder="https://zoom.us/j/123456789"
+          />
+          <p className="admin-field-hint">
+            Paste the Zoom invite link. Booked students will see a Join meeting button.
+          </p>
+        </div>
         <label className="admin-check">
           <input
             type="checkbox"
@@ -237,6 +253,7 @@ export default function AdminSessionsPage() {
                 <strong>{session.type}</strong>
                 <span>
                   {session.day} · {session.time} · {session.duration}
+                  {session.meetingUrl ? " · Zoom linked" : ""}
                 </span>
               </div>
               <div className="admin-list-actions">

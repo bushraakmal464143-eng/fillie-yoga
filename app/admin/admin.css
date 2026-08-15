@@ -570,6 +570,40 @@
   transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
 }
 
+.password-field {
+  position: relative;
+  width: 100%;
+}
+
+.password-field .password-field__input,
+.admin-field .password-field__input {
+  width: 100%;
+  padding-right: 2.7rem;
+}
+
+.password-field__toggle {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background: transparent;
+  color: rgba(44, 26, 14, 0.5);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0;
+}
+
+.password-field__toggle:hover {
+  color: var(--soil);
+  background: rgba(139, 94, 60, 0.08);
+}
+
 .admin-field input:focus,
 .admin-field select:focus,
 .admin-field textarea:focus,
@@ -718,6 +752,13 @@
   border-radius: 10px;
   background: linear-gradient(135deg, rgba(212, 160, 23, 0.16), rgba(139, 94, 60, 0.1));
   border: 1px solid rgba(212, 160, 23, 0.28);
+}
+
+.admin-field-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgba(44, 26, 14, 0.55);
 }
 
 .admin-form-actions {

@@ -35,7 +35,16 @@ export const EMPTY_SESSION = {
   spots: 8,
   special: false,
   note: "",
+  meetingUrl: "",
 };
+
+/** Normalize pasted Zoom/Meet links so Join opens correctly. */
+export function normalizeMeetingUrl(url?: string): string | undefined {
+  const trimmed = url?.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
 
 export const EMPTY_PRICING = {
   name: "",

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { ROUTES } from "@/lib/routes";
+import PasswordInput from "@/components/PasswordInput";
 
 type Subscriber = {
   subscriptionId: string;
@@ -154,9 +155,8 @@ export default function AdminSubscribersPanel() {
             <p>Sign in to view Stripe subscription details.</p>
             <div className="admin-field">
               <label htmlFor="admin-password">Password</label>
-              <input
+              <PasswordInput
                 id="admin-password"
-                type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter admin password"
