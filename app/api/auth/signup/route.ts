@@ -28,21 +28,27 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error:
-          "Email is not configured. Add SMTP settings to .env.local to send verification codes.",
+          "Email is not configured. Add SMTP settings in Vercel Environment Variables (or .env locally).",
       },
       { status: 503 },
     );
   }
 
-  const result = await sendSignupOtp({ name, email });
-  if (result.error) {
-    const status = result.error.includes("exists")
-      ? 409
-      : result.error.toLowerCase().includes("wait")
-        ? 429
-        : 400;
-    return NextResponse.json({ error: result.error }, { status });
-  }
+  try {
+    const result = await sendSignupOtp({ name, email });
+    if (result.error) {
+      const status = result.error.includes("exists")
+        ? 409
+        : result.error.toLowerCase().includes("wait")
+          ? 429
+          : 400;
+      return NextResponse.json({ error: result.error }, { status });
+    }
 
-  return NextResponse.json({ ok: true, needsVerification: true });
+    return NextResponse.json({ ok: true, needsVerification: true });
+  } catch (err) {
+    console.error("[signup]", err);
+    const message = err instanceof Error ? err.message : "Signup failed.";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

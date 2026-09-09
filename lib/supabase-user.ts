@@ -124,8 +124,13 @@ export async function sendSignupOtp(input: {
   }
 
   if (isSupabaseConfigured()) {
-    const existing = await findAuthUserByEmail(email);
-    if (existing?.email_confirmed_at) {
+    const { data: profile } = await createAdminClient()
+      .from("profiles")
+      .select("id")
+      .ilike("email", email)
+      .maybeSingle();
+
+    if (profile) {
       return {
         error: "An account with this email already exists. Try logging in instead.",
       };

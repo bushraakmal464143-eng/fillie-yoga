@@ -66,43 +66,43 @@ export default function AuthModal() {
     setError("");
     setBusy(true);
 
-    if (authMode === "signup") {
-      if (signupStep === "details") {
-        if (password !== confirmPassword) {
-          setBusy(false);
-          setError("Passwords do not match.");
+    try {
+      if (authMode === "signup") {
+        if (signupStep === "details") {
+          if (password !== confirmPassword) {
+            setError("Passwords do not match.");
+            return;
+          }
+
+          const sendError = await sendSignupCode(name, email, password);
+          if (sendError) {
+            setError(sendError);
+            return;
+          }
+          setSignupStep("verify");
           return;
         }
 
-        const sendError = await sendSignupCode(name, email, password);
-        setBusy(false);
-        if (sendError) {
-          setError(sendError);
-          return;
-        }
-        setSignupStep("verify");
+        const verifyError = await verifySignupCode(name, email, password, code);
+        if (verifyError) setError(verifyError);
         return;
       }
 
-      const verifyError = await verifySignupCode(name, email, password, code);
+      const loginError = await login(email, password);
+      if (loginError) setError(loginError);
+    } finally {
       setBusy(false);
-      if (verifyError) setError(verifyError);
-      return;
     }
-
-    const loginError = await login(email, password);
-    setBusy(false);
-    if (loginError) setError(loginError);
   };
 
   const handleResendCode = async () => {
     setError("");
     setBusy(true);
-    const sendError = await sendSignupCode(name, email, password);
-    setBusy(false);
-    if (sendError) {
-      setError(sendError);
-      return;
+    try {
+      const sendError = await sendSignupCode(name, email, password);
+      if (sendError) setError(sendError);
+    } finally {
+      setBusy(false);
     }
   };
 

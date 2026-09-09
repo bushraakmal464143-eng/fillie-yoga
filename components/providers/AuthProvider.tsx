@@ -94,29 +94,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const sendSignupCode = useCallback(async (name: string, email: string, password: string) => {
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
 
-    const data = (await response.json()) as {
-      error?: string;
-      needsVerification?: boolean;
-      user?: User;
-    };
-    if (!response.ok) return data.error ?? "Could not send verification code.";
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        needsVerification?: boolean;
+        user?: User;
+      };
+      if (!response.ok) return data.error ?? "Could not send verification code.";
 
-    // Local/fallback signup can create the account immediately (no email OTP).
-    if (data.user && !data.needsVerification) {
-      setUser(data.user);
-      setAuthMessage(null);
-      setAuthOpen(false);
+      // Local/fallback signup can create the account immediately (no email OTP).
+      if (data.user && !data.needsVerification) {
+        setUser(data.user);
+        setAuthMessage(null);
+        setAuthOpen(false);
+        return null;
+      }
+
+      setAuthMessage(`We sent a verification code to ${email.trim()}. Check your inbox.`);
       return null;
+    } catch {
+      return "Network error. Please try again.";
     }
-
-    setAuthMessage(`We sent a verification code to ${email.trim()}. Check your inbox.`);
-    return null;
   }, []);
 
   const verifySignupCode = useCallback(
