@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { CONTACT_EMAIL, ROUTES } from "@/lib/routes";
 
@@ -100,6 +101,21 @@ const FAQS = [
   },
 ];
 
+const MOOD_IMAGES = [
+  {
+    src: "/assets/images/reiki/reiki-rest.jpg",
+    alt: "Soft spa still life with candle, rolled towel, and pink tulips",
+  },
+  {
+    src: "/assets/images/reiki/reiki-light.jpg",
+    alt: "Silhouette of a person meditating at sunrise in warm golden light",
+  },
+  {
+    src: "/assets/images/reiki/reiki-nature.png",
+    alt: "Soft misty forest light filtering through tall trees at dawn",
+  },
+] as const;
+
 function requestMailto(subject: string) {
   const body = encodeURIComponent(
     `Hi Om At Home,\n\nI would like to book a Distance Reiki session.\n\nPreferred session: ${subject}\nPreferred date/time (your timezone):\nIntention for the session:\n\nThank you.`,
@@ -110,27 +126,54 @@ function requestMailto(subject: string) {
 export default function DistanceReiki() {
   return (
     <section className="service-page service-page--reiki">
-      <div className="container service-hero service-hero--rich">
-        <p className="section-label">Wellness offering</p>
-        <h1 className="service-title">Distance Reiki</h1>
-        <p className="service-lead">Healing energy knows no distance.</p>
-        <p className="service-hero-copy">
-          A gentle energy-healing practice you can receive from wherever you are. Your practitioner
-          holds a quiet, intentional space focused on relaxation, balance, and energetic well-being.
-        </p>
-        <div className="service-hero-actions">
-          <a className="btn-primary" href="#reiki-plans">
-            View sessions
-          </a>
-          <a className="btn-ghost" href={requestMailto("Distance Reiki — Session inquiry")}>
-            Request a session
-          </a>
+      <div className="container service-hero-layout">
+        <div className="service-hero service-hero--rich">
+          <p className="section-label">Wellness offering</p>
+          <h1 className="service-title">Distance Reiki</h1>
+          <p className="service-lead">Healing energy knows no distance.</p>
+          <p className="service-hero-copy">
+            A gentle energy-healing practice you can receive from wherever you are. Your
+            practitioner holds a quiet, intentional space focused on relaxation, balance, and
+            energetic well-being.
+          </p>
+          <div className="service-hero-actions">
+            <a className="btn-primary" href="#reiki-plans">
+              View sessions
+            </a>
+            <a className="btn-outline" href={requestMailto("Distance Reiki — Session inquiry")}>
+              Request a session
+            </a>
+          </div>
+          <p className="service-worldwide">Available worldwide. 🌎</p>
         </div>
-        <p className="service-worldwide">Available worldwide. 🌎</p>
+        <figure className="service-hero-visual">
+          <Image
+            src="/assets/images/reiki/reiki-space.png"
+            alt="Quiet corner with a meditation cushion, soft morning light, and a simple ceramic bowl"
+            width={960}
+            height={720}
+            priority
+            className="service-photo"
+          />
+        </figure>
+      </div>
+
+      <div className="container service-mood-strip" aria-hidden="true">
+        {MOOD_IMAGES.map((image) => (
+          <figure key={image.src} className="service-mood-frame">
+            <Image
+              src={image.src}
+              alt=""
+              width={640}
+              height={480}
+              className="service-photo"
+            />
+          </figure>
+        ))}
       </div>
 
       <div className="container service-body">
-        <div className="service-split">
+        <div className="service-split service-split--visual">
           <div className="service-prose">
             <h2 className="service-section-title">What is Distance Reiki?</h2>
             <p>
@@ -148,15 +191,19 @@ export default function DistanceReiki() {
               experience and any intuitive insights that came through.
             </p>
           </div>
-          <aside className="service-highlight-card">
-            <p className="service-highlight-label">Session vibe</p>
-            <ul>
-              <li>Soft · quiet · restorative</li>
-              <li>No performance, no pressure</li>
-              <li>Receive in your own space</li>
-              <li>Intention-led energetic support</li>
-            </ul>
-          </aside>
+          <figure className="service-side-visual">
+            <Image
+              src="/assets/images/reiki/reiki-hands.png"
+              alt="Open hands resting gently in soft golden light"
+              width={720}
+              height={960}
+              className="service-photo"
+            />
+            <figcaption>
+              Soft · quiet · restorative — receive in your own space, with no performance and no
+              pressure.
+            </figcaption>
+          </figure>
         </div>
 
         <div className="service-steps-block">
@@ -172,6 +219,17 @@ export default function DistanceReiki() {
             ))}
           </div>
         </div>
+
+        <figure className="service-visual-band">
+          <Image
+            src="/assets/images/reiki/reiki-nature.png"
+            alt="Soft misty forest light filtering through tall trees at dawn"
+            width={1600}
+            height={900}
+            className="service-photo"
+          />
+          <figcaption>Find a quiet place. Rest. Allow the session to unfold.</figcaption>
+        </figure>
 
         <div className="service-benefits-block">
           <p className="section-label">Why people book</p>
@@ -273,7 +331,7 @@ export default function DistanceReiki() {
           <p>
             Explore <strong>Ask the Rods</strong> — live or recorded dowsing sessions with Fillie.
           </p>
-          <Link href={ROUTES.dowsing} className="btn-ghost service-related-cta">
+          <Link href={ROUTES.dowsing} className="btn-outline service-related-cta">
             Visit Ask the Rods
           </Link>
         </div>
