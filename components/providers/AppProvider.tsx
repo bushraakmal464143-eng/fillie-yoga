@@ -36,6 +36,10 @@ type AppContextValue = {
   refreshClasses: () => Promise<void>;
   goToBookApp: () => void;
   openTrial: () => void;
+  trialModalOpen: boolean;
+  trialClassType: string | null;
+  openTrialModal: (classType?: string | null) => void;
+  closeTrialModal: () => void;
   subscribe: (planId?: string) => Promise<void>;
   cancelSub: () => Promise<void>;
   toggleBook: (id: number) => void;
@@ -60,6 +64,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [appFilter, setAppFilter] = useState("all");
   const [activeTab, setActiveTab] = useState<AppTab>("trial");
   const [hydrated, setHydrated] = useState(false);
+  const [trialModalOpen, setTrialModalOpen] = useState(false);
+  const [trialClassType, setTrialClassType] = useState<string | null>(null);
 
   const refreshClasses = useCallback(async () => {
     const response = await fetch("/api/classes");
@@ -140,10 +146,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
     router.push(ROUTES.bookApp);
   }, [pathname, router]);
 
+  const openTrialModal = useCallback((classType?: string | null) => {
+    setTrialClassType(classType?.trim() || null);
+    setTrialModalOpen(true);
+  }, []);
+
+  const closeTrialModal = useCallback(() => {
+    setTrialModalOpen(false);
+    setTrialClassType(null);
+  }, []);
+
   const openTrial = useCallback(() => {
     setActiveTab("trial");
-    goToBookApp();
-  }, [goToBookApp]);
+    openTrialModal(null);
+  }, [openTrialModal]);
 
   const subscribe = useCallback(async (planId?: string) => {
     setCheckoutError(null);
@@ -232,6 +248,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       refreshClasses,
       goToBookApp,
       openTrial,
+      trialModalOpen,
+      trialClassType,
+      openTrialModal,
+      closeTrialModal,
       subscribe,
       cancelSub,
       toggleBook,
@@ -255,6 +275,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       refreshClasses,
       goToBookApp,
       openTrial,
+      trialModalOpen,
+      trialClassType,
+      openTrialModal,
+      closeTrialModal,
       subscribe,
       cancelSub,
       toggleBook,

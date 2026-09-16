@@ -4,6 +4,8 @@ export const ROUTES = {
   schedule: "/schedule",
   teacher: "/teacher",
   pricing: "/pricing",
+  reiki: "/reiki",
+  dowsing: "/dowsing",
   admin: "/admin",
   adminClassCards: "/admin/class-cards",
   adminSessions: "/admin/sessions",
@@ -15,4 +17,9 @@ export const ROUTES = {
   adminClasses: "/admin/classes",
   sunset: "/#sunset",
   bookApp: "/#book-app",
+  wellness: "/#wellness",
 } as const;
+
+/** Public contact email used for wellness session requests. */
+export const CONTACT_EMAIL =
+  process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "filliefaragi@gmail.com";

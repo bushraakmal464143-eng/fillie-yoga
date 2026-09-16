@@ -337,6 +337,42 @@
           background: var(--white);
           color: var(--soil);
         }
+        .auth-field select {
+          width: 100%;
+          border: 1px solid rgba(139, 94, 60, 0.2);
+          border-radius: var(--radius-sm);
+          padding: 0.7rem 0.8rem;
+          font: inherit;
+          background: var(--white);
+          color: var(--soil);
+        }
+        .trial-modal-class {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding: 0.75rem 0.85rem;
+          margin: 0.25rem 0 0.5rem;
+          border-radius: var(--radius-sm);
+          background: rgba(139, 94, 60, 0.06);
+          border: 1px solid rgba(139, 94, 60, 0.12);
+        }
+        .trial-modal-class strong {
+          display: block;
+          color: var(--soil);
+          font-size: 0.95rem;
+        }
+        .trial-modal-class span {
+          display: block;
+          color: var(--clay);
+          font-size: 0.8rem;
+          margin-top: 0.15rem;
+        }
+        .trial-modal-join {
+          display: inline-flex;
+          margin: 0.5rem 0 0.75rem;
+          padding: 0.65rem 1rem;
+          font-size: 0.9rem;
+        }
         .password-field {
           position: relative;
           width: 100%;
@@ -1285,13 +1321,37 @@
         }
         .class-tag {
           display: inline-block;
-          align-self: flex-start;
-          margin-top: auto;
           font-size: 11px;
           padding: 3px 10px;
           border-radius: 20px;
           letter-spacing: 0.06em;
           text-transform: uppercase;
+        }
+        .class-card-footer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+          margin-top: auto;
+          flex-wrap: wrap;
+        }
+        .class-book-btn {
+          border: none;
+          border-radius: 8px;
+          padding: 0.55rem 1rem;
+          font: inherit;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          cursor: pointer;
+          background: var(--soil);
+          color: var(--cream);
+          transition: background 0.2s, transform 0.15s;
+        }
+        .class-book-btn:hover {
+          background: #3a2416;
+          transform: translateY(-1px);
         }
         .special-badge {
           display: inline-block;
@@ -2642,5 +2702,403 @@
           .app-tab {
             font-size: 11px;
             padding: 6px 4px;
+          }
+        }
+
+        /* WELLNESS + SERVICE PAGES */
+        .wellness-section {
+          padding: 5rem 0;
+          background: linear-gradient(180deg, var(--cream) 0%, #f3ebe0 100%);
+        }
+        .wellness-intro {
+          color: var(--clay);
+          max-width: 540px;
+          font-size: 15px;
+          margin-top: 0.75rem;
+        }
+        .wellness-grid {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1.5rem;
+          margin-top: 2.5rem;
+        }
+        .wellness-card {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          border-radius: var(--radius);
+          padding: 1.75rem;
+          box-shadow: var(--shadow);
+        }
+        .wellness-eyebrow {
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--clay);
+          margin-bottom: 0.65rem;
+        }
+        .wellness-card h3 {
+          font-size: 1.65rem;
+          color: var(--soil);
+          margin-bottom: 0.4rem;
+        }
+        .wellness-lead {
+          font-family: var(--font-display), Georgia, serif;
+          font-size: 1.05rem;
+          color: var(--bark);
+          margin-bottom: 0.75rem;
+        }
+        .wellness-card p {
+          color: var(--clay);
+          font-size: 0.95rem;
+          line-height: 1.65;
+        }
+        .wellness-meta {
+          margin-top: 1rem;
+          font-size: 0.85rem;
+          color: var(--soil);
+          font-weight: 600;
+        }
+        .wellness-cta {
+          display: inline-flex;
+          margin-top: 1.25rem;
+          text-decoration: none;
+        }
+        .service-page {
+          padding: 3.5rem 0 5rem;
+          background:
+            radial-gradient(circle at 12% 18%, rgba(212, 160, 23, 0.12), transparent 42%),
+            radial-gradient(circle at 88% 10%, rgba(142, 68, 173, 0.1), transparent 40%),
+            var(--cream);
+        }
+        .service-page--dowsing {
+          background:
+            radial-gradient(circle at 18% 12%, rgba(92, 61, 145, 0.12), transparent 42%),
+            radial-gradient(circle at 90% 20%, rgba(41, 128, 185, 0.1), transparent 38%),
+            var(--cream);
+        }
+        .service-hero {
+          max-width: 720px;
+          margin-bottom: 2.5rem;
+        }
+        .service-hero--rich {
+          max-width: 760px;
+        }
+        .service-hero-copy {
+          margin-top: 1rem;
+          color: var(--clay);
+          font-size: 1.05rem;
+          line-height: 1.75;
+          max-width: 620px;
+        }
+        .service-hero-actions {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.75rem;
+          margin-top: 1.5rem;
+        }
+        .service-hero-actions .btn-primary,
+        .service-hero-actions .btn-ghost {
+          text-decoration: none;
+        }
+        .service-title {
+          font-size: clamp(2.4rem, 5vw, 3.6rem);
+          color: var(--soil);
+          line-height: 1.1;
+          margin: 0.35rem 0 0.75rem;
+        }
+        .service-lead {
+          font-family: var(--font-display), Georgia, serif;
+          font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+          color: var(--bark);
+          font-style: italic;
+        }
+        .service-section-title {
+          font-size: clamp(1.6rem, 3vw, 2.1rem);
+          color: var(--soil);
+          margin: 0.35rem 0 1rem;
+        }
+        .service-body {
+          display: grid;
+          gap: 3rem;
+        }
+        .service-split {
+          display: grid;
+          grid-template-columns: 1.4fr 0.9fr;
+          gap: 1.5rem;
+          align-items: start;
+        }
+        .service-prose {
+          max-width: 680px;
+          display: grid;
+          gap: 1rem;
+        }
+        .service-prose--wide {
+          max-width: 760px;
+        }
+        .service-prose p {
+          color: var(--clay);
+          font-size: 1.02rem;
+          line-height: 1.75;
+        }
+        .service-worldwide {
+          margin-top: 1.25rem;
+          color: var(--soil) !important;
+          font-weight: 600;
+        }
+        .service-highlight-card {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          border-radius: var(--radius);
+          padding: 1.4rem 1.5rem;
+          box-shadow: var(--shadow);
+        }
+        .service-highlight-label {
+          font-size: 11px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: var(--clay);
+          margin-bottom: 0.85rem;
+        }
+        .service-highlight-card ul {
+          list-style: none;
+          display: grid;
+          gap: 0.65rem;
+        }
+        .service-highlight-card li {
+          color: var(--bark);
+          font-size: 0.95rem;
+          padding-left: 1rem;
+          position: relative;
+        }
+        .service-highlight-card li::before {
+          content: "";
+          position: absolute;
+          left: 0;
+          top: 0.55rem;
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: var(--clay);
+        }
+        .service-steps,
+        .service-benefits {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 1rem;
+          margin-top: 0.5rem;
+        }
+        .service-benefits {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+        .service-step,
+        .service-benefit {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.12);
+          border-radius: var(--radius);
+          padding: 1.25rem;
+        }
+        .service-step-num {
+          display: block;
+          font-size: 0.75rem;
+          letter-spacing: 0.14em;
+          color: var(--clay);
+          margin-bottom: 0.65rem;
+        }
+        .service-step h3,
+        .service-benefit h3 {
+          font-size: 1.15rem;
+          color: var(--soil);
+          margin-bottom: 0.45rem;
+        }
+        .service-step p,
+        .service-benefit p {
+          color: var(--clay);
+          font-size: 0.92rem;
+          line-height: 1.6;
+        }
+        .service-plans {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 1.25rem;
+          margin-top: 0.75rem;
+        }
+        .service-plan-card {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          border-radius: var(--radius);
+          padding: 1.6rem;
+          box-shadow: var(--shadow);
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          position: relative;
+        }
+        .service-plan-card.is-featured {
+          border-color: rgba(212, 160, 23, 0.45);
+          box-shadow: 0 8px 28px rgba(44, 26, 14, 0.12);
+        }
+        .service-plan-badge {
+          position: absolute;
+          top: 0.9rem;
+          right: 0.9rem;
+          font-size: 10px;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          background: rgba(212, 160, 23, 0.18);
+          color: var(--soil);
+          padding: 0.3rem 0.55rem;
+          border-radius: 999px;
+        }
+        .service-plan-card h2 {
+          font-size: 1.45rem;
+          color: var(--soil);
+          padding-right: 5rem;
+        }
+        .service-plan-price {
+          font-size: 2rem;
+          color: var(--soil);
+          font-family: var(--font-display), Georgia, serif;
+        }
+        .service-plan-price small {
+          font-size: 0.95rem;
+          color: var(--clay);
+          font-family: var(--font-body), "Helvetica Neue", Arial, sans-serif;
+        }
+        .service-plan-emoji {
+          font-size: 1.4rem;
+        }
+        .service-plan-details {
+          list-style: none;
+          display: grid;
+          gap: 0.4rem;
+          margin: 0.25rem 0 0.5rem;
+        }
+        .service-plan-details li {
+          color: var(--bark);
+          font-size: 0.92rem;
+          padding-left: 0.9rem;
+          position: relative;
+        }
+        .service-plan-details li::before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: var(--clay);
+          font-size: 0.8rem;
+        }
+        .service-plan-card > p {
+          color: var(--clay);
+          line-height: 1.65;
+        }
+        .service-cta {
+          display: inline-flex;
+          justify-content: center;
+          text-decoration: none;
+          margin-top: auto;
+        }
+        .service-note {
+          border-left: 3px solid rgba(139, 94, 60, 0.35);
+          padding: 0.85rem 1rem;
+          background: rgba(139, 94, 60, 0.06);
+          border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+          max-width: 760px;
+        }
+        .service-note p {
+          color: var(--clay);
+          font-size: 0.9rem;
+          line-height: 1.6;
+        }
+        .service-confirm {
+          margin-top: 0.25rem;
+          max-width: 760px;
+        }
+        .service-confirm-intro {
+          color: var(--clay);
+          margin: -0.35rem 0 1rem;
+        }
+        .service-confirm-card {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          border-radius: var(--radius);
+          padding: 1.5rem 1.6rem;
+          display: grid;
+          gap: 0.85rem;
+          box-shadow: var(--shadow);
+        }
+        .service-email-card {
+          border-top: 4px solid rgba(139, 94, 60, 0.25);
+        }
+        .service-email-meta {
+          display: grid;
+          gap: 0.2rem;
+          padding-bottom: 0.75rem;
+          margin-bottom: 0.25rem;
+          border-bottom: 1px solid rgba(139, 94, 60, 0.12);
+          font-size: 0.8rem;
+          color: var(--clay);
+        }
+        .service-confirm-card p {
+          color: var(--clay);
+          line-height: 1.7;
+        }
+        .service-confirm-title {
+          color: var(--soil) !important;
+          font-family: var(--font-display), Georgia, serif;
+          font-size: 1.2rem;
+        }
+        .service-signoff {
+          color: var(--soil) !important;
+          margin-top: 0.35rem;
+        }
+        .service-faq-list {
+          display: grid;
+          gap: 0.75rem;
+          max-width: 760px;
+        }
+        .service-faq {
+          background: var(--white);
+          border: 1px solid rgba(139, 94, 60, 0.14);
+          border-radius: var(--radius-sm);
+          padding: 0.9rem 1rem;
+        }
+        .service-faq summary {
+          cursor: pointer;
+          color: var(--soil);
+          font-weight: 600;
+          list-style: none;
+        }
+        .service-faq summary::-webkit-details-marker {
+          display: none;
+        }
+        .service-faq p {
+          margin-top: 0.65rem;
+          color: var(--clay);
+          line-height: 1.65;
+          font-size: 0.95rem;
+        }
+        .service-related {
+          max-width: 680px;
+          padding-top: 0.5rem;
+        }
+        .service-related p {
+          color: var(--clay);
+          margin-bottom: 1rem;
+          line-height: 1.65;
+        }
+        .service-related-cta {
+          text-decoration: none;
+          display: inline-flex;
+        }
+        @media (max-width: 900px) {
+          .service-split,
+          .service-steps,
+          .service-benefits,
+          .service-plans {
+            grid-template-columns: 1fr;
+          }
+        }
+        @media (max-width: 800px) {
+          .wellness-grid {
+            grid-template-columns: 1fr;
           }
         }

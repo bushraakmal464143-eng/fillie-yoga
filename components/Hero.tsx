@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useApp } from "@/components/providers/AppProvider";
+import { useBookTrial } from "@/components/hooks/useBookTrial";
 import { ROUTES } from "@/lib/routes";
 
 const TRUST_ITEMS = [
@@ -13,7 +13,7 @@ const TRUST_ITEMS = [
 ] as const;
 
 export default function Hero() {
-  const { openTrial } = useApp();
+  const bookTrial = useBookTrial();
   const [dots, setDots] = useState<
     { left: number; top: number; duration: number; delay: number }[]
   >([]);
@@ -74,7 +74,7 @@ export default function Hero() {
           </ul>
 
           <div className="hero-actions">
-            <button className="btn-primary" type="button" onClick={openTrial}>
+            <button className="btn-primary" type="button" onClick={bookTrial}>
               Book a free trial
             </button>
             <Link href={ROUTES.classes} className="btn-ghost">

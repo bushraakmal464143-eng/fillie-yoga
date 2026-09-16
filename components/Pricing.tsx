@@ -1,7 +1,9 @@
 "use client";
 
+import { useBookTrial } from "@/components/hooks/useBookTrial";
 import { useApp } from "@/components/providers/AppProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { markPendingTrial } from "@/components/TrialModal";
 import { formatPlanAmount, getPrimaryPlan } from "@/lib/pricing";
 import type { PricingPlan } from "@/lib/types";
 
@@ -10,8 +12,9 @@ type PricingProps = {
 };
 
 export default function Pricing({ plans: plansProp }: PricingProps) {
-  const { pricing, openTrial, subscribe, checkoutLoading, checkoutError } = useApp();
+  const { pricing, subscribe, checkoutLoading, checkoutError } = useApp();
   const { user, authReady, openAuth } = useAuth();
+  const bookTrial = useBookTrial();
   const plans = plansProp?.length ? plansProp : pricing;
   const primary = getPrimaryPlan(plans);
 
@@ -22,7 +25,8 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
   const requireAuthThen = (action: () => void) => {
     if (!authReady) return;
     if (!user) {
-      openAuth("signup");
+      markPendingTrial();
+      openAuth("login");
       return;
     }
     action();
@@ -61,7 +65,7 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
               <button
                 className="btn-ghost"
                 type="button"
-                onClick={() => requireAuthThen(openTrial)}
+                onClick={bookTrial}
                 style={{ marginTop: "0.75rem" }}
               >
                 {plan.trialCtaText}

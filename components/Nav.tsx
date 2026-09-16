@@ -4,13 +4,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { useApp } from "@/components/providers/AppProvider";
+import { useBookTrial } from "@/components/hooks/useBookTrial";
 import { ROUTES } from "@/lib/routes";
 import type { User } from "@/lib/types";
 
 const NAV_LINKS = [
   { href: ROUTES.classes, label: "Classes" },
   { href: ROUTES.schedule, label: "Schedule" },
+  { href: ROUTES.reiki, label: "Reiki" },
+  { href: ROUTES.dowsing, label: "Dowsing" },
   { href: ROUTES.sunset, label: "Sunset Flow" },
   { href: ROUTES.teacher, label: "Teacher" },
   { href: ROUTES.pricing, label: "Pricing" },
@@ -23,7 +25,7 @@ function welcomeLabel(user: User) {
 }
 
 export default function Nav() {
-  const { openTrial } = useApp();
+  const bookTrial = useBookTrial();
   const { user, authReady, openAuth, logout } = useAuth();
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -122,7 +124,7 @@ export default function Nav() {
           className="nav-trial nav-trial-mobile"
           type="button"
           onClick={() => {
-            openTrial();
+            bookTrial();
             closeMenu();
           }}
         >
@@ -153,7 +155,7 @@ export default function Nav() {
             </button>
           </div>
         )}
-        <button className="nav-trial" type="button" onClick={openTrial}>
+        <button className="nav-trial" type="button" onClick={bookTrial}>
           Book a trial
         </button>
         <button

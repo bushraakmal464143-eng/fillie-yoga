@@ -3,6 +3,7 @@ import CommunityBand from "@/components/CommunityBand";
 import Hero from "@/components/Hero";
 import HomePractice from "@/components/HomePractice";
 import Sunset from "@/components/Sunset";
+import WellnessOfferings from "@/components/WellnessOfferings";
 import WorldSection from "@/components/WorldSection";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <HomePractice />
       <CommunityBand />
+      <WellnessOfferings />
       <Sunset />
       <WorldSection />
       <BookApp />

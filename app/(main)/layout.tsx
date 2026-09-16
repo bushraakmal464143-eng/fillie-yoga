@@ -2,6 +2,7 @@ import Footer from "@/components/Footer";
 import HashScroll from "@/components/HashScroll";
 import Nav from "@/components/Nav";
 import RevealObserver from "@/components/RevealObserver";
+import TrialModal from "@/components/TrialModal";
 import { AppProvider } from "@/components/providers/AppProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { SOCIAL } from "@/lib/social";
@@ -32,6 +33,7 @@ export default function MainLayout({
           {children}
           <Footer />
           <RevealObserver />
+          <TrialModal />
         </AuthProvider>
       </AppProvider>
     </>

@@ -20,6 +20,8 @@ export default function Footer() {
             <li><Link href={ROUTES.home}>Home</Link></li>
             <li><Link href={ROUTES.classes}>Classes</Link></li>
             <li><Link href={ROUTES.schedule}>Schedule</Link></li>
+            <li><Link href={ROUTES.reiki}>Distance Reiki</Link></li>
+            <li><Link href={ROUTES.dowsing}>Ask the Rods</Link></li>
             <li><Link href={ROUTES.sunset}>Sunset Flow</Link></li>
             <li><Link href={ROUTES.teacher}>Teacher</Link></li>
             <li><Link href={ROUTES.pricing}>Pricing</Link></li>

@@ -1,10 +1,15 @@
+"use client";
+
 import type { ClassOffer } from "@/lib/types";
+import { useBookTrial } from "@/components/hooks/useBookTrial";
 
 type ClassesProps = {
   offers: ClassOffer[];
 };
 
 export default function Classes({ offers }: ClassesProps) {
+  const bookTrial = useBookTrial();
+
   return (
     <section id="classes" className="classes-bg">
       <div className="container">
@@ -47,12 +52,21 @@ export default function Classes({ offers }: ClassesProps) {
               </div>
               <h3>{c.title}</h3>
               <p>{c.desc}</p>
-              <span
-                className="class-tag"
-                style={{ background: c.tagBg, color: c.tagColor }}
-              >
-                {c.tag}
-              </span>
+              <div className="class-card-footer">
+                <span
+                  className="class-tag"
+                  style={{ background: c.tagBg, color: c.tagColor }}
+                >
+                  {c.tag}
+                </span>
+                <button
+                  className="class-book-btn"
+                  type="button"
+                  onClick={() => bookTrial(c.title)}
+                >
+                  Book
+                </button>
+              </div>
             </div>
           ))}
         </div>
