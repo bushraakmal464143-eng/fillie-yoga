@@ -155,7 +155,7 @@ export default function Nav() {
             </button>
           </div>
         )}
-        <button className="nav-trial" type="button" onClick={bookTrial}>
+        <button className="nav-trial" type="button" onClick={() => bookTrial()}>
           Book a trial
         </button>
         <button

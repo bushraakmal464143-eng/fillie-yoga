@@ -65,7 +65,7 @@ export default function Pricing({ plans: plansProp }: PricingProps) {
               <button
                 className="btn-ghost"
                 type="button"
-                onClick={bookTrial}
+                onClick={() => bookTrial()}
                 style={{ marginTop: "0.75rem" }}
               >
                 {plan.trialCtaText}

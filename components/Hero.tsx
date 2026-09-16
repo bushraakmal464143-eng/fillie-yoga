@@ -74,7 +74,7 @@ export default function Hero() {
           </ul>
 
           <div className="hero-actions">
-            <button className="btn-primary" type="button" onClick={bookTrial}>
+            <button className="btn-primary" type="button" onClick={() => bookTrial()}>
               Book a free trial
             </button>
             <Link href={ROUTES.classes} className="btn-ghost">
