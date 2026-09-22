@@ -6,6 +6,7 @@ export const ICON_OPTIONS = [
   { id: "icon-sunset", label: "Sunset", vb: "0 0 24 24" },
   { id: "icon-pyramid", label: "Pyramid", vb: "0 0 24 24" },
   { id: "icon-calendar", label: "Calendar", vb: "0 0 24 24" },
+  { id: "icon-map-pin", label: "Map pin", vb: "0 0 48 48" },
 ] as const;
 
 export function getIconMeta(iconId: string) {

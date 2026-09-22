@@ -13,20 +13,16 @@ export default function Classes({ offers }: ClassesProps) {
   return (
     <section id="classes" className="classes-bg">
       <div className="container">
-        <p className="section-label" style={{ "--reveal-delay": 0 } as React.CSSProperties}>
-          What we offer
-        </p>
-        <h2 className="section-title">Move with the world</h2>
-        <p
-          style={{
-            color: "var(--clay)",
-            maxWidth: 520,
-            fontSize: 15,
-          }}
-        >
-          {offers.length} live class{offers.length === 1 ? "" : "es"} daily, led by Fillie Faragi and
-          shared with practitioners across every continent.
-        </p>
+        <div className="classes-intro">
+          <p className="section-label" style={{ "--reveal-delay": 0 } as React.CSSProperties}>
+            What we offer
+          </p>
+          <h2 className="section-title">Move with the world</h2>
+          <p>
+            {offers.length} live class{offers.length === 1 ? "" : "es"} daily, led by Fillie Faragi and
+            shared with practitioners across every continent.
+          </p>
+        </div>
         <div className="classes-grid">
           {offers.map((c) => (
             <div
@@ -64,7 +60,7 @@ export default function Classes({ offers }: ClassesProps) {
                   type="button"
                   onClick={() => bookTrial(c.title)}
                 >
-                  Book
+                  Book class
                 </button>
               </div>
             </div>

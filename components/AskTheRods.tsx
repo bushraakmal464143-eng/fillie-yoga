@@ -173,19 +173,21 @@ export default function AskTheRods() {
           <figcaption>Wonder about love, a decision, travel — or whatever is on your mind.</figcaption>
         </figure>
 
-        <div className="service-prose service-prose--wide">
-          <p>
+        <div className="service-reflect">
+          <p className="section-label">Come curious</p>
+          <blockquote className="service-reflect-quote">
             Whether you&apos;re wondering about love, a decision, a new opportunity, travel, or
-            simply something that&apos;s been on your mind, come with an open mind and a little
+            simply something that&apos;s been on your mind — come with an open mind and a little
             curiosity.
-          </p>
-          <p>
+          </blockquote>
+          <p className="service-reflect-aside">
             Sometimes the answer is yes. Sometimes it&apos;s no. And sometimes the most interesting
             part is what the question reveals.
           </p>
         </div>
 
         <aside className="service-note">
+          <p className="service-note-label">A gentle reminder</p>
           <p>
             Dowsing is offered as a spiritual/intuitive and entertainment practice. It should not be
             used as a substitute for medical, legal, financial, or other professional advice.
@@ -193,15 +195,28 @@ export default function AskTheRods() {
         </aside>
 
         <div className="service-related">
-          <p className="section-label">Also from Om at Home</p>
-          <h2 className="service-section-title">Prefer a quiet energetic reset?</h2>
-          <p>
-            Explore <strong>Distance Reiki</strong> — gentle energy healing you can receive from
-            anywhere in the world.
-          </p>
-          <Link href={ROUTES.reiki} className="btn-outline service-related-cta">
-            Visit Distance Reiki
-          </Link>
+          <div className="service-related-card">
+            <div className="service-related-copy">
+              <p className="section-label">Also from Om At Home</p>
+              <h2 className="service-section-title">Prefer a quiet energetic reset?</h2>
+              <p>
+                Explore <strong>Distance Reiki</strong> — gentle energy healing you can receive from
+                anywhere in the world.
+              </p>
+              <Link href={ROUTES.reiki} className="btn-primary service-related-cta">
+                Visit Distance Reiki
+              </Link>
+            </div>
+            <figure className="service-related-visual">
+              <Image
+                src="/assets/images/reiki/reiki-space.png"
+                alt="Quiet corner with soft morning light for Distance Reiki"
+                width={640}
+                height={480}
+                className="service-photo"
+              />
+            </figure>
+          </div>
         </div>
       </div>
     </section>

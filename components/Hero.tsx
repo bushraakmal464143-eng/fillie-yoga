@@ -115,7 +115,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <a href="#practice" className="hero-scroll" aria-label="Scroll to explore">
+      <a href="#features" className="hero-scroll" aria-label="Scroll to explore">
         <span>Discover</span>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 5v14M5 12l7 7 7-7" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

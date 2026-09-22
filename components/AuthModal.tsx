@@ -109,12 +109,17 @@ export default function AuthModal() {
   const isVerifyStep = authMode === "signup" && signupStep === "verify";
 
   return (
-    <div className="auth-overlay">
+    <div
+      className="auth-overlay"
+      onClick={closeAuth}
+      role="presentation"
+    >
       <div
         className="auth-modal"
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-modal-title"
+        onClick={(event) => event.stopPropagation()}
       >
         <button className="auth-close" type="button" aria-label="Close" onClick={closeAuth}>
           ×

@@ -280,35 +280,44 @@ export default function DistanceReiki() {
           </p>
         </aside>
 
-        <div className="service-confirm">
-          <p className="section-label">Confirmation email</p>
-          <h2 className="service-section-title">What you&apos;ll receive after booking</h2>
-          <p className="service-confirm-intro">
-            Once your session is set, you&apos;ll get a warm confirmation like this:
+        <div className="service-after">
+          <p className="section-label">After you book</p>
+          <h2 className="service-section-title">A gentle path from request to rest</h2>
+          <p className="service-after-lead">
+            Once your session is set, everything arrives quietly — no rush, no performance, just
+            space to receive.
           </p>
-          <div className="service-confirm-card service-email-card">
-            <div className="service-email-meta">
-              <span>From: Om at Home</span>
-              <span>Subject: Your Distance Reiki session is confirmed</span>
-            </div>
-            <p className="service-confirm-title">
-              Your Distance Reiki session with Om at Home is confirmed. ✨
-            </p>
-            <p>Thank you for trusting us with your practice.</p>
-            <p>
-              You don&apos;t need to prepare anything complicated. When your session approaches,
-              find a quiet and comfortable place where you can relax and allow yourself to receive.
-            </p>
-            <p>Your practitioner will hold the session with your intention in mind.</p>
-            <p>
-              After your session, you&apos;ll receive a follow-up message with any reflections or
-              intuitive insights from the experience.
-            </p>
-            <p className="service-signoff">
-              With love and light,
-              <br />
-              Om at Home 🌿
-            </p>
+          <div className="service-after-grid">
+            <article className="service-after-item">
+              <span className="service-after-num" aria-hidden="true">
+                01
+              </span>
+              <h3>Confirmation</h3>
+              <p>
+                You&apos;ll receive a warm note confirming your session time, so you can settle in
+                with ease.
+              </p>
+            </article>
+            <article className="service-after-item">
+              <span className="service-after-num" aria-hidden="true">
+                02
+              </span>
+              <h3>Prepare simply</h3>
+              <p>
+                Find a quiet, comfortable place. Rest, set an intention, and allow yourself to
+                receive — nothing complicated required.
+              </p>
+            </article>
+            <article className="service-after-item">
+              <span className="service-after-num" aria-hidden="true">
+                03
+              </span>
+              <h3>Follow-up care</h3>
+              <p>
+                Afterward, a short message arrives with reflections and any intuitive insights from
+                the experience.
+              </p>
+            </article>
           </div>
         </div>
 
@@ -326,14 +335,28 @@ export default function DistanceReiki() {
         </div>
 
         <div className="service-related">
-          <p className="section-label">Also from Om at Home</p>
-          <h2 className="service-section-title">Curious about intuitive guidance?</h2>
-          <p>
-            Explore <strong>Ask the Rods</strong> — live or recorded dowsing sessions with Fillie.
-          </p>
-          <Link href={ROUTES.dowsing} className="btn-outline service-related-cta">
-            Visit Ask the Rods
-          </Link>
+          <div className="service-related-card">
+            <div className="service-related-copy">
+              <p className="section-label">Also from Om At Home</p>
+              <h2 className="service-section-title">Curious about intuitive guidance?</h2>
+              <p>
+                Explore <strong>Ask the Rods</strong> — live or recorded dowsing sessions with
+                Fillie.
+              </p>
+              <Link href={ROUTES.dowsing} className="btn-primary service-related-cta">
+                Visit Ask the Rods
+              </Link>
+            </div>
+            <figure className="service-related-visual">
+              <Image
+                src="/assets/images/dowsing/dowsing-rods.png"
+                alt="Antique brass dowsing rods resting on soft linen"
+                width={640}
+                height={480}
+                className="service-photo"
+              />
+            </figure>
+          </div>
         </div>
       </div>
     </section>

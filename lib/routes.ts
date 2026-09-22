@@ -18,6 +18,7 @@ export const ROUTES = {
   sunset: "/#sunset",
   bookApp: "/#book-app",
   wellness: "/#wellness",
+  features: "/#features",
 } as const;
 
 /** Public contact email used for wellness session requests. */

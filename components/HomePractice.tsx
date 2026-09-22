@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useJoinClass } from "@/components/hooks/useJoinClass";
+import { useApp } from "@/components/providers/AppProvider";
+import { getIconMeta } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
 
 const PRACTICES = [
@@ -23,11 +28,28 @@ const PRACTICES = [
     color: "#1e7a4a",
     bg: "rgba(30, 122, 74, 0.1)",
   },
+  {
+    title: "Heart Opening Yin",
+    desc: "Gentle chest and shoulder openers that invite softness, breath, and emotional release.",
+    icon: "icon-heart-yin",
+    color: "#a07010",
+    bg: "rgba(212, 160, 23, 0.12)",
+  },
+  {
+    title: "Sunset Flow",
+    desc: "A special live practice streamed from the Giza Pyramids — shared across the globe each quarter.",
+    icon: "icon-sunset",
+    color: "#c0392b",
+    bg: "rgba(192, 57, 43, 0.1)",
+  },
 ] as const;
 
 export default function HomePractice() {
+  const { joinClass, checkoutLoading } = useJoinClass();
+  const { checkoutError } = useApp();
+
   return (
-        <section className="home-practice" id="practice">
+    <section className="home-practice" id="practice">
       <div className="container">
         <p className="section-label reveal" style={{ "--reveal-delay": 0 } as React.CSSProperties}>
           Your practice
@@ -43,30 +65,47 @@ export default function HomePractice() {
         </p>
 
         <div className="practice-grid">
-          {PRACTICES.map((practice, index) => (
-            <article
-              key={practice.title}
-              className="practice-card reveal"
-              style={
-                {
-                  "--reveal-delay": index + 3,
-                  "--practice-color": practice.color,
-                  "--practice-bg": practice.bg,
-                } as React.CSSProperties
-              }
-            >
-              <div className="practice-icon">
-                <svg viewBox="0 0 48 48" aria-hidden="true">
-                  <use href={`#${practice.icon}`} />
-                </svg>
-              </div>
-              <h3>{practice.title}</h3>
-              <p>{practice.desc}</p>
-            </article>
-          ))}
+          {PRACTICES.map((practice, index) => {
+            const icon = getIconMeta(practice.icon);
+            return (
+              <article
+                key={practice.title}
+                className="practice-card reveal"
+                style={
+                  {
+                    "--reveal-delay": index + 3,
+                    "--practice-color": practice.color,
+                    "--practice-bg": practice.bg,
+                  } as React.CSSProperties
+                }
+              >
+                <div className="practice-icon">
+                  <svg viewBox={icon.vb} aria-hidden="true">
+                    <use href={`#${icon.id}`} />
+                  </svg>
+                </div>
+                <h3>{practice.title}</h3>
+                <p>{practice.desc}</p>
+                <button
+                  className="practice-join-btn"
+                  type="button"
+                  disabled={checkoutLoading}
+                  onClick={joinClass}
+                >
+                  {checkoutLoading ? "Redirecting…" : "Join class"}
+                </button>
+              </article>
+            );
+          })}
         </div>
 
-        <div className="home-practice-cta reveal" style={{ "--reveal-delay": 6 } as React.CSSProperties}>
+        {checkoutError && (
+          <p className="home-practice-error" role="alert">
+            {checkoutError}
+          </p>
+        )}
+
+        <div className="home-practice-cta reveal" style={{ "--reveal-delay": 8 } as React.CSSProperties}>
           <Link href={ROUTES.classes} className="btn-primary">
             View all classes
           </Link>
