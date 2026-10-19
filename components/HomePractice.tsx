@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/components/providers/AppProvider";
 import { getIconMeta } from "@/lib/icons";
+import { normalizeMeetingUrl, resolveMeetingUrl } from "@/lib/meeting-url";
 import { ROUTES } from "@/lib/routes";
 
 const FALLBACK_PRACTICES = [
@@ -45,9 +46,8 @@ const FALLBACK_PRACTICES = [
 ] as const;
 
 function openZoomLink(url?: string) {
-  const trimmed = url?.trim();
-  if (!trimmed) return false;
-  const href = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  const href = normalizeMeetingUrl(url);
+  if (!href) return false;
   window.open(href, "_blank", "noopener,noreferrer");
   return true;
 }
@@ -65,7 +65,7 @@ export default function HomePractice() {
           icon: offer.icon,
           color: offer.iconColor,
           bg: offer.iconBg,
-          meetingUrl: offer.meetingUrl,
+          meetingUrl: resolveMeetingUrl({ type: offer.title, meetingUrl: offer.meetingUrl }, offers),
         }))
       : FALLBACK_PRACTICES.map((practice) => ({
           key: practice.title,
@@ -74,7 +74,7 @@ export default function HomePractice() {
           icon: practice.icon,
           color: practice.color,
           bg: practice.bg,
-          meetingUrl: undefined as string | undefined,
+          meetingUrl: resolveMeetingUrl({ type: practice.title }, offers),
         }));
 
   const handleJoin = (meetingUrl?: string) => {

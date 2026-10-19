@@ -12,6 +12,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { startStripeCheckout } from "@/lib/checkout";
 import { DEFAULT_OFFERS, DEFAULT_PRICING } from "@/lib/default-store";
+import { withResolvedMeetingUrls } from "@/lib/meeting-url";
 import { buildClasses } from "@/lib/schedule";
 import { getPrimaryPlan } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
@@ -85,7 +86,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       pricing?: PricingPlan[];
     };
     setOffers(data.offers);
-    setAllClasses(data.sessions);
+    setAllClasses(withResolvedMeetingUrls(data.sessions ?? [], data.offers ?? []));
     if (data.pricing?.length) setPricing(data.pricing);
     setClassesLoaded(true);
   }, []);

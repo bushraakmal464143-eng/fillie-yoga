@@ -16,7 +16,7 @@ const APP_TABS: { id: AppTab; label: string }[] = [
   { id: "myclasses", label: "My Classes" },
 ];
 
-function JoinMeetingButton({ url }: { url?: string }) {
+function JoinMeetingButton({ url, label = "Join lesson" }: { url?: string; label?: string }) {
   if (!url) return null;
   return (
     <a
@@ -25,7 +25,7 @@ function JoinMeetingButton({ url }: { url?: string }) {
       target="_blank"
       rel="noopener noreferrer"
     >
-      Join meeting
+      {label}
     </a>
   );
 }
@@ -350,14 +350,18 @@ function AppSchedulePanel() {
                   </div>
                   <div className="sc-right">
                     <div className="sc-spots">{c.special ? "Global event" : `${c.spots} spots`}</div>
-                    <button
-                      className={`bk-btn${isB ? " booked" : ""}`}
-                      type="button"
-                      onClick={() => toggleBook(c.id)}
-                      disabled={isB}
-                    >
-                      {isB ? "✓ Booked" : c.special ? "Notify" : "Book"}
-                    </button>
+                    {isB && c.meetingUrl ? (
+                      <JoinMeetingButton url={c.meetingUrl} />
+                    ) : (
+                      <button
+                        className={`bk-btn${isB ? " booked" : ""}`}
+                        type="button"
+                        onClick={() => toggleBook(c.id)}
+                        disabled={isB}
+                      >
+                        {isB ? "✓ Booked" : c.special ? "Notify" : "Book"}
+                      </button>
+                    )}
                   </div>
                 </div>
               );
