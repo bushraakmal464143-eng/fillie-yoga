@@ -3,6 +3,7 @@ import { recordAuthEvent } from "@/lib/admin-members";
 import {
   clearAdminSession,
   isAdminCredentials,
+  isAdminEmail,
   setAdminSession,
 } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
@@ -44,21 +45,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please enter your email and password." }, { status: 400 });
   }
 
-  const adminLogin = isAdminCredentials(email, password);
+  const adminCreds = isAdminCredentials(email, password);
+  const adminEmail = isAdminEmail(email);
 
   if (isSupabaseConfigured()) {
     let result = await signInWithSupabase(email, password);
 
-    if (result.error && adminLogin) {
+    // Sync / create the admin Auth user when env credentials match.
+    if (result.error && adminCreds) {
       result = await ensureAndSignInAdmin({ email, password });
     }
 
-    if (result.error && !adminLogin) {
+    if (result.error && !adminCreds) {
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
 
     if (result.error || !result.user) {
-      if (!adminLogin) {
+      if (!adminCreds) {
         return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
       }
 
@@ -78,13 +81,16 @@ export async function POST(request: Request) {
 
     await recordLogin(result.user, request);
 
-    const response = NextResponse.json({ user: result.user, isAdmin: adminLogin });
-    if (adminLogin) setAdminSession(response);
+    // Any successful login as the admin email opens the studio desk
+    // (covers Vercel env quirks where ADMIN_PASSWORD $ may be truncated).
+    const grantAdmin = adminEmail || adminCreds;
+    const response = NextResponse.json({ user: result.user, isAdmin: grantAdmin });
+    if (grantAdmin) setAdminSession(response);
     else clearAdminSession(response);
     return response;
   }
 
-  if (adminLogin) {
+  if (adminCreds) {
     const user = await ensureAdminUser({
       email,
       password,

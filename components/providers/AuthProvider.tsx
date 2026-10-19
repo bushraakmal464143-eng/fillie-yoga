@@ -116,7 +116,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthOpen(false);
 
     if (data.isAdmin) {
-      window.location.assign("/admin");
+      // Full navigation so the admin cookie is applied before /admin loads.
+      window.location.href = "/admin";
+      return null;
     }
 
     return null;

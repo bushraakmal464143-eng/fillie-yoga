@@ -41,6 +41,7 @@ export function setAdminSession(response: NextResponse) {
   response.cookies.set(ADMIN_COOKIE, getAdminToken(), {
     httpOnly: true,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });
@@ -50,6 +51,7 @@ export function clearAdminSession(response: NextResponse) {
   response.cookies.set(ADMIN_COOKIE, "", {
     httpOnly: true,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: 0,
   });
