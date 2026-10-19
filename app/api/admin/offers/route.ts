@@ -3,6 +3,13 @@ import { requireAdmin } from "@/lib/auth";
 import { addOffer, deleteOffer, getOffers, updateOffer } from "@/lib/store";
 import type { ClassOffer } from "@/lib/types";
 
+function normalizeMeetingUrl(url?: string): string | undefined {
+  const trimmed = url?.trim();
+  if (!trimmed) return undefined;
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `https://${trimmed}`;
+}
+
 function offerPayload(body: Omit<ClassOffer, "id" | "key"> & { key?: string }) {
   return {
     icon: body.icon || "icon-yin",
@@ -16,6 +23,7 @@ function offerPayload(body: Omit<ClassOffer, "id" | "key"> & { key?: string }) {
     tag: body.tag.trim(),
     schedule: body.schedule,
     special: Boolean(body.special),
+    meetingUrl: normalizeMeetingUrl(body.meetingUrl),
     key: body.key,
   };
 }

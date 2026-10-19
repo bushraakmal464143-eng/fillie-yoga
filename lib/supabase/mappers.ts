@@ -14,6 +14,7 @@ type OfferRow = {
   tag: string;
   schedule: OfferSchedule | null;
   special: boolean;
+  meeting_url?: string | null;
   sort_order: number;
 };
 
@@ -63,6 +64,7 @@ export function offerFromRow(row: OfferRow): ClassOffer {
     tag: row.tag,
     schedule: row.schedule ?? undefined,
     special: row.special || undefined,
+    meetingUrl: row.meeting_url?.trim() || undefined,
   };
 }
 
@@ -84,6 +86,7 @@ export function offerToRow(
     tag: offer.tag,
     schedule: offer.schedule ?? null,
     special: Boolean(offer.special),
+    meeting_url: offer.meetingUrl?.trim() || null,
     sort_order: sortOrder,
   };
 }

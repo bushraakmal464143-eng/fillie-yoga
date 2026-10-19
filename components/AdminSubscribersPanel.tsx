@@ -150,24 +150,16 @@ export default function AdminSubscribersPanel() {
     return (
       <div className="admin-page">
         <div className="admin-shell admin-shell--narrow">
-          <form className="admin-login" onSubmit={handleLogin}>
+          <div className="admin-login">
             <h1>Subscribers admin</h1>
-            <p>Sign in to view Stripe subscription details.</p>
-            <div className="admin-field">
-              <label htmlFor="admin-password">Password</label>
-              <PasswordInput
-                id="admin-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter admin password"
-                autoFocus
-              />
-            </div>
-            {error && <p className="admin-error">{error}</p>}
-            <button className="admin-btn" type="submit" disabled={busy} style={{ width: "100%", marginTop: "1rem" }}>
-              {busy ? "Signing in…" : "Sign in"}
-            </button>
-          </form>
+            <p>
+              There is no separate admin login. Sign in on the main site with your admin email and
+              password, then return here.
+            </p>
+            <a className="admin-btn" href="/?login=1" style={{ display: "inline-flex", marginTop: "1rem" }}>
+              Log in on the main site
+            </a>
+          </div>
         </div>
       </div>
     );

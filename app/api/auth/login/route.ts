@@ -1,10 +1,35 @@
 import { NextResponse } from "next/server";
 import { recordAuthEvent } from "@/lib/admin-members";
+import {
+  clearAdminSession,
+  isAdminCredentials,
+  setAdminSession,
+} from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
-import { signInWithSupabase } from "@/lib/supabase-user";
-import { findUserByEmail, touchUserLogin } from "@/lib/user-store";
+import { ensureAndSignInAdmin, signInWithSupabase } from "@/lib/supabase-user";
+import { ensureAdminUser, findUserByEmail, touchUserLogin } from "@/lib/user-store";
 import { getClientMeta, recordLoginEvent } from "@/lib/login-log";
 import { setUserSession, toPublicUser, verifyPassword } from "@/lib/user-auth";
+import type { User } from "@/lib/types";
+
+async function recordLogin(user: User, request: Request) {
+  const meta = getClientMeta(request);
+  await recordLoginEvent({
+    userId: user.id,
+    name: user.name,
+    email: user.email,
+    action: "login",
+    ip: meta.ip,
+    userAgent: meta.userAgent,
+  });
+  await recordAuthEvent({
+    userId: user.id,
+    email: user.email,
+    name: user.name,
+    eventType: "login",
+    headers: request.headers,
+  });
+}
 
 export async function POST(request: Request) {
   const body = (await request.json()) as {
@@ -19,33 +44,59 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please enter your email and password." }, { status: 400 });
   }
 
-  const meta = getClientMeta(request);
+  const adminLogin = isAdminCredentials(email, password);
 
   if (isSupabaseConfigured()) {
-    const result = await signInWithSupabase(email, password);
-    if (result.error) {
+    let result = await signInWithSupabase(email, password);
+
+    if (result.error && adminLogin) {
+      result = await ensureAndSignInAdmin({ email, password });
+    }
+
+    if (result.error && !adminLogin) {
       return NextResponse.json({ error: result.error }, { status: 401 });
     }
 
-    if (result.user) {
-      await recordLoginEvent({
-        userId: result.user.id,
-        name: result.user.name,
-        email: result.user.email,
-        action: "login",
-        ip: meta.ip,
-        userAgent: meta.userAgent,
-      });
-      await recordAuthEvent({
-        userId: result.user.id,
-        email: result.user.email,
-        name: result.user.name,
-        eventType: "login",
-        headers: request.headers,
-      });
+    if (result.error || !result.user) {
+      if (!adminLogin) {
+        return NextResponse.json({ error: "Invalid email or password." }, { status: 401 });
+      }
+
+      // Last resort: desk access via admin cookie if Auth sync failed.
+      const fallbackUser: User = {
+        id: "admin-local",
+        name: "Studio Admin",
+        email: email.trim().toLowerCase(),
+        createdAt: Date.now(),
+        lastLoginAt: Date.now(),
+      };
+      await recordLogin(fallbackUser, request);
+      const response = NextResponse.json({ user: fallbackUser, isAdmin: true });
+      setAdminSession(response);
+      return response;
     }
 
-    return NextResponse.json({ user: result.user });
+    await recordLogin(result.user, request);
+
+    const response = NextResponse.json({ user: result.user, isAdmin: adminLogin });
+    if (adminLogin) setAdminSession(response);
+    else clearAdminSession(response);
+    return response;
+  }
+
+  if (adminLogin) {
+    const user = await ensureAdminUser({
+      email,
+      password,
+      name: "Studio Admin",
+    });
+    await touchUserLogin(user.id);
+    await recordLogin(user, request);
+
+    const response = NextResponse.json({ user, isAdmin: true });
+    setUserSession(response, user.id);
+    setAdminSession(response);
+    return response;
   }
 
   const user = await findUserByEmail(email);
@@ -54,18 +105,11 @@ export async function POST(request: Request) {
   }
 
   await touchUserLogin(user.id);
-  await recordLoginEvent({
-    userId: user.id,
-    name: user.name,
-    email: user.email,
-    action: "login",
-    ip: meta.ip,
-    userAgent: meta.userAgent,
-  });
+  await recordLogin(toPublicUser(user), request);
 
-  const response = NextResponse.json({
-    user: toPublicUser({ ...user, lastLoginAt: Date.now() }),
-  });
+  const publicUser = toPublicUser({ ...user, lastLoginAt: Date.now() });
+  const response = NextResponse.json({ user: publicUser, isAdmin: false });
   setUserSession(response, user.id);
+  clearAdminSession(response);
   return response;
 }

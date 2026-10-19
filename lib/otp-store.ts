@@ -4,6 +4,9 @@ import path from "path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 
+/** Marker stored in the shared OTP table/file for password-reset rows. */
+export const PASSWORD_RESET_OTP_NAME = "__password_reset__";
+
 export type PendingSignup = {
   email: string;
   name: string;
@@ -171,7 +174,7 @@ export async function verifyStoredSignupOtp(input: {
 
   if (isSupabaseConfigured()) {
     const pending = await getSupabasePending(email, now);
-    if (!pending) {
+    if (!pending || pending.name === PASSWORD_RESET_OTP_NAME) {
       return { error: "Code expired or not found. Request a new one." };
     }
 
@@ -196,7 +199,9 @@ export async function verifyStoredSignupOtp(input: {
   const store = await readFileStore();
   store.pending = store.pending.filter((row) => row.expiresAt > now);
 
-  const index = store.pending.findIndex((row) => row.email === email);
+  const index = store.pending.findIndex(
+    (row) => row.email === email && row.name !== PASSWORD_RESET_OTP_NAME,
+  );
   if (index === -1) {
     await writeFileStore(store);
     return { error: "Code expired or not found. Request a new one." };
@@ -232,4 +237,81 @@ export async function clearSignupOtp(email: string): Promise<void> {
   const store = await readFileStore();
   store.pending = store.pending.filter((row) => row.email !== normalized);
   await writeFileStore(store);
+}
+
+export async function savePasswordResetOtp(input: {
+  email: string;
+  code: string;
+}): Promise<{ error: string | null }> {
+  return saveSignupOtp({
+    email: input.email,
+    name: PASSWORD_RESET_OTP_NAME,
+    code: input.code,
+  });
+}
+
+export async function verifyStoredPasswordResetOtp(input: {
+  email: string;
+  code: string;
+}): Promise<{ ok: true } | { error: string }> {
+  const email = normalizeEmail(input.email);
+  const code = input.code.trim();
+  const now = Date.now();
+
+  if (isSupabaseConfigured()) {
+    const pending = await getSupabasePending(email, now);
+    if (!pending || pending.name !== PASSWORD_RESET_OTP_NAME) {
+      return { error: "Code expired or not found. Request a new one." };
+    }
+
+    if (pending.attempts >= MAX_ATTEMPTS) {
+      await createAdminClient().from("signup_otps").delete().eq("email", email);
+      return { error: "Too many invalid attempts. Request a new code." };
+    }
+
+    if (!codesMatch(email, code, pending.codeHash)) {
+      const { error } = await createAdminClient()
+        .from("signup_otps")
+        .update({ attempts: pending.attempts + 1 })
+        .eq("email", email);
+      if (error) console.error("[signup_otps] attempt update failed:", error);
+      return { error: "Invalid or expired code. Please try again." };
+    }
+
+    await createAdminClient().from("signup_otps").delete().eq("email", email);
+    return { ok: true };
+  }
+
+  const store = await readFileStore();
+  store.pending = store.pending.filter((row) => row.expiresAt > now);
+
+  const index = store.pending.findIndex(
+    (row) => row.email === email && row.name === PASSWORD_RESET_OTP_NAME,
+  );
+  if (index === -1) {
+    await writeFileStore(store);
+    return { error: "Code expired or not found. Request a new one." };
+  }
+
+  const pending = store.pending[index];
+  if (pending.attempts >= MAX_ATTEMPTS) {
+    store.pending.splice(index, 1);
+    await writeFileStore(store);
+    return { error: "Too many invalid attempts. Request a new code." };
+  }
+
+  if (!codesMatch(email, code, pending.codeHash)) {
+    pending.attempts += 1;
+    store.pending[index] = pending;
+    await writeFileStore(store);
+    return { error: "Invalid or expired code. Please try again." };
+  }
+
+  store.pending.splice(index, 1);
+  await writeFileStore(store);
+  return { ok: true };
+}
+
+export async function clearPasswordResetOtp(email: string): Promise<void> {
+  await clearSignupOtp(email);
 }

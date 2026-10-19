@@ -9,37 +9,37 @@ const SECTIONS = [
   {
     href: ROUTES.adminClassCards,
     label: "Class cards",
-    description: "Overview cards on the public Classes page.",
+    description: "Public class list on the Classes page",
     countKey: "offers" as const,
   },
   {
     href: ROUTES.adminSessions,
     label: "Sessions",
-    description: "Schedule page and booking calendar sessions.",
+    description: "Weekly schedule times and Zoom links",
     countKey: "sessions" as const,
   },
   {
     href: ROUTES.adminPricing,
     label: "Pricing",
-    description: "Membership plans on Pricing and in the booking app.",
+    description: "Membership plans and prices",
     countKey: "pricing" as const,
   },
   {
     href: ROUTES.adminMembers,
     label: "Members",
-    description: "Who signed up for an account.",
+    description: "People who created an account",
     countKey: "members" as const,
   },
   {
     href: ROUTES.adminSubscriptions,
     label: "Subscriptions",
-    description: "Paid memberships and plan status.",
+    description: "Paid Stripe memberships",
     countKey: "subscriptions" as const,
   },
   {
     href: ROUTES.adminBookings,
     label: "Bookings",
-    description: "Class bookings from members and guests.",
+    description: "Trial lessons and class bookings",
     countKey: "bookings" as const,
   },
 ] as const;
@@ -51,44 +51,29 @@ export default function AdminDashboard() {
     void refreshCounts();
   }, [refreshKey, refreshCounts]);
 
-  const summary = [
-    SECTIONS[0],
-    SECTIONS[1],
-    SECTIONS[2],
-    SECTIONS[3],
-    SECTIONS[4],
-  ];
-
   return (
-    <>
-      <div className="admin-stats" aria-label="Content summary">
-        {summary.map((section) => (
-          <Link key={section.href} href={section.href} className="admin-stat admin-stat--link">
-            <span className="admin-stat-value">{counts[section.countKey]}</span>
-            <span className="admin-stat-label">{section.label}</span>
+    <section className="admin-home">
+      <header className="admin-home-head">
+        <h2>Dashboard</h2>
+        <p>Open a section to edit content or review activity.</p>
+      </header>
+
+      <div className="admin-dash-list" aria-label="Admin sections">
+        {SECTIONS.map((section) => (
+          <Link key={section.href} href={section.href} className="admin-dash-row">
+            <div className="admin-dash-row-copy">
+              <strong>{section.label}</strong>
+              <span>{section.description}</span>
+            </div>
+            <div className="admin-dash-row-meta">
+              <span className="admin-dash-row-count">{counts[section.countKey] ?? 0}</span>
+              <span className="admin-dash-row-go" aria-hidden="true">
+                Open
+              </span>
+            </div>
           </Link>
         ))}
       </div>
-
-      <section className="admin-card admin-card--wide">
-        <div className="admin-card-head">
-          <div>
-            <p className="admin-card-kicker">Studio desk</p>
-            <h2>Dashboard</h2>
-          </div>
-        </div>
-        <p>Jump into a section to manage content or review member activity.</p>
-
-        <div className="admin-dash-grid">
-          {SECTIONS.map((section) => (
-            <Link key={section.href} href={section.href} className="admin-dash-card">
-              <span className="admin-dash-card-count">{counts[section.countKey]}</span>
-              <strong>{section.label}</strong>
-              <span>{section.description}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </>
+    </section>
   );
 }

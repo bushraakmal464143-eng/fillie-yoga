@@ -33,6 +33,8 @@ export type ClassOffer = {
   tag: string;
   schedule?: OfferSchedule;
   special?: boolean;
+  /** Zoom / Meet join link for this class card (set in admin). */
+  meetingUrl?: string;
 };
 
 export type PricingPlan = {

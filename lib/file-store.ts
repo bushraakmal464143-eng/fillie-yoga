@@ -128,7 +128,9 @@ export async function addOffer(
     id: `offer-${crypto.randomUUID()}`,
     key,
     schedule: offer.schedule,
+    meetingUrl: offer.meetingUrl?.trim() || undefined,
   };
+  if (!newOffer.meetingUrl) delete newOffer.meetingUrl;
   store.offers.push(newOffer);
   await writeStore(store);
   return newOffer;
@@ -167,7 +169,9 @@ export async function updateOffer(
     desc: updates.desc.trim(),
     tag: updates.tag.trim(),
     schedule: updates.schedule,
+    meetingUrl: updates.meetingUrl?.trim() || undefined,
   };
+  if (!updated.meetingUrl) delete updated.meetingUrl;
 
   store.offers[index] = updated;
   await writeStore(store);

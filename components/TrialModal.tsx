@@ -45,6 +45,7 @@ export default function TrialModal() {
     allClasses,
     offers,
     submitTrial,
+    cancelTrial,
     primaryPlan,
     setActiveTab,
     goToBookApp,
@@ -52,6 +53,7 @@ export default function TrialModal() {
   const { user } = useAuth();
   const [classId, setClassId] = useState("");
   const [busy, setBusy] = useState(false);
+  const [cancelBusy, setCancelBusy] = useState(false);
   const [error, setError] = useState("");
 
   const availableClasses = useMemo(() => {
@@ -66,7 +68,6 @@ export default function TrialModal() {
     if (!trialModalOpen) return;
     setError("");
     setBusy(false);
-    // Prefill the only matching time, or first option for that class.
     if (availableClasses.length === 1) {
       setClassId(String(availableClasses[0].id));
     } else if (
@@ -88,7 +89,6 @@ export default function TrialModal() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset when modal opens / filter changes
   }, [trialModalOpen, closeTrialModal, availableClasses]);
 
-  // After login/signup from a trial CTA, open the details popup.
   useEffect(() => {
     if (!user) return;
     const { pending, classType } = consumePendingTrial();
@@ -98,9 +98,13 @@ export default function TrialModal() {
 
   if (!trialModalOpen) return null;
 
-  const selected = allClasses.find((c) => c.id === Number(classId));
+  const bookedClass = trialBooking
+    ? allClasses.find((c) => c.id === trialBooking.classId)
+    : undefined;
 
-  const handleSubmit = (event: FormEvent) => {
+  const firstName = (trialBooking?.name || user?.name || "friend").trim().split(/\s+/)[0];
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!user) return;
     const id = parseInt(classId, 10);
@@ -108,9 +112,24 @@ export default function TrialModal() {
       setError("Please choose a class time.");
       return;
     }
+    const selectedClass = allClasses.find((c) => c.id === id);
+    if (!selectedClass) {
+      setError("Please choose a class time.");
+      return;
+    }
     setBusy(true);
     setError("");
-    submitTrial({ name: user.name, email: user.email, classId: id });
+    const bookError = await submitTrial({
+      name: user.name,
+      email: user.email,
+      classId: id,
+      classType: selectedClass.type,
+      day: selectedClass.day,
+      time: selectedClass.time,
+      duration: selectedClass.duration,
+      meetingUrl: selectedClass.meetingUrl,
+    });
+    if (bookError) setError(bookError);
     setBusy(false);
   };
 
@@ -129,7 +148,11 @@ export default function TrialModal() {
 
         <p className="auth-eyebrow">Free trial</p>
         <h2 id="trial-modal-title" className="auth-title">
-          {trialClassType ? `Book ${trialClassType}` : "Book your free trial"}
+          {trialBooking
+            ? "Your trial lesson is booked"
+            : trialClassType
+              ? `Book ${trialClassType}`
+              : "Book your free trial"}
         </h2>
 
         {subscribed ? (
@@ -150,47 +173,46 @@ export default function TrialModal() {
             </button>
           </>
         ) : trialBooking ? (
-          <>
-            <p className="auth-subtitle">
-              Hi {trialBooking.name}, your free trial is booked. We&apos;ll send joining details to{" "}
-              <strong>{trialBooking.email}</strong>.
+          <div className="trial-success-panel">
+            <div className="trial-success-mark" aria-hidden="true">
+              ✓
+            </div>
+            <p className="trial-success-hello">
+              Hi {firstName}, your trial lesson is booked.
             </p>
-            {(() => {
-              const bookedClass = allClasses.find((c) => c.id === trialBooking.classId);
-              if (!bookedClass) return null;
-              return (
-                <div className="trial-modal-class">
-                  <div
-                    className="sc-badge"
-                    style={{ background: bookedClass.bg, color: bookedClass.color }}
-                  >
-                    <ClassIcon type={bookedClass.type} color={bookedClass.color} offers={offers} />
-                  </div>
-                  <div>
-                    <strong>{bookedClass.type}</strong>
-                    <span>
-                      {bookedClass.day} · {bookedClass.time} · {bookedClass.duration}
-                    </span>
-                  </div>
-                </div>
-              );
-            })()}
-            {(() => {
-              const bookedClass = allClasses.find((c) => c.id === trialBooking.classId);
-              if (!bookedClass?.meetingUrl) return null;
-              return (
-                <a
-                  className="join-meet-btn trial-modal-join"
-                  href={bookedClass.meetingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+            <p className="trial-success-note">
+              A confirmation email was sent to{" "}
+              <strong>{trialBooking?.email || user?.email || "your inbox"}</strong> with the class
+              day, time, and how to join. Check your spam folder if you don&apos;t see it.
+            </p>
+            {bookedClass && (
+              <div className="trial-modal-class trial-modal-class--success">
+                <div
+                  className="sc-badge"
+                  style={{ background: bookedClass.bg, color: bookedClass.color }}
                 >
-                  Join meeting
-                </a>
-              );
-            })()}
+                  <ClassIcon type={bookedClass.type} color={bookedClass.color} offers={offers} />
+                </div>
+                <div>
+                  <strong>{bookedClass.type}</strong>
+                  <span>
+                    {bookedClass.day} · {bookedClass.time} · {bookedClass.duration}
+                  </span>
+                </div>
+              </div>
+            )}
+            {bookedClass?.meetingUrl && (
+              <a
+                className="join-meet-btn trial-modal-join"
+                href={bookedClass.meetingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Join Zoom meeting
+              </a>
+            )}
             <button
-              className="auth-submit"
+              className="trial-success-btn"
               type="button"
               onClick={() => {
                 closeTrialModal();
@@ -200,23 +222,46 @@ export default function TrialModal() {
             >
               View membership · {primaryPlan ? formatPlanPeriod(primaryPlan) : "$70/mo"}
             </button>
-          </>
+            <button
+              className="trial-cancel-btn"
+              type="button"
+              disabled={cancelBusy}
+              onClick={() => {
+                void (async () => {
+                  setCancelBusy(true);
+                  setError("");
+                  const cancelError = await cancelTrial();
+                  setCancelBusy(false);
+                  if (cancelError) {
+                    setError(cancelError);
+                    return;
+                  }
+                  setClassId("");
+                })();
+              }}
+            >
+              {cancelBusy ? "Canceling…" : "Cancel trial lesson"}
+            </button>
+            {error && <p className="auth-error">{error}</p>}
+          </div>
         ) : (
           <>
             <p className="auth-subtitle">
               {trialClassType
-                ? `Pick a time for ${trialClassType}. One free session per person — no payment required.`
-                : "Choose a live class with Fillie Faragi. One free session per person — no payment required."}
+                ? `Pick a time for ${trialClassType}. One free session — no payment needed.`
+                : "Choose a live class with Fillie Faragi. One free session — no payment needed."}
             </p>
-            <form className="auth-form" onSubmit={handleSubmit}>
+            <form className="auth-form" onSubmit={(event) => void handleSubmit(event)}>
               <div className="auth-field">
                 <label>Signed in as</label>
-                <p className="trial-note" style={{ margin: 0 }}>
-                  {user?.name} · {user?.email}
+                <p className="trial-signed-in">
+                  <span className="trial-signed-in__name">{user?.name}</span>
+                  <span className="trial-signed-in__email">{user?.email}</span>
                 </p>
               </div>
+
               <div className="auth-field">
-                <label htmlFor="trial-modal-class">
+                <label id="trial-class-list-label">
                   {trialClassType ? "Choose a time" : "Choose a class"}
                 </label>
                 {availableClasses.length === 0 ? (
@@ -224,37 +269,53 @@ export default function TrialModal() {
                     No schedule times found for this class yet. Ask admin to add sessions.
                   </p>
                 ) : (
-                  <select
-                    id="trial-modal-class"
-                    required
-                    value={classId}
-                    onChange={(event) => setClassId(event.target.value)}
+                  <div
+                    className="trial-class-list"
+                    role="listbox"
+                    aria-labelledby="trial-class-list-label"
+                    aria-activedescendant={classId ? `trial-option-${classId}` : undefined}
                   >
-                    <option value="">
-                      {trialClassType ? "Select a time" : "Select a class"}
-                    </option>
-                    {availableClasses.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.day} · {c.time} · {c.duration}
-                        {!trialClassType ? ` · ${c.type}` : ""}
-                      </option>
-                    ))}
-                  </select>
+                    {availableClasses.map((c) => {
+                      const selected = String(c.id) === classId;
+                      return (
+                        <button
+                          key={c.id}
+                          id={`trial-option-${c.id}`}
+                          type="button"
+                          role="option"
+                          aria-selected={selected}
+                          className={`trial-class-option${selected ? " is-selected" : ""}`}
+                          onClick={() => {
+                            setClassId(String(c.id));
+                            setError("");
+                          }}
+                        >
+                          <span
+                            className="trial-class-option__icon"
+                            style={{ background: c.bg, color: c.color }}
+                            aria-hidden="true"
+                          >
+                            <ClassIcon type={c.type} color={c.color} offers={offers} />
+                          </span>
+                          <span className="trial-class-option__body">
+                            {!trialClassType && (
+                              <span className="trial-class-option__title">{c.type}</span>
+                            )}
+                            <span className="trial-class-option__meta">
+                              {c.day} · {c.time}
+                            </span>
+                            <span className="trial-class-option__duration">{c.duration}</span>
+                          </span>
+                          <span className="trial-class-option__check" aria-hidden="true">
+                            {selected ? "✓" : ""}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
-              {selected && (
-                <div className="trial-modal-class">
-                  <div className="sc-badge" style={{ background: selected.bg, color: selected.color }}>
-                    <ClassIcon type={selected.type} color={selected.color} offers={offers} />
-                  </div>
-                  <div>
-                    <strong>{selected.type}</strong>
-                    <span>
-                      {selected.day} · {selected.time} · {selected.duration}
-                    </span>
-                  </div>
-                </div>
-              )}
+
               {error && <p className="auth-error">{error}</p>}
               <button
                 className="auth-submit"
@@ -263,7 +324,6 @@ export default function TrialModal() {
               >
                 {busy ? "Booking…" : "Confirm free trial"}
               </button>
-              <p className="trial-note">We&apos;ll email you a join link before class starts.</p>
             </form>
           </>
         )}

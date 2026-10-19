@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import {
-  ADMIN_COOKIE,
-  getAdminPassword,
-  getAdminToken,
+  clearAdminSession,
   isAdminAuthenticated,
+  isAdminCredentials,
+  setAdminSession,
 } from "@/lib/auth";
 
 export async function GET() {
@@ -11,29 +11,26 @@ export async function GET() {
   return NextResponse.json({ authenticated });
 }
 
+/** Kept for compatibility — prefer signing in via the main site login. */
 export async function POST(request: Request) {
-  const body = (await request.json()) as { password?: string };
-  if (!body.password || body.password !== getAdminPassword()) {
-    return NextResponse.json({ error: "Invalid password" }, { status: 401 });
+  const body = (await request.json()) as { email?: string; password?: string };
+  const email = body.email?.trim() ?? "";
+  const password = body.password ?? "";
+
+  if (!email || !password || !isAdminCredentials(email, password)) {
+    return NextResponse.json(
+      { error: "Use the main site Log in with your admin email and password." },
+      { status: 401 },
+    );
   }
 
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(ADMIN_COOKIE, getAdminToken(), {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7,
-  });
+  setAdminSession(response);
   return response;
 }
 
 export async function DELETE() {
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(ADMIN_COOKIE, "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
+  clearAdminSession(response);
   return response;
 }

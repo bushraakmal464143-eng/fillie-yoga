@@ -1,15 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import type { User } from "@/lib/types";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { isMailConfigured, sendSignupOtpEmail } from "@/lib/mail";
+import { isMailConfigured, sendPasswordResetOtpEmail, sendSignupOtpEmail } from "@/lib/mail";
 import {
+  clearPasswordResetOtp,
   clearSignupOtp,
   generateOtpCode,
+  savePasswordResetOtp,
   saveSignupOtp,
+  verifyStoredPasswordResetOtp,
   verifyStoredSignupOtp,
 } from "@/lib/otp-store";
-import { createUser } from "@/lib/user-store";
+import { createUser, findUserByEmail, updateUserPassword } from "@/lib/user-store";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
+import { toPublicUser } from "@/lib/user-auth";
 
 export async function getSessionUser(): Promise<User | null> {
   const supabase = await createClient();
@@ -227,7 +231,140 @@ export async function signInWithSupabase(
   };
 }
 
+/** Create or sync the studio admin account in Supabase Auth, then sign in. */
+export async function ensureAndSignInAdmin(input: {
+  email: string;
+  password: string;
+}): Promise<{ user: User | null; error: string | null }> {
+  const email = input.email.trim().toLowerCase();
+  const password = input.password;
+  const admin = createAdminClient();
+  const existing = await findAuthUserByEmail(email);
+
+  if (existing) {
+    const { error } = await admin.auth.admin.updateUserById(existing.id, {
+      password,
+      email_confirm: true,
+      user_metadata: {
+        ...(existing.user_metadata ?? {}),
+        name: (existing.user_metadata?.name as string | undefined) || "Studio Admin",
+      },
+    });
+    if (error) return { user: null, error: error.message };
+  } else {
+    const { error } = await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { name: "Studio Admin" },
+    });
+    if (error) return { user: null, error: error.message };
+  }
+
+  return signInAndGetUser(email, password);
+}
+
 export async function signOutSupabase(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
+}
+
+const GENERIC_RESET_SENT =
+  "If an account exists for that email, we sent a password reset code. Check your inbox.";
+
+export async function sendPasswordResetOtp(input: {
+  email: string;
+}): Promise<{ error: string | null; message?: string }> {
+  const email = input.email.trim().toLowerCase();
+
+  if (!isMailConfigured()) {
+    return {
+      error:
+        "Email is not configured. Add SMTP_HOST, SMTP_USER, SMTP_PASS (and optional SMTP_FROM) to .env.local.",
+    };
+  }
+
+  let accountExists = false;
+  let displayName = "";
+
+  if (isSupabaseConfigured()) {
+    const authUser = await findAuthUserByEmail(email);
+    accountExists = Boolean(authUser);
+    displayName =
+      (authUser?.user_metadata?.name as string | undefined)?.trim() ||
+      email.split("@")[0] ||
+      "";
+  } else {
+    const local = await findUserByEmail(email);
+    accountExists = Boolean(local);
+    displayName = local?.name?.trim() || email.split("@")[0] || "";
+  }
+
+  // Always return the same message so we don't reveal whether the email exists.
+  if (!accountExists) {
+    return { error: null, message: GENERIC_RESET_SENT };
+  }
+
+  const code = generateOtpCode();
+  const saved = await savePasswordResetOtp({ email, code });
+  if (saved.error) return saved;
+
+  try {
+    await sendPasswordResetOtpEmail({ to: email, name: displayName, code });
+  } catch (error) {
+    await clearPasswordResetOtp(email);
+    const message = error instanceof Error ? error.message : "Could not send email.";
+    return { error: `Could not send reset email: ${message}` };
+  }
+
+  return { error: null, message: GENERIC_RESET_SENT };
+}
+
+export async function resetPasswordWithOtp(input: {
+  email: string;
+  code: string;
+  password: string;
+}): Promise<{ user: User | null; error: string | null }> {
+  const email = input.email.trim().toLowerCase();
+  const code = input.code.trim();
+  const password = input.password;
+
+  const verified = await verifyStoredPasswordResetOtp({ email, code });
+  if ("error" in verified) {
+    return { user: null, error: verified.error };
+  }
+
+  if (isSupabaseConfigured()) {
+    const authUser = await findAuthUserByEmail(email);
+    if (!authUser) {
+      return { user: null, error: "No account found for this email." };
+    }
+
+    const admin = createAdminClient();
+    const { error: updateError } = await admin.auth.admin.updateUserById(authUser.id, {
+      password,
+    });
+    if (updateError) {
+      return { user: null, error: updateError.message || "Could not update password." };
+    }
+
+    const signedIn = await signInAndGetUser(email, password);
+    if (signedIn.error || !signedIn.user) {
+      return {
+        user: null,
+        error: "Password updated. Please log in with your new password.",
+      };
+    }
+    return { user: signedIn.user, error: null };
+  }
+
+  const updated = await updateUserPassword(email, password);
+  if (!updated) {
+    return { user: null, error: "No account found for this email." };
+  }
+
+  return {
+    user: toPublicUser({ ...updated, lastLoginAt: Date.now() }),
+    error: null,
+  };
 }

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { clearAdminSession } from "@/lib/auth";
 import { isSupabaseConfigured } from "@/lib/supabase/env";
 import { signOutSupabase } from "@/lib/supabase-user";
 import { findUserById } from "@/lib/user-store";
@@ -8,7 +9,9 @@ import { clearUserSession, getSessionUserId } from "@/lib/user-auth";
 export async function POST(request: Request) {
   if (isSupabaseConfigured()) {
     await signOutSupabase();
-    return NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true });
+    clearAdminSession(response);
+    return response;
   }
 
   const userId = await getSessionUserId();
@@ -29,5 +32,6 @@ export async function POST(request: Request) {
 
   const response = NextResponse.json({ ok: true });
   clearUserSession(response);
+  clearAdminSession(response);
   return response;
 }

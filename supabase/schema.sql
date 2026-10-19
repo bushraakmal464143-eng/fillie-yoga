@@ -60,6 +60,7 @@ create table if not exists public.class_offers (
   tag text not null,
   schedule jsonb,
   special boolean not null default false,
+  meeting_url text,
   sort_order int not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()

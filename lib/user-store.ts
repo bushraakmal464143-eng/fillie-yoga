@@ -67,6 +67,50 @@ export async function createUser(input: {
   };
 }
 
+export async function updateUserPassword(
+  email: string,
+  password: string,
+): Promise<StoredUser | null> {
+  const store = await readStore();
+  const normalized = email.trim().toLowerCase();
+  const index = store.users.findIndex((user) => user.email === normalized);
+  if (index === -1) return null;
+
+  store.users[index] = {
+    ...store.users[index],
+    passwordHash: await hashPassword(password),
+    lastLoginAt: Date.now(),
+  };
+  await writeStore(store);
+  return store.users[index];
+}
+
+/** Ensure the studio admin account exists locally with the given password. */
+export async function ensureAdminUser(input: {
+  email: string;
+  password: string;
+  name?: string;
+}): Promise<User> {
+  const email = input.email.trim().toLowerCase();
+  const existing = await findUserByEmail(email);
+  if (existing) {
+    const updated = await updateUserPassword(email, input.password);
+    return {
+      id: updated!.id,
+      name: updated!.name,
+      email: updated!.email,
+      createdAt: updated!.createdAt,
+      lastLoginAt: updated!.lastLoginAt,
+    };
+  }
+
+  return createUser({
+    name: input.name?.trim() || "Studio Admin",
+    email,
+    password: input.password,
+  });
+}
+
 export async function listUsers(): Promise<User[]> {
   const store = await readStore();
   return store.users

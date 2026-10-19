@@ -1,10 +1,11 @@
 "use client";
 
+import { AdminTableSkeleton } from "@/components/Skeleton";
 import { formatWhen } from "./admin-shared";
 import { useMembersActivity } from "./useMembersActivity";
 
 export default function AdminMembersPage() {
-  const { members, note } = useMembersActivity();
+  const { members, note, loading } = useMembersActivity();
 
   return (
     <section className="admin-card admin-card--wide admin-activity">
@@ -13,14 +14,16 @@ export default function AdminMembersPage() {
           <p className="admin-card-kicker">Audience</p>
           <h2>Members</h2>
         </div>
-        <span className="admin-count-pill">{members.length}</span>
+        <span className="admin-count-pill">{loading ? "…" : members.length}</span>
       </div>
       <p>People who created an account on the site.</p>
 
       {note && <p className="admin-banner admin-banner--error">{note}</p>}
 
       <div className="admin-table-wrap">
-        {members.length === 0 ? (
+        {loading ? (
+          <AdminTableSkeleton rows={6} cols={4} />
+        ) : members.length === 0 ? (
           <p className="admin-empty">No members yet. Signups will appear here.</p>
         ) : (
           <table className="admin-table">

@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  FormEvent,
   ReactNode,
   createContext,
   useCallback,
@@ -10,7 +9,10 @@ import {
   useMemo,
   useState,
 } from "react";
-import PasswordInput from "@/components/PasswordInput";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AdminLoadingSkeleton } from "@/components/Skeleton";
+import { ROUTES } from "@/lib/routes";
 
 type AdminAuthContextValue = {
   authenticated: boolean | null;
@@ -20,7 +22,6 @@ type AdminAuthContextValue = {
   showSuccess: (message: string) => void;
   setError: (message: string) => void;
   setBusy: (busy: boolean) => void;
-  login: (password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   refresh: () => void;
   refreshKey: number;
@@ -47,8 +48,8 @@ export function useAdminAuth() {
 }
 
 export default function AdminAuthProvider({ children }: { children: ReactNode }) {
+  const router = useRouter();
   const [authenticated, setAuthenticated] = useState<boolean | null>(null);
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [busy, setBusy] = useState(false);
@@ -135,34 +136,9 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
     })();
   }, [refreshCounts]);
 
-  const login = useCallback(
-    async (nextPassword: string) => {
-      setError("");
-      setBusy(true);
-
-      const response = await fetch("/api/admin/auth", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ password: nextPassword }),
-      });
-
-      setBusy(false);
-      if (!response.ok) {
-        setError("Incorrect password.");
-        return false;
-      }
-
-      setPassword("");
-      setAuthenticated(true);
-      await refreshCounts();
-      setRefreshKey((key) => key + 1);
-      return true;
-    },
-    [refreshCounts],
-  );
-
   const logout = useCallback(async () => {
     await fetch("/api/admin/auth", { method: "DELETE" });
+    await fetch("/api/auth/logout", { method: "POST" });
     setAuthenticated(false);
     setCounts({
       offers: 0,
@@ -175,17 +151,13 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
     });
     setError("");
     setSuccess("");
-  }, []);
+    router.push(`${ROUTES.home}?login=1`);
+  }, [router]);
 
   const refresh = useCallback(() => {
     setRefreshKey((key) => key + 1);
     void refreshCounts();
   }, [refreshCounts]);
-
-  const handleLogin = async (event: FormEvent) => {
-    event.preventDefault();
-    await login(password);
-  };
 
   const value = useMemo(
     () => ({
@@ -196,7 +168,6 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
       showSuccess,
       setError,
       setBusy,
-      login,
       logout,
       refresh,
       refreshKey,
@@ -209,7 +180,6 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
       error,
       success,
       showSuccess,
-      login,
       logout,
       refresh,
       refreshKey,
@@ -222,12 +192,7 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
     return (
       <div className="admin-page">
         <div className="admin-shell admin-shell--center">
-          <div className="admin-loading" role="status">
-            <span className="admin-loading-mark" aria-hidden="true">
-              ॐ
-            </span>
-            <p>Opening studio desk…</p>
-          </div>
+          <AdminLoadingSkeleton />
         </div>
       </div>
     );
@@ -237,29 +202,20 @@ export default function AdminAuthProvider({ children }: { children: ReactNode })
     return (
       <div className="admin-page">
         <div className="admin-login-wrap">
-          <form className="admin-login" onSubmit={handleLogin}>
+          <div className="admin-login">
             <p className="admin-eyebrow">Om At Home</p>
             <h1>Studio desk</h1>
-            <p>Sign in to manage class cards, schedule sessions, and membership pricing.</p>
-            <div className="admin-field">
-              <label htmlFor="admin-password">Password</label>
-              <PasswordInput
-                id="admin-password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                placeholder="Enter admin password"
-                required
-              />
-            </div>
-            {error && <p className="admin-error">{error}</p>}
-            <button className="admin-btn admin-btn--block" type="submit" disabled={busy}>
-              {busy ? "Signing in…" : "Sign in"}
-            </button>
-            <p className="admin-hint">
-              Default password is <strong>omathome</strong>. Change it with the{" "}
-              <code>ADMIN_PASSWORD</code> environment variable.
+            <p>
+              There is no separate admin login. Sign in on the main site with your admin email and
+              password, then open this page.
             </p>
-          </form>
+            <Link className="admin-btn admin-btn--block" href={`${ROUTES.home}?login=1`}>
+              Log in on the main site
+            </Link>
+            <p className="admin-hint">
+              After you log in as admin, you&apos;ll be taken to the studio desk automatically.
+            </p>
+          </div>
         </div>
       </div>
     );

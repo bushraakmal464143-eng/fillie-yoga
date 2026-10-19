@@ -1,12 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { useJoinClass } from "@/components/hooks/useJoinClass";
 import { useApp } from "@/components/providers/AppProvider";
 import { getIconMeta } from "@/lib/icons";
 import { ROUTES } from "@/lib/routes";
 
-const PRACTICES = [
+const FALLBACK_PRACTICES = [
   {
     title: "Yin Yoga Flow",
     desc: "Slow, meditative holds that open the body and quiet the mind — perfect for evening practice.",
@@ -44,9 +44,46 @@ const PRACTICES = [
   },
 ] as const;
 
+function openZoomLink(url?: string) {
+  const trimmed = url?.trim();
+  if (!trimmed) return false;
+  const href = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+  window.open(href, "_blank", "noopener,noreferrer");
+  return true;
+}
+
 export default function HomePractice() {
-  const { joinClass, checkoutLoading } = useJoinClass();
-  const { checkoutError } = useApp();
+  const { offers, checkoutError } = useApp();
+  const [joinHint, setJoinHint] = useState("");
+
+  const cards =
+    offers.length > 0
+      ? offers.map((offer) => ({
+          key: offer.id,
+          title: offer.title,
+          desc: offer.desc,
+          icon: offer.icon,
+          color: offer.iconColor,
+          bg: offer.iconBg,
+          meetingUrl: offer.meetingUrl,
+        }))
+      : FALLBACK_PRACTICES.map((practice) => ({
+          key: practice.title,
+          title: practice.title,
+          desc: practice.desc,
+          icon: practice.icon,
+          color: practice.color,
+          bg: practice.bg,
+          meetingUrl: undefined as string | undefined,
+        }));
+
+  const handleJoin = (meetingUrl?: string) => {
+    if (openZoomLink(meetingUrl)) {
+      setJoinHint("");
+      return;
+    }
+    setJoinHint("Zoom link not set yet for this class. Add it in Admin → Class cards.");
+  };
 
   return (
     <section className="home-practice" id="practice">
@@ -65,15 +102,14 @@ export default function HomePractice() {
         </p>
 
         <div className="practice-grid">
-          {PRACTICES.map((practice, index) => {
+          {cards.map((practice) => {
             const icon = getIconMeta(practice.icon);
             return (
               <article
-                key={practice.title}
-                className="practice-card reveal"
+                key={practice.key}
+                className="practice-card"
                 style={
                   {
-                    "--reveal-delay": index + 3,
                     "--practice-color": practice.color,
                     "--practice-bg": practice.bg,
                   } as React.CSSProperties
@@ -89,28 +125,27 @@ export default function HomePractice() {
                 <button
                   className="practice-join-btn"
                   type="button"
-                  disabled={checkoutLoading}
-                  onClick={joinClass}
+                  onClick={() => handleJoin(practice.meetingUrl)}
                 >
-                  {checkoutLoading ? "Redirecting…" : "Join class"}
+                  Join class
                 </button>
               </article>
             );
           })}
         </div>
 
-        {checkoutError && (
+        {(joinHint || checkoutError) && (
           <p className="home-practice-error" role="alert">
-            {checkoutError}
+            {joinHint || checkoutError}
           </p>
         )}
 
         <div className="home-practice-cta reveal" style={{ "--reveal-delay": 8 } as React.CSSProperties}>
           <Link href={ROUTES.classes} className="btn-primary">
-            View all classes
+            View classes & schedule
           </Link>
-          <Link href={ROUTES.schedule} className="btn-outline">
-            See weekly schedule
+          <Link href={ROUTES.pricing} className="btn-outline">
+            See membership
           </Link>
         </div>
       </div>

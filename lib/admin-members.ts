@@ -46,6 +46,17 @@ export type AdminBooking = {
   cancelledAt: string | null;
 };
 
+export type AdminTrialNotification = {
+  id: string;
+  guestName: string;
+  guestEmail: string;
+  classType: string;
+  day: string;
+  time: string;
+  duration: string;
+  bookedAt: string;
+};
+
 function clientIpFromHeaders(headers: Headers): string | null {
   const forwarded = headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0]?.trim() || null;
@@ -262,4 +273,60 @@ export async function getAdminMemberInsights(): Promise<{
     bookings,
     supabaseConfigured: true,
   };
+}
+
+export async function getRecentTrialNotifications(limit = 12): Promise<{
+  notifications: AdminTrialNotification[];
+  supabaseConfigured: boolean;
+}> {
+  if (!isSupabaseConfigured()) {
+    return { notifications: [], supabaseConfigured: false };
+  }
+
+  const admin = createAdminClient();
+  const { data: bookings, error } = await admin
+    .from("bookings")
+    .select("id, guest_name, guest_email, session_id, booked_at, cancelled_at, booking_type")
+    .eq("booking_type", "trial")
+    .is("cancelled_at", null)
+    .order("booked_at", { ascending: false })
+    .limit(limit);
+
+  if (error || !bookings?.length) {
+    return { notifications: [], supabaseConfigured: true };
+  }
+
+  const sessionIds = [...new Set(bookings.map((row) => Number(row.session_id)).filter(Boolean))];
+  const { data: sessions } = await admin
+    .from("yoga_sessions")
+    .select("id, type, day, time, duration")
+    .in("id", sessionIds);
+
+  const sessionById = new Map(
+    (sessions ?? []).map((row) => [
+      Number(row.id),
+      {
+        type: (row.type as string) || "Trial class",
+        day: (row.day as string) || "—",
+        time: (row.time as string) || "—",
+        duration: (row.duration as string) || "—",
+      },
+    ]),
+  );
+
+  const notifications: AdminTrialNotification[] = bookings.map((row) => {
+    const session = sessionById.get(Number(row.session_id));
+    return {
+      id: row.id as string,
+      guestName: ((row.guest_name as string | null) || "Guest").trim() || "Guest",
+      guestEmail: ((row.guest_email as string | null) || "—").trim() || "—",
+      classType: session?.type ?? "Trial class",
+      day: session?.day ?? "—",
+      time: session?.time ?? "—",
+      duration: session?.duration ?? "—",
+      bookedAt: row.booked_at as string,
+    };
+  });
+
+  return { notifications, supabaseConfigured: true };
 }

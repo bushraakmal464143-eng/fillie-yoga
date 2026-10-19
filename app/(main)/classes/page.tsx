@@ -5,9 +5,9 @@ import { getOffers } from "@/lib/store";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Classes · Om At Home",
+  title: "Classes & Schedule · Om At Home",
   description:
-    "Yin Yoga Flow, Vinyasa Flow, Pilates, Heart Opening Yin, and Sunset Flow — five live classes daily with Fillie Faragi.",
+    "Explore Yin, Vinyasa, Pilates, Heart Opening Yin, and Sunset Flow — then pick a live class time from the weekly schedule with Fillie Faragi.",
 };
 
 export default async function ClassesPage() {

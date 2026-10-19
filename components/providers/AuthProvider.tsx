@@ -12,7 +12,7 @@ import {
 import AuthModal from "@/components/AuthModal";
 import type { User } from "@/lib/types";
 
-type AuthMode = "login" | "signup";
+export type AuthMode = "login" | "signup" | "forgot";
 
 type AuthContextValue = {
   user: User | null;
@@ -30,6 +30,8 @@ type AuthContextValue = {
     password: string,
     code: string,
   ) => Promise<string | null>;
+  sendPasswordResetCode: (email: string) => Promise<string | null>;
+  resetPassword: (email: string, code: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
 };
 
@@ -55,6 +57,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })();
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("login") === "1" || params.get("admin") === "1") {
+      setAuthMode("login");
+      setAuthOpen(true);
+      setAuthMessage(
+        params.get("admin") === "1"
+          ? "Sign in with your admin email and password to open the studio desk."
+          : null,
+      );
+      params.delete("login");
+      params.delete("admin");
+      const next = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
+      window.history.replaceState({}, "", next);
+    }
+  }, []);
+
   const openAuth = useCallback((mode: AuthMode) => {
     setAuthMode(mode);
     setAuthMessage(null);
@@ -73,7 +93,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = (await response.json()) as { user?: User; error?: string };
+    const data = (await response.json()) as {
+      user?: User;
+      error?: string;
+      isAdmin?: boolean;
+    };
     if (!response.ok) return data.error ?? "Could not log in.";
 
     let loggedInUser = data.user ?? null;
@@ -90,6 +114,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(loggedInUser);
     setAuthMessage(null);
     setAuthOpen(false);
+
+    if (data.isAdmin) {
+      window.location.assign("/admin");
+    }
+
     return null;
   }, []);
 
@@ -108,7 +137,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       };
       if (!response.ok) return data.error ?? "Could not send verification code.";
 
-      // Local/fallback signup can create the account immediately (no email OTP).
       if (data.user && !data.needsVerification) {
         setUser(data.user);
         setAuthMessage(null);
@@ -153,6 +181,77 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const sendPasswordResetCode = useCallback(async (email: string) => {
+    try {
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+        message?: string;
+      };
+      if (!response.ok) return data.error ?? "Could not send reset code.";
+
+      setAuthMessage(
+        data.message ??
+          `If an account exists for ${email.trim()}, we sent a reset code. Check your inbox.`,
+      );
+      return null;
+    } catch {
+      return "Network error. Please try again.";
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (email: string, code: string, password: string) => {
+    try {
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, code, password }),
+      });
+
+      const data = (await response.json()) as {
+        user?: User;
+        error?: string;
+        needsLogin?: boolean;
+        message?: string;
+      };
+
+      if (!response.ok) return data.error ?? "Could not reset password.";
+
+      if (data.needsLogin) {
+        setAuthMode("login");
+        setAuthMessage(data.message ?? "Password updated. Please log in with your new password.");
+        return null;
+      }
+
+      let loggedInUser = data.user ?? null;
+      if (!loggedInUser) {
+        const sessionRes = await fetch("/api/auth/session");
+        if (sessionRes.ok) {
+          const sessionData = (await sessionRes.json()) as { user: User | null };
+          loggedInUser = sessionData.user;
+        }
+      }
+
+      if (!loggedInUser) {
+        setAuthMode("login");
+        setAuthMessage("Password updated. Please log in with your new password.");
+        return null;
+      }
+
+      setUser(loggedInUser);
+      setAuthMessage(null);
+      setAuthOpen(false);
+      return null;
+    } catch {
+      return "Network error. Please try again.";
+    }
+  }, []);
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setUser(null);
@@ -170,6 +269,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       sendSignupCode,
       verifySignupCode,
+      sendPasswordResetCode,
+      resetPassword,
       logout,
     }),
     [
@@ -183,6 +284,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       sendSignupCode,
       verifySignupCode,
+      sendPasswordResetCode,
+      resetPassword,
       logout,
     ],
   );

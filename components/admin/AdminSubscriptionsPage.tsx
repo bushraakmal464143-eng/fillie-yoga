@@ -1,10 +1,11 @@
 "use client";
 
+import { AdminTableSkeleton } from "@/components/Skeleton";
 import { formatWhen } from "./admin-shared";
 import { useMembersActivity } from "./useMembersActivity";
 
 export default function AdminSubscriptionsPage() {
-  const { subscriptions, note } = useMembersActivity();
+  const { subscriptions, note, loading } = useMembersActivity();
 
   return (
     <section className="admin-card admin-card--wide admin-activity">
@@ -13,14 +14,16 @@ export default function AdminSubscriptionsPage() {
           <p className="admin-card-kicker">Audience</p>
           <h2>Subscriptions</h2>
         </div>
-        <span className="admin-count-pill">{subscriptions.length}</span>
+        <span className="admin-count-pill">{loading ? "…" : subscriptions.length}</span>
       </div>
       <p>Paid memberships with plan name and status.</p>
 
       {note && <p className="admin-banner admin-banner--error">{note}</p>}
 
       <div className="admin-table-wrap">
-        {subscriptions.length === 0 ? (
+        {loading ? (
+          <AdminTableSkeleton rows={6} cols={5} />
+        ) : subscriptions.length === 0 ? (
           <p className="admin-empty">
             No paid subscriptions recorded yet. Once Stripe checkout is connected, purchases will
             show here with member name, plan, and status.

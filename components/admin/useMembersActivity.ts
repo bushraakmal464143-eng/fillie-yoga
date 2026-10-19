@@ -15,11 +15,13 @@ export type MembersActivityData = {
   subscriptions: AdminSubscription[];
   bookings: AdminBooking[];
   note: string;
+  loading: boolean;
 };
 
 export function useMembersActivity() {
   const { setError, refreshKey } = useAdminAuth();
-  const [data, setData] = useState<MembersActivityData>({
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<Omit<MembersActivityData, "loading">>({
     members: [],
     logins: [],
     subscriptions: [],
@@ -28,8 +30,12 @@ export function useMembersActivity() {
   });
 
   const load = useCallback(async () => {
+    setLoading(true);
     const response = await fetch("/api/admin/members");
-    if (response.status === 401) return;
+    if (response.status === 401) {
+      setLoading(false);
+      return;
+    }
 
     if (!response.ok) {
       setData({
@@ -40,6 +46,7 @@ export function useMembersActivity() {
         note: "Could not load member activity.",
       });
       setError("Could not load member activity.");
+      setLoading(false);
       return;
     }
 
@@ -60,11 +67,12 @@ export function useMembersActivity() {
         ? ""
         : "Connect Supabase to track member logins and purchases.",
     });
+    setLoading(false);
   }, [setError]);
 
   useEffect(() => {
     void load();
   }, [load, refreshKey]);
 
-  return data;
+  return { ...data, loading };
 }

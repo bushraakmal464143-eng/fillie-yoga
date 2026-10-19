@@ -1,7 +1,8 @@
 export const ROUTES = {
   home: "/",
   classes: "/classes",
-  schedule: "/schedule",
+  /** @deprecated Use ROUTES.classes + #schedule — kept for old links */
+  schedule: "/classes#schedule",
   teacher: "/teacher",
   pricing: "/pricing",
   reiki: "/reiki",

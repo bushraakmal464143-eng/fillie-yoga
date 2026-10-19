@@ -210,28 +210,16 @@ export default function AdminPricingPanel() {
   if (!authenticated) {
     return (
       <div className="admin-page">
-        <form className="admin-login" onSubmit={handleLogin}>
+        <div className="admin-login">
           <h1>Admin panel</h1>
-          <p>Sign in to manage pricing plans for Om At Home.</p>
-          <div className="admin-field">
-            <label htmlFor="admin-password">Password</label>
-            <PasswordInput
-              id="admin-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter admin password"
-              required
-            />
-          </div>
-          {error && <p className="admin-error">{error}</p>}
-          <button className="admin-btn" type="submit" disabled={busy} style={{ width: "100%", marginTop: "1rem" }}>
-            {busy ? "Signing in…" : "Sign in"}
-          </button>
-          <p className="admin-hint">
-            Default password is <strong>omathome</strong>. Change it with the{" "}
-            <code>ADMIN_PASSWORD</code> environment variable.
+          <p>
+            There is no separate admin login. Sign in on the main site with your admin email and
+            password, then return here.
           </p>
-        </form>
+          <a className="admin-btn" href="/?login=1" style={{ display: "inline-flex", marginTop: "1rem" }}>
+            Log in on the main site
+          </a>
+        </div>
       </div>
     );
   }

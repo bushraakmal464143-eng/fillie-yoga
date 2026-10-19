@@ -95,7 +95,7 @@ export default function Features() {
           <Link href={ROUTES.pricing} className="btn-primary">
             See membership
           </Link>
-          <Link href={ROUTES.schedule} className="btn-outline">
+          <Link href={`${ROUTES.classes}#schedule`} className="btn-outline">
             Browse the schedule
           </Link>
         </div>

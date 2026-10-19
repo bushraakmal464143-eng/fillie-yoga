@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { DAYS } from "@/lib/schedule";
 import type { ClassOffer, YogaClass } from "@/lib/types";
+import { AdminListSkeleton } from "@/components/Skeleton";
 import { useAdminAuth } from "./AdminAuthProvider";
 import {
   EMPTY_SESSION,
@@ -15,16 +16,21 @@ export default function AdminSessionsPage() {
   const { busy, setBusy, setError, showSuccess, refreshKey, refreshCounts } = useAdminAuth();
   const [offers, setOffers] = useState<ClassOffer[]>([]);
   const [sessions, setSessions] = useState<YogaClass[]>([]);
+  const [listLoading, setListLoading] = useState(true);
   const [sessionForm, setSessionForm] = useState<SessionFormState>(EMPTY_SESSION);
   const [editingSessionId, setEditingSessionId] = useState<number | null>(null);
 
   const loadData = useCallback(async () => {
+    setListLoading(true);
     const [offersRes, sessionsRes] = await Promise.all([
       fetch("/api/admin/offers"),
       fetch("/api/admin/sessions"),
     ]);
 
-    if (offersRes.status === 401 || sessionsRes.status === 401) return;
+    if (offersRes.status === 401 || sessionsRes.status === 401) {
+      setListLoading(false);
+      return;
+    }
 
     if (offersRes.ok) setOffers(await offersRes.json());
     if (sessionsRes.ok) {
@@ -32,6 +38,7 @@ export default function AdminSessionsPage() {
     } else {
       setError("Could not load schedule sessions.");
     }
+    setListLoading(false);
   }, [setError]);
 
   useEffect(() => {
@@ -242,38 +249,44 @@ export default function AdminSessionsPage() {
       </form>
 
       <div className="admin-list-section">
-        <h3 className="admin-list-heading">Saved sessions ({sessions.length})</h3>
+        <h3 className="admin-list-heading">
+          Saved sessions ({listLoading ? "…" : sessions.length})
+        </h3>
         <div className="admin-list">
-          {sessions.map((session) => (
-            <div
-              key={session.id}
-              className={`admin-list-item${editingSessionId === session.id ? " is-editing" : ""}`}
-            >
-              <div>
-                <strong>{session.type}</strong>
-                <span>
-                  {session.day} · {session.time} · {session.duration}
-                  {session.meetingUrl ? " · Zoom linked" : ""}
-                </span>
+          {listLoading ? (
+            <AdminListSkeleton rows={5} />
+          ) : (
+            sessions.map((session) => (
+              <div
+                key={session.id}
+                className={`admin-list-item${editingSessionId === session.id ? " is-editing" : ""}`}
+              >
+                <div>
+                  <strong>{session.type}</strong>
+                  <span>
+                    {session.day} · {session.time} · {session.duration}
+                    {session.meetingUrl ? " · Zoom linked" : ""}
+                  </span>
+                </div>
+                <div className="admin-list-actions">
+                  <button
+                    className="admin-edit"
+                    type="button"
+                    onClick={() => handleEditSession(session)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="admin-delete"
+                    type="button"
+                    onClick={() => void handleDeleteSession(session.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="admin-list-actions">
-                <button
-                  className="admin-edit"
-                  type="button"
-                  onClick={() => handleEditSession(session)}
-                >
-                  Edit
-                </button>
-                <button
-                  className="admin-delete"
-                  type="button"
-                  onClick={() => void handleDeleteSession(session.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </section>

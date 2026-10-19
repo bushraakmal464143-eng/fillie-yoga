@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { useBookTrial } from "@/components/hooks/useBookTrial";
+import { NavAuthMobileSkeleton, NavAuthSkeleton } from "@/components/Skeleton";
 import { ROUTES } from "@/lib/routes";
 import type { User } from "@/lib/types";
 
 const NAV_LINKS = [
   { href: ROUTES.classes, label: "Classes" },
-  { href: ROUTES.schedule, label: "Schedule" },
   { href: ROUTES.reiki, label: "Reiki" },
   { href: ROUTES.dowsing, label: "Dowsing" },
   { href: ROUTES.sunset, label: "Sunset Flow" },
@@ -43,26 +43,6 @@ function IconLogin({ className }: { className?: string }) {
   );
 }
 
-function IconSignup({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="none">
-      <circle cx="10" cy="8" r="3.25" stroke="currentColor" strokeWidth="1.75" />
-      <path
-        d="M3.75 19.25c1.45-2.8 3.55-4.25 6.25-4.25 1.05 0 2 .22 2.85.62"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-      <path
-        d="M17.5 11.5v6M14.5 14.5h6"
-        stroke="currentColor"
-        strokeWidth="1.75"
-        strokeLinecap="round"
-      />
-    </svg>
-  );
-}
-
 function IconCalendar({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden="true" fill="none">
@@ -86,11 +66,19 @@ export default function Nav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [hash, setHash] = useState("");
   const profileRef = useRef<HTMLDivElement>(null);
 
   const closeMenu = () => {
     setMenuOpen(false);
   };
+
+  useEffect(() => {
+    const syncHash = () => setHash(window.location.hash);
+    syncHash();
+    window.addEventListener("hashchange", syncHash);
+    return () => window.removeEventListener("hashchange", syncHash);
+  }, [pathname]);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -128,7 +116,10 @@ export default function Nav() {
   }, [pathname, user]);
 
   const isActive = (href: string) => {
-    if (href.startsWith("/#")) return pathname === "/" && href === ROUTES.sunset;
+    if (href.startsWith("/#")) {
+      const target = href.slice(href.indexOf("#"));
+      return pathname === "/" && hash === target;
+    }
     return pathname === href;
   };
 
@@ -155,7 +146,14 @@ export default function Nav() {
               <Link
                 href={href}
                 className={isActive(href) ? "is-active" : undefined}
-                onClick={closeMenu}
+                onClick={() => {
+                  if (href.includes("#")) {
+                    setHash(href.slice(href.indexOf("#")));
+                  } else {
+                    setHash("");
+                  }
+                  closeMenu();
+                }}
               >
                 {label}
               </Link>
@@ -163,7 +161,9 @@ export default function Nav() {
           ))}
         </ul>
         <div className="nav-auth-mobile">
-          {authReady && user ? (
+          {!authReady ? (
+            <NavAuthMobileSkeleton />
+          ) : user ? (
             <>
               <div className="nav-user-chip">
                 <span className="nav-profile-avatar" aria-hidden="true">
@@ -183,30 +183,17 @@ export default function Nav() {
               </button>
             </>
           ) : (
-            <>
-              <button
-                className="nav-auth"
-                type="button"
-                onClick={() => {
-                  openAuth("login");
-                  closeMenu();
-                }}
-              >
-                <IconLogin className="nav-icon" />
-                Log in
-              </button>
-              <button
-                className="nav-auth nav-auth--primary"
-                type="button"
-                onClick={() => {
-                  openAuth("signup");
-                  closeMenu();
-                }}
-              >
-                <IconSignup className="nav-icon" />
-                Sign up
-              </button>
-            </>
+            <button
+              className="nav-auth nav-auth--primary"
+              type="button"
+              onClick={() => {
+                openAuth("login");
+                closeMenu();
+              }}
+            >
+              <IconLogin className="nav-icon" />
+              Log in
+            </button>
           )}
         </div>
         <button
@@ -222,7 +209,11 @@ export default function Nav() {
         </button>
       </div>
       <div className="nav-end">
-        {authReady && user ? (
+        {!authReady ? (
+          <div className="nav-auth-desktop">
+            <NavAuthSkeleton />
+          </div>
+        ) : user ? (
           <div className="nav-profile" ref={profileRef}>
             <button
               className={`nav-profile-btn${profileOpen ? " is-open" : ""}`}
@@ -270,20 +261,12 @@ export default function Nav() {
         ) : (
           <div className="nav-auth-desktop">
             <button
-              className="nav-btn"
+              className="nav-btn nav-btn--primary"
               type="button"
               onClick={() => openAuth("login")}
             >
               <IconLogin className="nav-icon" />
               Log in
-            </button>
-            <button
-              className="nav-btn nav-btn--primary"
-              type="button"
-              onClick={() => openAuth("signup")}
-            >
-              <IconSignup className="nav-icon" />
-              Sign up
             </button>
             <button
               className="nav-btn nav-btn--trial"

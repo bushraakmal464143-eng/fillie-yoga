@@ -23,6 +23,7 @@ export const EMPTY_OFFER = {
   tagBg: "#8e44ad15",
   tagColor: "#7b3fa0",
   special: false,
+  meetingUrl: "",
 };
 
 export const EMPTY_SESSION = {

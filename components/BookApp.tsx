@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { ClassIcon } from "@/components/ClassIcon";
+import { BookPanelSkeleton } from "@/components/Skeleton";
 import { useApp } from "@/components/providers/AppProvider";
 import { useAuth } from "@/components/providers/AuthProvider";
 import { formatPlanPeriod } from "@/lib/pricing";
@@ -61,9 +62,19 @@ function AuthRequiredGate({ action }: { action: string }) {
 }
 
 function TrialPanel() {
-  const { subscribed, trialBooking, allClasses, submitTrial, setActiveTab, primaryPlan } = useApp();
+  const {
+    subscribed,
+    trialBooking,
+    allClasses,
+    submitTrial,
+    cancelTrial,
+    setActiveTab,
+    primaryPlan,
+  } = useApp();
   const { user, authReady } = useAuth();
   const [classId, setClassId] = useState("");
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   if (subscribed) {
     return (
@@ -84,8 +95,8 @@ function TrialPanel() {
         <div className="trial-success">
           <h4>✓ Trial lesson booked</h4>
           <p>
-            Hi {trialBooking.name}, you&apos;re all set. We&apos;ll send joining details to{" "}
-            <strong>{trialBooking.email}</strong> before your class.
+            Hi {trialBooking.name.split(/\s+/)[0]}, your trial lesson is booked. A confirmation
+            email with the class day and time was sent to your inbox.
           </p>
           {c && (
             <div className="trial-class-pill">
@@ -97,6 +108,24 @@ function TrialPanel() {
               <JoinMeetingButton url={c.meetingUrl} />
             </div>
           )}
+          {cancelError && <p className="auth-error" style={{ marginTop: "0.75rem" }}>{cancelError}</p>}
+          <button
+            className="cancel-btn"
+            type="button"
+            style={{ marginTop: "0.85rem", width: "100%", padding: "10px" }}
+            disabled={cancelBusy}
+            onClick={() => {
+              void (async () => {
+                setCancelBusy(true);
+                setCancelError("");
+                const err = await cancelTrial();
+                setCancelBusy(false);
+                if (err) setCancelError(err);
+              })();
+            }}
+          >
+            {cancelBusy ? "Canceling…" : "Cancel trial lesson"}
+          </button>
         </div>
         <div className="sub-gate-box">
           <h4>Love your first class?</h4>
@@ -109,16 +138,31 @@ function TrialPanel() {
     );
   }
 
-  if (authReady && !user) {
+  if (!authReady) {
+    return <BookPanelSkeleton />;
+  }
+
+  if (!user) {
     return <AuthRequiredGate action="book a free trial lesson" />;
   }
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) return;
     const id = parseInt(classId, 10);
     if (!id) return;
-    submitTrial({ name: user.name, email: user.email, classId: id });
+    const selectedClass = allClasses.find((c) => c.id === id);
+    if (!selectedClass) return;
+    await submitTrial({
+      name: user.name,
+      email: user.email,
+      classId: id,
+      classType: selectedClass.type,
+      day: selectedClass.day,
+      time: selectedClass.time,
+      duration: selectedClass.duration,
+      meetingUrl: selectedClass.meetingUrl,
+    });
   };
 
   return (
@@ -148,7 +192,6 @@ function TrialPanel() {
         <button className="sub-btn" type="submit" disabled={!user}>
           Book my free trial
         </button>
-        <p className="trial-note">We&apos;ll email you a link to join before your class starts.</p>
       </form>
     </div>
   );
@@ -208,7 +251,11 @@ function SubscribePanel() {
     );
   }
 
-  if (authReady && !user) {
+  if (!authReady) {
+    return <BookPanelSkeleton />;
+  }
+
+  if (!user) {
     return <AuthRequiredGate action="subscribe to Om At Home" />;
   }
 
@@ -337,8 +384,19 @@ function AppSchedulePanel() {
 }
 
 function MyClassesPanel() {
-  const { subscribed, trialBooking, allClasses, offers, booked, toggleBook, setActiveTab } = useApp();
+  const {
+    subscribed,
+    trialBooking,
+    allClasses,
+    offers,
+    booked,
+    toggleBook,
+    setActiveTab,
+    cancelTrial,
+  } = useApp();
   const { user, openAuth } = useAuth();
+  const [cancelBusy, setCancelBusy] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   if (!subscribed && !trialBooking) {
     return (
@@ -384,7 +442,26 @@ function MyClassesPanel() {
             <JoinMeetingButton url={c.meetingUrl} />
           </div>
         </div>
-        <button className="sub-btn" type="button" style={{ marginTop: "1rem" }} onClick={() => setActiveTab("subscribe")}>
+        {cancelError && <p className="auth-error" style={{ marginTop: "0.75rem" }}>{cancelError}</p>}
+        <button
+          className="cancel-btn"
+          type="button"
+          style={{ marginTop: "0.85rem", width: "100%", padding: "10px" }}
+          disabled={cancelBusy}
+          onClick={() => {
+            void (async () => {
+              setCancelBusy(true);
+              setCancelError("");
+              const err = await cancelTrial();
+              setCancelBusy(false);
+              if (err) setCancelError(err);
+              else setActiveTab("trial");
+            })();
+          }}
+        >
+          {cancelBusy ? "Canceling…" : "Cancel trial lesson"}
+        </button>
+        <button className="sub-btn" type="button" style={{ marginTop: "0.75rem" }} onClick={() => setActiveTab("subscribe")}>
           Subscribe for unlimited classes →
         </button>
       </>

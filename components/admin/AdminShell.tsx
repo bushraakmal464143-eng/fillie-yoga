@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ReactNode, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
+import AdminTrialNotifications from "./AdminTrialNotifications";
 import { useAdminAuth } from "./AdminAuthProvider";
 
 const NAV_LINKS = [
@@ -61,9 +62,9 @@ export default function AdminShell({ children }: { children: ReactNode }) {
               ॐ
             </span>
             <div>
-              <p className="admin-eyebrow">Content studio</p>
-              <h1>Class admin</h1>
-              <p>Shape what members see on Classes, Schedule, and Pricing.</p>
+              <p className="admin-eyebrow">Om At Home</p>
+              <h1>Studio desk</h1>
+              <p>Manage class cards, schedule sessions, pricing, and members.</p>
             </div>
           </div>
           <button
@@ -141,6 +142,8 @@ export default function AdminShell({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
+
+        <AdminTrialNotifications />
 
         {error && (
           <p className="admin-banner admin-banner--error" role="alert">

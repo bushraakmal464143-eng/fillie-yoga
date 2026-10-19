@@ -1,10 +1,11 @@
 "use client";
 
+import { AdminTableSkeleton } from "@/components/Skeleton";
 import { formatWhen } from "./admin-shared";
 import { useMembersActivity } from "./useMembersActivity";
 
 export default function AdminBookingsPage() {
-  const { bookings, note } = useMembersActivity();
+  const { bookings, note, loading } = useMembersActivity();
 
   return (
     <section className="admin-card admin-card--wide admin-activity">
@@ -13,14 +14,16 @@ export default function AdminBookingsPage() {
           <p className="admin-card-kicker">Audience</p>
           <h2>Bookings</h2>
         </div>
-        <span className="admin-count-pill">{bookings.length}</span>
+        <span className="admin-count-pill">{loading ? "…" : bookings.length}</span>
       </div>
       <p>Class bookings from members and guests.</p>
 
       {note && <p className="admin-banner admin-banner--error">{note}</p>}
 
       <div className="admin-table-wrap">
-        {bookings.length === 0 ? (
+        {loading ? (
+          <AdminTableSkeleton rows={6} cols={5} />
+        ) : bookings.length === 0 ? (
           <p className="admin-empty">No class bookings in the database yet.</p>
         ) : (
           <table className="admin-table">

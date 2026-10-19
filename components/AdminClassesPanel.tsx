@@ -28,6 +28,7 @@ const EMPTY_OFFER = {
   tagBg: "#8e44ad15",
   tagColor: "#7b3fa0",
   special: false,
+  meetingUrl: "",
 };
 
 const EMPTY_SESSION = {
@@ -178,6 +179,7 @@ export default function AdminClassesPanel() {
       special: offerForm.special,
       tag,
       schedule: offerForm.special && offerForm.useCustomTag ? undefined : schedule,
+      meetingUrl: offerForm.meetingUrl,
     };
 
     const response = await fetch("/api/admin/offers", {
@@ -228,6 +230,7 @@ export default function AdminClassesPanel() {
       tagBg: offer.tagBg,
       tagColor: normalizeColor(offer.tagColor),
       special: Boolean(offer.special),
+      meetingUrl: offer.meetingUrl ?? "",
     });
     setError("");
     scrollToForm("offer-form");
@@ -379,28 +382,16 @@ export default function AdminClassesPanel() {
   if (!authenticated) {
     return (
       <div className="admin-page">
-        <form className="admin-login" onSubmit={handleLogin}>
+        <div className="admin-login">
           <h1>Admin panel</h1>
-          <p>Sign in to manage class cards and schedule sessions for Om At Home.</p>
-          <div className="admin-field">
-            <label htmlFor="admin-password">Password</label>
-            <PasswordInput
-              id="admin-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Enter admin password"
-              required
-            />
-          </div>
-          {error && <p className="admin-error">{error}</p>}
-          <button className="admin-btn" type="submit" disabled={busy} style={{ width: "100%", marginTop: "1rem" }}>
-            {busy ? "Signing in…" : "Sign in"}
-          </button>
-          <p className="admin-hint">
-            Default password is <strong>omathome</strong>. Change it with the{" "}
-            <code>ADMIN_PASSWORD</code> environment variable.
+          <p>
+            There is no separate admin login. Sign in on the main site with your admin email and
+            password, then return here.
           </p>
-        </form>
+          <a className="admin-btn" href="/?login=1" style={{ display: "inline-flex", marginTop: "1rem" }}>
+            Log in on the main site
+          </a>
+        </div>
       </div>
     );
   }
@@ -499,6 +490,18 @@ export default function AdminClassesPanel() {
                   onChange={(event) => setOfferForm({ ...offerForm, desc: event.target.value })}
                   placeholder="Short description for the class card"
                   required
+                />
+              </div>
+              <div className="admin-field">
+                <label htmlFor="panel-offer-meeting-url">Zoom meeting link</label>
+                <input
+                  id="panel-offer-meeting-url"
+                  type="url"
+                  value={offerForm.meetingUrl}
+                  onChange={(event) =>
+                    setOfferForm({ ...offerForm, meetingUrl: event.target.value })
+                  }
+                  placeholder="https://zoom.us/j/123456789"
                 />
               </div>
               <div className="admin-field">

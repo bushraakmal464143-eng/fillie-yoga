@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { featuresToText, formatPlanPeriod, textToFeatures } from "@/lib/pricing";
 import type { PricingPlan } from "@/lib/types";
+import { AdminListSkeleton } from "@/components/Skeleton";
 import { useAdminAuth } from "./AdminAuthProvider";
 import {
   EMPTY_PRICING,
@@ -13,17 +14,24 @@ import {
 export default function AdminPricingPage() {
   const { busy, setBusy, setError, showSuccess, refreshKey, refreshCounts } = useAdminAuth();
   const [pricing, setPricing] = useState<PricingPlan[]>([]);
+  const [listLoading, setListLoading] = useState(true);
   const [pricingForm, setPricingForm] = useState<PricingFormState>(EMPTY_PRICING);
   const [editingPricingId, setEditingPricingId] = useState<string | null>(null);
 
   const loadPricing = useCallback(async () => {
+    setListLoading(true);
     const response = await fetch("/api/admin/pricing");
-    if (response.status === 401) return;
+    if (response.status === 401) {
+      setListLoading(false);
+      return;
+    }
     if (!response.ok) {
       setError("Could not load pricing plans.");
+      setListLoading(false);
       return;
     }
     setPricing(await response.json());
+    setListLoading(false);
   }, [setError]);
 
   useEffect(() => {
@@ -301,34 +309,40 @@ export default function AdminPricingPage() {
       </form>
 
       <div className="admin-list-section">
-        <h3 className="admin-list-heading">Saved pricing plans ({pricing.length})</h3>
+        <h3 className="admin-list-heading">
+          Saved pricing plans ({listLoading ? "…" : pricing.length})
+        </h3>
         <div className="admin-list">
-          {pricing.map((plan) => (
-            <div
-              key={plan.id}
-              className={`admin-list-item${editingPricingId === plan.id ? " is-editing" : ""}`}
-            >
-              <div>
-                <strong>
-                  {plan.name}
-                  {plan.highlighted ? " · Featured" : ""}
-                </strong>
-                <span>{formatPlanPeriod(plan)}</span>
+          {listLoading ? (
+            <AdminListSkeleton rows={3} />
+          ) : (
+            pricing.map((plan) => (
+              <div
+                key={plan.id}
+                className={`admin-list-item${editingPricingId === plan.id ? " is-editing" : ""}`}
+              >
+                <div>
+                  <strong>
+                    {plan.name}
+                    {plan.highlighted ? " · Featured" : ""}
+                  </strong>
+                  <span>{formatPlanPeriod(plan)}</span>
+                </div>
+                <div className="admin-list-actions">
+                  <button className="admin-edit" type="button" onClick={() => handleEditPricing(plan)}>
+                    Edit
+                  </button>
+                  <button
+                    className="admin-delete"
+                    type="button"
+                    onClick={() => void handleDeletePricing(plan.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="admin-list-actions">
-                <button className="admin-edit" type="button" onClick={() => handleEditPricing(plan)}>
-                  Edit
-                </button>
-                <button
-                  className="admin-delete"
-                  type="button"
-                  onClick={() => void handleDeletePricing(plan.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </section>

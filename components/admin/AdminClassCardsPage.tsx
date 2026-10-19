@@ -9,6 +9,7 @@ import {
   offerToFormSchedule,
 } from "@/lib/offer-schedule";
 import type { ClassOffer } from "@/lib/types";
+import { AdminListSkeleton } from "@/components/Skeleton";
 import { useAdminAuth } from "./AdminAuthProvider";
 import {
   EMPTY_OFFER,
@@ -20,17 +21,24 @@ import {
 export default function AdminClassCardsPage() {
   const { busy, setBusy, setError, showSuccess, refreshKey, refreshCounts } = useAdminAuth();
   const [offers, setOffers] = useState<ClassOffer[]>([]);
+  const [listLoading, setListLoading] = useState(true);
   const [offerForm, setOfferForm] = useState<OfferFormState>(EMPTY_OFFER);
   const [editingOfferId, setEditingOfferId] = useState<string | null>(null);
 
   const loadOffers = useCallback(async () => {
+    setListLoading(true);
     const response = await fetch("/api/admin/offers");
-    if (response.status === 401) return;
+    if (response.status === 401) {
+      setListLoading(false);
+      return;
+    }
     if (!response.ok) {
       setError("Could not load class cards.");
+      setListLoading(false);
       return;
     }
     setOffers(await response.json());
+    setListLoading(false);
   }, [setError]);
 
   useEffect(() => {
@@ -75,6 +83,7 @@ export default function AdminClassCardsPage() {
       special: offerForm.special,
       tag,
       schedule: offerForm.special && offerForm.useCustomTag ? undefined : schedule,
+      meetingUrl: offerForm.meetingUrl,
     };
 
     const response = await fetch("/api/admin/offers", {
@@ -124,6 +133,7 @@ export default function AdminClassCardsPage() {
       tagBg: offer.tagBg,
       tagColor: normalizeColor(offer.tagColor),
       special: Boolean(offer.special),
+      meetingUrl: offer.meetingUrl ?? "",
     });
     setError("");
     scrollToForm("offer-form");
@@ -232,6 +242,21 @@ export default function AdminClassCardsPage() {
             placeholder="Short description for the class card"
             required
           />
+        </div>
+        <div className="admin-field">
+          <label htmlFor="offer-meeting-url">Zoom meeting link</label>
+          <input
+            id="offer-meeting-url"
+            type="url"
+            value={offerForm.meetingUrl}
+            onChange={(event) =>
+              setOfferForm({ ...offerForm, meetingUrl: event.target.value })
+            }
+            placeholder="https://zoom.us/j/123456789"
+          />
+          <p className="admin-field-hint">
+            Paste the Zoom invite link. Join Class on the site opens this URL.
+          </p>
         </div>
         <div className="admin-field">
           <label htmlFor="offer-duration">Duration</label>
@@ -420,31 +445,40 @@ export default function AdminClassCardsPage() {
       </form>
 
       <div className="admin-list-section">
-        <h3 className="admin-list-heading">Saved class cards ({offers.length})</h3>
+        <h3 className="admin-list-heading">
+          Saved class cards ({listLoading ? "…" : offers.length})
+        </h3>
         <div className="admin-list">
-          {offers.map((offer) => (
-            <div
-              key={offer.id}
-              className={`admin-list-item${editingOfferId === offer.id ? " is-editing" : ""}`}
-            >
-              <div>
-                <strong>{offer.title}</strong>
-                <span>{offer.tag}</span>
+          {listLoading ? (
+            <AdminListSkeleton rows={4} />
+          ) : (
+            offers.map((offer) => (
+              <div
+                key={offer.id}
+                className={`admin-list-item${editingOfferId === offer.id ? " is-editing" : ""}`}
+              >
+                <div>
+                  <strong>{offer.title}</strong>
+                  <span>
+                    {offer.tag}
+                    {offer.meetingUrl ? " · Zoom linked" : ""}
+                  </span>
+                </div>
+                <div className="admin-list-actions">
+                  <button className="admin-edit" type="button" onClick={() => handleEditOffer(offer)}>
+                    Edit
+                  </button>
+                  <button
+                    className="admin-delete"
+                    type="button"
+                    onClick={() => void handleDeleteOffer(offer.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="admin-list-actions">
-                <button className="admin-edit" type="button" onClick={() => handleEditOffer(offer)}>
-                  Edit
-                </button>
-                <button
-                  className="admin-delete"
-                  type="button"
-                  onClick={() => void handleDeleteOffer(offer.id)}
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </section>

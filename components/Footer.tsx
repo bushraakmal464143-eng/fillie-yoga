@@ -3,8 +3,7 @@ import { CONTACT_EMAIL, ROUTES } from "@/lib/routes";
 import { INSTAGRAM_HANDLE, SOCIAL } from "@/lib/social";
 
 const PRACTICE_LINKS = [
-  { href: ROUTES.classes, label: "Classes" },
-  { href: ROUTES.schedule, label: "Schedule" },
+  { href: ROUTES.classes, label: "Classes & schedule" },
   { href: ROUTES.sunset, label: "Sunset Flow" },
   { href: ROUTES.teacher, label: "Teacher" },
   { href: ROUTES.pricing, label: "Pricing" },

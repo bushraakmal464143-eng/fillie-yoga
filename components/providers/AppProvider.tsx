@@ -43,7 +43,16 @@ type AppContextValue = {
   subscribe: (planId?: string) => Promise<void>;
   cancelSub: () => Promise<void>;
   toggleBook: (id: number) => void;
-  submitTrial: (data: Omit<TrialBooking, "bookedAt">) => void;
+  submitTrial: (
+    data: Omit<TrialBooking, "bookedAt"> & {
+      classType?: string;
+      day?: string;
+      time?: string;
+      duration?: string;
+      meetingUrl?: string;
+    },
+  ) => Promise<string | null>;
+  cancelTrial: () => Promise<string | null>;
 };
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -221,12 +230,100 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [subscribed],
   );
 
-  const submitTrial = useCallback((data: Omit<TrialBooking, "bookedAt">) => {
-    const booking: TrialBooking = { ...data, bookedAt: Date.now() };
-    setTrialBooking(booking);
-    localStorage.setItem("omathome_trial", JSON.stringify(booking));
-    setBooked(new Set([booking.classId]));
-  }, []);
+  const submitTrial = useCallback(
+    async (
+      data: Omit<TrialBooking, "bookedAt"> & {
+        classType?: string;
+        day?: string;
+        time?: string;
+        duration?: string;
+        meetingUrl?: string;
+      },
+    ) => {
+      try {
+        const response = await fetch("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: data.classId,
+            bookingType: "trial",
+            guestName: data.name,
+            guestEmail: data.email,
+            classDetails: {
+              classType: data.classType,
+              day: data.day,
+              time: data.time,
+              duration: data.duration,
+              meetingUrl: data.meetingUrl,
+            },
+          }),
+        });
+
+        const payload = (await response.json().catch(() => ({}))) as {
+          booking?: TrialBooking;
+          error?: string;
+          emailSent?: boolean;
+        };
+
+        // Soft-fail email still returns a booking — keep local state in sync.
+        if (payload.booking) {
+          setTrialBooking(payload.booking);
+          localStorage.setItem("omathome_trial", JSON.stringify(payload.booking));
+          setBooked(new Set([payload.booking.classId]));
+        }
+
+        if (!response.ok) {
+          if (payload.booking) {
+            return (
+              payload.error ??
+              "Booked, but we could not send the confirmation email. Please check your schedule."
+            );
+          }
+          return payload.error ?? "Could not book your trial lesson.";
+        }
+
+        if (!payload.booking) {
+          const booking = {
+            name: data.name,
+            email: data.email,
+            classId: data.classId,
+            bookedAt: Date.now(),
+          };
+          setTrialBooking(booking);
+          localStorage.setItem("omathome_trial", JSON.stringify(booking));
+          setBooked(new Set([booking.classId]));
+        }
+
+        return null;
+      } catch {
+        return "Network error. Please try again.";
+      }
+    },
+    [],
+  );
+
+  const cancelTrial = useCallback(async () => {
+    const sessionId = trialBooking?.classId;
+    try {
+      const response = await fetch("/api/bookings", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(sessionId ? { sessionId } : {}),
+      });
+
+      const payload = (await response.json().catch(() => ({}))) as { error?: string };
+      if (!response.ok) {
+        return payload.error ?? "Could not cancel your trial lesson.";
+      }
+
+      setTrialBooking(null);
+      localStorage.removeItem("omathome_trial");
+      setBooked(new Set());
+      return null;
+    } catch {
+      return "Network error. Please try again.";
+    }
+  }, [trialBooking?.classId]);
 
   const value = useMemo(
     () => ({
@@ -256,6 +353,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelSub,
       toggleBook,
       submitTrial,
+      cancelTrial,
     }),
     [
       offers,
@@ -283,6 +381,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cancelSub,
       toggleBook,
       submitTrial,
+      cancelTrial,
     ],
   );
 
