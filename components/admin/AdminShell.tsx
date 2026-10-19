@@ -127,36 +127,38 @@ export default function AdminShell({ children }: { children: ReactNode }) {
           </div>
         </header>
 
-        <nav className="admin-nav admin-nav--bar" aria-label="Admin sections">
-          {NAV_LINKS.map((link) => {
-            const active = isActivePath(pathname, link.href, "exact" in link ? link.exact : false);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`admin-nav-link${active ? " is-active" : ""}`}
-                aria-current={active ? "page" : undefined}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="admin-main">
+          <nav className="admin-nav admin-nav--bar" aria-label="Admin sections">
+            {NAV_LINKS.map((link) => {
+              const active = isActivePath(pathname, link.href, "exact" in link ? link.exact : false);
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`admin-nav-link${active ? " is-active" : ""}`}
+                  aria-current={active ? "page" : undefined}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </nav>
 
-        <AdminTrialNotifications />
+          <AdminTrialNotifications />
 
-        {error && (
-          <p className="admin-banner admin-banner--error" role="alert">
-            {error}
-          </p>
-        )}
-        {success && (
-          <p className="admin-banner admin-banner--success" role="status">
-            {success}
-          </p>
-        )}
+          {error && (
+            <p className="admin-banner admin-banner--error" role="alert">
+              {error}
+            </p>
+          )}
+          {success && (
+            <p className="admin-banner admin-banner--success" role="status">
+              {success}
+            </p>
+          )}
 
-        {children}
+          {children}
+        </div>
       </div>
     </div>
   );

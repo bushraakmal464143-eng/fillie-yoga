@@ -23,10 +23,24 @@
 }
 
 .admin-shell {
-  max-width: 1120px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4.5rem;
   animation: admin-rise 0.55s ease both;
+}
+
+.admin-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+}
+
+.admin-main > * {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .admin-shell--center {
@@ -283,7 +297,7 @@
 }
 
 .admin-trial-strip {
-  margin: 0 0 1.35rem;
+  margin: 0;
   padding: 1.15rem 1.25rem;
   border-radius: 16px;
   border: 1px solid var(--admin-line);
@@ -499,11 +513,11 @@
 }
 
 .admin-nav--bar {
-  margin: -0.35rem 0 1.5rem;
+  margin: 0;
   padding: 0.55rem;
   border: 1px solid var(--admin-line);
-  border-radius: calc(var(--radius) + 2px);
-  background: rgba(255, 255, 255, 0.62);
+  border-radius: 16px;
+  background: #fff;
   box-shadow: 0 10px 28px rgba(44, 26, 14, 0.04);
 }
 
@@ -551,6 +565,7 @@
 .admin-home {
   display: grid;
   gap: 1rem;
+  width: 100%;
 }
 
 .admin-home-head h2 {
@@ -569,6 +584,7 @@
 .admin-dash-list {
   display: grid;
   gap: 0.65rem;
+  width: 100%;
 }
 
 .admin-dash-row {
@@ -576,13 +592,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.05rem 1.2rem;
-  border-radius: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.05rem 1.25rem;
+  border-radius: 16px;
   border: 1px solid var(--admin-line);
   background: #fff;
   text-decoration: none;
   color: inherit;
-  box-shadow: 0 8px 22px rgba(44, 26, 14, 0.04);
+  box-shadow: 0 10px 28px rgba(44, 26, 14, 0.04);
   transition:
     transform 0.15s ease,
     box-shadow 0.15s ease,
