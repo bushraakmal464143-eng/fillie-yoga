@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useJoinClass } from "@/components/hooks/useJoinClass";
 import { useApp } from "@/components/providers/AppProvider";
 import { getIconMeta } from "@/lib/icons";
-import { normalizeMeetingUrl, resolveMeetingUrl } from "@/lib/meeting-url";
+import { resolveMeetingUrl } from "@/lib/meeting-url";
 import { ROUTES } from "@/lib/routes";
 
 const FALLBACK_PRACTICES = [
@@ -45,16 +45,9 @@ const FALLBACK_PRACTICES = [
   },
 ] as const;
 
-function openZoomLink(url?: string) {
-  const href = normalizeMeetingUrl(url);
-  if (!href) return false;
-  window.open(href, "_blank", "noopener,noreferrer");
-  return true;
-}
-
 export default function HomePractice() {
-  const { offers, checkoutError } = useApp();
-  const [joinHint, setJoinHint] = useState("");
+  const { offers } = useApp();
+  const { joinClass, checkoutLoading, joinHint } = useJoinClass();
 
   const cards =
     offers.length > 0
@@ -77,14 +70,6 @@ export default function HomePractice() {
           meetingUrl: resolveMeetingUrl({ type: practice.title }, offers),
         }));
 
-  const handleJoin = (meetingUrl?: string) => {
-    if (openZoomLink(meetingUrl)) {
-      setJoinHint("");
-      return;
-    }
-    setJoinHint("Zoom link not set yet for this class. Add it in Admin → Class cards.");
-  };
-
   return (
     <section className="home-practice" id="practice">
       <div className="container">
@@ -97,8 +82,7 @@ export default function HomePractice() {
           <em>at your own pace</em>
         </h2>
         <p className="home-practice-lead reveal" style={{ "--reveal-delay": 2 } as React.CSSProperties}>
-          Live classes led by Fillie Faragi — designed for every body, every timezone,
-          and every stage of your yoga journey.
+          Live classes led by Fillie Faragi — log in, subscribe, then join on Zoom.
         </p>
 
         <div className="practice-grid">
@@ -125,18 +109,19 @@ export default function HomePractice() {
                 <button
                   className="practice-join-btn"
                   type="button"
-                  onClick={() => handleJoin(practice.meetingUrl)}
+                  disabled={checkoutLoading}
+                  onClick={() => joinClass(practice.meetingUrl)}
                 >
-                  Join class
+                  {checkoutLoading ? "Redirecting…" : "Join class"}
                 </button>
               </article>
             );
           })}
         </div>
 
-        {(joinHint || checkoutError) && (
+        {joinHint && (
           <p className="home-practice-error" role="alert">
-            {joinHint || checkoutError}
+            {joinHint}
           </p>
         )}
 

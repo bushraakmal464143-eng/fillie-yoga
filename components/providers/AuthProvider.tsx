@@ -20,7 +20,7 @@ type AuthContextValue = {
   authOpen: boolean;
   authMode: AuthMode;
   authMessage: string | null;
-  openAuth: (mode: AuthMode) => void;
+  openAuth: (mode: AuthMode, message?: string) => void;
   closeAuth: () => void;
   login: (email: string, password: string) => Promise<string | null>;
   sendSignupCode: (name: string, email: string, password: string) => Promise<string | null>;
@@ -75,9 +75,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const openAuth = useCallback((mode: AuthMode) => {
+  const openAuth = useCallback((mode: AuthMode, message?: string) => {
     setAuthMode(mode);
-    setAuthMessage(null);
+    setAuthMessage(message?.trim() || null);
     setAuthOpen(true);
   }, []);
 
