@@ -168,26 +168,47 @@ async function listSubscriptions(): Promise<AdminSubscription[]> {
   const { data, error } = await admin
     .from("subscriptions")
     .select(
-      "id, user_id, plan_id, status, current_period_start, current_period_end, created_at, profiles(name, email), pricing_plans(name)",
+      "id, user_id, plan_id, status, current_period_start, current_period_end, created_at, customer_email, customer_name, profiles(name, email), pricing_plans(name)",
     )
     .order("created_at", { ascending: false })
     .limit(200);
 
   if (error) {
-    // Fallback without joins if relationships are missing.
+    // Fallback without joins if relationships / new columns are missing.
     const fallback = await admin
       .from("subscriptions")
-      .select("id, user_id, plan_id, status, current_period_start, current_period_end, created_at")
+      .select(
+        "id, user_id, plan_id, status, current_period_start, current_period_end, created_at, customer_email, customer_name",
+      )
       .order("created_at", { ascending: false })
       .limit(200);
 
-    if (fallback.error) return [];
+    if (fallback.error) {
+      const basic = await admin
+        .from("subscriptions")
+        .select("id, user_id, plan_id, status, current_period_start, current_period_end, created_at")
+        .order("created_at", { ascending: false })
+        .limit(200);
+      if (basic.error) return [];
+      return (basic.data ?? []).map((row) => ({
+        id: row.id as string,
+        userId: row.user_id as string,
+        userName: "",
+        userEmail: "",
+        planId: row.plan_id as string,
+        planName: row.plan_id as string,
+        status: row.status as string,
+        currentPeriodStart: (row.current_period_start as string | null) ?? null,
+        currentPeriodEnd: (row.current_period_end as string | null) ?? null,
+        createdAt: row.created_at as string,
+      }));
+    }
 
     return (fallback.data ?? []).map((row) => ({
       id: row.id as string,
       userId: row.user_id as string,
-      userName: "",
-      userEmail: "",
+      userName: (row.customer_name as string | null) ?? "",
+      userEmail: (row.customer_email as string | null) ?? "",
       planId: row.plan_id as string,
       planName: row.plan_id as string,
       status: row.status as string,
@@ -208,8 +229,8 @@ async function listSubscriptions(): Promise<AdminSubscription[]> {
     return {
       id: row.id as string,
       userId: row.user_id as string,
-      userName: profile?.name ?? "",
-      userEmail: profile?.email ?? "",
+      userName: profile?.name || (row.customer_name as string | null) || "",
+      userEmail: profile?.email || (row.customer_email as string | null) || "",
       planId: row.plan_id as string,
       planName: plan?.name ?? (row.plan_id as string),
       status: row.status as string,

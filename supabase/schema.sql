@@ -159,9 +159,17 @@ create table if not exists public.subscriptions (
   status text not null default 'active' check (status in ('active', 'cancelled', 'past_due', 'trialing')),
   current_period_start timestamptz,
   current_period_end timestamptz,
+  stripe_subscription_id text,
+  customer_email text,
+  customer_name text,
+  notify_email_sent_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create unique index if not exists subscriptions_stripe_id_uidx
+  on public.subscriptions (stripe_subscription_id)
+  where stripe_subscription_id is not null;
 
 alter table public.subscriptions enable row level security;
 

@@ -142,6 +142,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const next = params.toString();
       const cleanUrl = `${window.location.pathname}${next ? `?${next}` : ""}${window.location.hash}`;
       window.history.replaceState({}, "", cleanUrl);
+    } else {
+      // Backfill admin record + Fillie email if checkout already finished earlier.
+      const existingSubId = localStorage.getItem("omathome_subscription_id");
+      if (existingSubId && localStorage.getItem("omathome_sub_synced") !== existingSubId) {
+        void (async () => {
+          try {
+            const response = await fetch(
+              `/api/stripe/session?subscription_id=${encodeURIComponent(existingSubId)}`,
+            );
+            if (response.ok) {
+              localStorage.setItem("omathome_sub_synced", existingSubId);
+            }
+          } catch {
+            // ignore
+          }
+        })();
+      }
     }
 
     setHydrated(true);

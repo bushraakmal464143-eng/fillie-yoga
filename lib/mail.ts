@@ -162,3 +162,42 @@ We look forward to practicing with you.
 
   await sendMail({ to: input.to, subject, text, html });
 }
+
+export async function sendNewSubscriberNotifyEmail(input: {
+  to: string;
+  subscriberName: string;
+  subscriberEmail: string;
+  planName: string;
+  amountLabel: string;
+  subscriptionId: string;
+}): Promise<void> {
+  const name = input.subscriberName.trim() || "A member";
+  const subject = `New subscriber: ${name} · ${input.planName}`;
+  const text = `New Om At Home subscription
+
+Name: ${name}
+Email: ${input.subscriberEmail}
+Plan: ${input.planName}
+Amount: ${input.amountLabel}
+Stripe subscription: ${input.subscriptionId}
+
+— Om At Home`;
+
+  const html = `
+  <div style="font-family:Georgia,serif;background:#faf5ee;padding:32px 20px;color:#2c1a0e;">
+    <div style="max-width:480px;margin:0 auto;background:#ffffff;border:1px solid rgba(139,94,60,.18);border-radius:16px;padding:28px 24px;">
+      <p style="margin:0 0 6px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#8b5e3c;">Om At Home</p>
+      <h1 style="margin:0 0 12px;font-size:28px;font-weight:500;">New subscriber</h1>
+      <p style="margin:0 0 18px;line-height:1.55;color:#8b5e3c;">Someone just subscribed on the website.</p>
+      <div style="margin:0;padding:18px;border-radius:12px;background:#faf5ee;border:1px solid rgba(139,94,60,.14);">
+        <p style="margin:0 0 8px;line-height:1.5;color:#2c1a0e;font-size:15px;"><strong>Name:</strong> ${name}</p>
+        <p style="margin:0 0 8px;line-height:1.5;color:#2c1a0e;font-size:15px;"><strong>Email:</strong> ${input.subscriberEmail}</p>
+        <p style="margin:0 0 8px;line-height:1.5;color:#2c1a0e;font-size:15px;"><strong>Plan:</strong> ${input.planName}</p>
+        <p style="margin:0 0 8px;line-height:1.5;color:#2c1a0e;font-size:15px;"><strong>Amount:</strong> ${input.amountLabel}</p>
+        <p style="margin:0;line-height:1.5;color:#8b5e3c;font-size:13px;"><strong>Stripe ID:</strong> ${input.subscriptionId}</p>
+      </div>
+    </div>
+  </div>`;
+
+  await sendMail({ to: input.to, subject, text, html });
+}
