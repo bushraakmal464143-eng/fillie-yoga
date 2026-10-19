@@ -43,6 +43,8 @@ export async function POST(request: NextRequest) {
       customer_email: user.email,
       billing_address_collection: "required",
       phone_number_collection: { enabled: true },
+      // Keep membership priced in USD ($70) — don't convert to local PKR on Checkout.
+      adaptive_pricing: { enabled: false },
       line_items: [
         {
           price_data: {
